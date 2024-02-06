@@ -37,7 +37,7 @@ if len(sys.argv)<=1 or sys.argv[1]=='--help' or sys.argv[1]=='-h':
     """
     print(help_message)
     # Hygiene
-    sys.exit(0);
+    sys.exit(0)
 
 
 if sys.argv[1] == '-p' or sys.argv[1] == '--play' :
