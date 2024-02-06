@@ -23,7 +23,7 @@ To see what they include.
 
 # This if statement checks to see what argument comes right after the program name
 # Note that it also runs if you have no arguments after the program name
-if argvlen<=1 or sys.argv[1]=='--help' or sys.argv[1]=='-h':
+if len(sys.argv)<=1 or sys.argv[1]=='--help' or sys.argv[1]=='-h':
 
     # This prints out a sample of how you might use this command
     print("usage:",sys.argv[0], '--help')
