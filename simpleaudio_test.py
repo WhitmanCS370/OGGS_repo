@@ -44,3 +44,9 @@ if sys.argv[1] == '-p' or sys.argv[1] == '--play' :
     for filename in sys.argv[2:]:
         play_sound(filename)
     sys.exit(0)
+
+
+"""
+possible restructure to accept commands after running the program rather than just on initial 
+command line arguements
+"""
