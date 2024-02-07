@@ -10,7 +10,7 @@ class Interface():
     init_args : initializes the list of arguements that interface can recognize
 
     """
-    def __init__(self) -> None:
+    def __init__(self):
         self.parser = argparse.ArgumentParser()
         self.init_args()
         self.parser.parse_args(namespace = self)
@@ -28,7 +28,3 @@ class Interface():
 
     def rename_file(self):
         pass 
-
-interface = Interface()
-
-interface.play()
