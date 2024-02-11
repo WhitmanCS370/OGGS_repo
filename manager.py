@@ -17,7 +17,6 @@ class FileManager():
         TODO: 
 
         """
-
         if dir in self.directories:
             path = "./sounds/" + str(dir) + "/"  
             try:
@@ -32,7 +31,7 @@ class FileManager():
 
 
 
-    def delete(self, fileName):
+    def delete(self,dir, fileName):
         """
         This method will delete a specific file from a directory given the path to that file.
 
@@ -42,10 +41,16 @@ class FileManager():
          - should we take directory as an arguemnt or the relative path to that file?
          - 
         """
-        try:
-            self.os.remove(fileName)
-        except FileNotFoundError:
-            print("file" + str(fileName) + "not found")
+        if dir in self.directories:
+            path = "./sounds/" + str(dir) + "/" 
+            try:
+                self.os.remove(path)
+            except FileNotFoundError:
+                print("file" + str(fileName) + "not found")
+        else:
+            print("directory not found")
+
+
 
     def add_file(self, filePath, dest):
         pass
