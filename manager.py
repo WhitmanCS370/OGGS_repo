@@ -1,8 +1,8 @@
-import sys
 import os
 from audio import *
 
 class FileManager():
+
     def __init__(self):
         self.os = os
         self.directories = self.os.listdir("./sounds/")
@@ -13,9 +13,7 @@ class FileManager():
         This method will take in a target directory, target file, and a new file name for the
         target file the target file will be renamed to the new file name and kept in the same
         directory.
-
         TODO: 
-
         """
         if dir in self.directories:
             path = "./sounds/" + str(dir) + "/"  
@@ -61,7 +59,7 @@ class FileManager():
         should it create a new file in a directory
         - test
         """
-        pass
+        raise NotImplementedError
 
 
     def list_files(self, dir = "sounds"):
@@ -86,43 +84,6 @@ class FileManager():
             print("file or directory not found")
 
 
-
-        
-        
-
-
-
-
-
-        
-def main():
-
-    filemanager = FileManager()
-
-    filemanager.add_file("~/Desktop/coffee-slurp-3.wav","~/Documents/GitHub/OGGS_repo/sounds/old-sounds/coffee-slurp-3.wav")
-
-    # if len(sys.argv)<=1 or sys.argv[1]=='--help' or sys.argv[1]=='-h':
-    #     # This prints out a sample of how you might use this command
-    #     print("usage:",sys.argv[0], '--help')
-
-    #     help_message = """
-    #     Usage: python cli_example.py [command] [arguments]
-    #     Commands:
-    #     -c, --count    : Count the number of arguments.
-    #     -p, --play     : Play the specified sound file. Usage: -p <filepath>
-    #     -h, --help     : Show this help message.
-    #     """
-    #     print(help_message)
-    #     # Hygiene
-    #     sys.exit(0)
-    # if sys.argv[1] == '-p' or sys.argv[1] == '--play' :
-    #     Control=Controller(sys.argv[2:])
-    #     sys.exit(0)
-    
-    # if sys.argv[1]=='-c' or sys.argv[1]=='--count':
-    #     return len(sys.argv)-2
-            
-            
     
 if __name__ == '__main__':
-    main()
+    filemanager = FileManager()
