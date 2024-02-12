@@ -7,7 +7,7 @@ class FileManager():
         self.os = os
         self.directories = self.os.listdir("./sounds/")
 
-    def rename(self, dir, oldFile, newFile):
+    def rename(self, dir, oldFileName, newFileName):
 
         """
         This method will take in a target directory, target file, and a new file name for the
@@ -20,21 +20,20 @@ class FileManager():
         if dir in self.directories:
             path = "./sounds/" + str(dir) + "/"  
             try:
-                self.os.rename(path + str(oldFile), path + str(newFile) )
+                self.os.rename(path + str(oldFileName), path + str(newFileName) )
             except FileNotFoundError:
-                print(path + str(oldFile))
-                print("file: " + str(oldFile) + " not found")
+                print(path + str(oldFileName))
+                print("file: " + str(oldFileName) + " not found")
             except FileExistsError: 
-                print("file: " + str(newFile) + " already exists")
+                print("file: " + str(newFileName) + " already exists")
         else:
             print("directory not found")
 
 
 
-    def delete(self,dir, fileName):
+    def delete(self,dir,fileName):
         """
-        This method will delete a specific file from a directory given the path to that file.
-
+        This method will delete a specific file from a directory given directory and filename.
 
         TODO: 
          - tests
@@ -46,23 +45,61 @@ class FileManager():
             try:
                 self.os.remove(path)
             except FileNotFoundError:
-                print("file" + str(fileName) + "not found")
+                print("file" + str(fileName) + "not found in " + str(dir))
         else:
             print("directory not found")
 
 
 
-    def add_file(self, filePath, dest):
+    def add_file(self, fileOriginPath, fileDestPath):
+        """
+        
+        NOTE: we do not need to do this for epoch one
+
+        TODO:
+        - should add file take an existing file and move it into a specific directory or 
+        should it create a new file in a directory
+        - test
+        """
         pass
 
-    def list_files(self, dest):
-        pass
+
+    def list_files(self, dir = "sounds"):
+        """
+        NOTE: dir = name of directory NOT PATH
+
+        This method will list all of the files in a directory or all subdirectories within the sounds directory
+        default case is listing all the directories within the sound archive
+         """
+        
+        if (dir != "sounds") and (dir in self.directories): # path in case directory is specified
+            path = "./sounds/" + str(dir) + "/"
+        elif (dir == "sounds"): # path if directory is not specified
+            path = "./sounds/"
+        
+        try:
+            for file in os.listdir(path):
+                print(file)
+        except UnboundLocalError:
+            print("file or directory not found")
+        except FileNotFoundError:
+            print("file or directory not found")
+
+
+
+        
+        
+
+
+
+
+
         
 def main():
 
     filemanager = FileManager()
 
-    filemanager.rename("old-sounds", "toaster.wav", "toaster.wav")
+    filemanager.add_file("~/Desktop/coffee-slurp-3.wav","~/Documents/GitHub/OGGS_repo/sounds/old-sounds/coffee-slurp-3.wav")
 
     # if len(sys.argv)<=1 or sys.argv[1]=='--help' or sys.argv[1]=='-h':
     #     # This prints out a sample of how you might use this command
