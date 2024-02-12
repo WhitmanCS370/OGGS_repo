@@ -30,6 +30,13 @@ class Interface():
     def init_args(self):
         """
         initializes list of commands for CLI
+
+        If you need to add a new command line arguement, add it here
+            first two args are the specific command string
+            metavar is the variable that the args will be stored under as self."metavar"
+            action is how the arg is handled, extend stores args as list, store just stores verbaitm
+            help is the help text associated with the command
+
         TODO:
          - is there a better way to add arguements? 
         """
@@ -56,23 +63,6 @@ class Interface():
         """
         return self.rename
 
-    def play_file(self):
-        """
-        placeholder
-        """
-        pass
-
-    def list_files(self):
-        """
-        placeholder
-        """
-        pass
-
-    def rename_file(self):
-        """
-        placeholder
-        """
-        pass 
 
 interface = Interface()
 
