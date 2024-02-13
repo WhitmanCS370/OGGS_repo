@@ -13,6 +13,7 @@ class Test(unittest.TestCase):
     """
     def test_Playing(self):
         print("test")
+        pass
 
 
 
@@ -30,6 +31,7 @@ class FileManager_test(unittest.TestCase):
             - assert that that file exists in the directory
             - rename back to test file
         """
+        pass
         
 
     def test_delete():

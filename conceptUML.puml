@@ -1,0 +1,37 @@
+@startuml
+
+abstract class Command {
+  {abstract} +execute(): void
+}
+
+class MoveFileCommand {
+  -filename: string
+  -src: string
+  -dst: string
+  +execute(): void
+}
+
+class UpdateDBCommand {
+  -filename: string
+  -dst: string
+  -*meta: list
+  +execute(): void
+}
+
+class AudioManager {
+  -commands: list
+  +execute_commands(): void
+}
+
+Command <|-- MoveFileCommand
+Command <|-- UpdateDBCommand
+
+AudioManager ..> Command : uses
+
+class Client {
+  +add_audio(filename: string, src: string, dst: string, *meta): void
+}
+
+Client ..> AudioManager : uses
+
+@enduml
