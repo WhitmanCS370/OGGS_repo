@@ -39,7 +39,7 @@ class FileManager():
          - 
         """
         if dir in self.directories:
-            path = "./sounds/" + str(dir) + "/" 
+            path = "./sounds/" + str(dir) + "/" + str(fileName)
             try:
                 self.os.remove(path)
             except FileNotFoundError:
@@ -62,7 +62,7 @@ class FileManager():
         raise NotImplementedError
 
 
-    def list_files(self, dir = "sounds"):
+    def list_files(self, dir):
         """
         NOTE: dir = name of directory NOT PATH
 
@@ -83,7 +83,5 @@ class FileManager():
         except FileNotFoundError:
             print("file or directory not found")
 
-
-    
 if __name__ == '__main__':
-    filemanager = FileManager()
+    pass

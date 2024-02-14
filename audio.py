@@ -22,7 +22,7 @@ class AudioEffects:
     
     """
     def __init__(self):
-        print("AudioEffects")
+        pass
         
     def layer(self):
         print("layer")
