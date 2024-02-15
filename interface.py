@@ -16,8 +16,6 @@ class Interface():
 
         self.init_parser()
         self.parser.parse_args(namespace = self)
-        AE=AudioEffects()
-        AE.layer(self.get_layer_args())
         
 
 
@@ -77,6 +75,10 @@ class Interface():
         if (self.remove):
             file_manager = FileManager()
             file_manager.delete(self.remove[0], self.remove[1])
+            
+        if(self.layer):
+            AE=AudioEffects()
+            AE.layer(self.get_layer_args())
     
     def get_play_args(self):
         """
