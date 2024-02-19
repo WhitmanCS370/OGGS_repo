@@ -24,6 +24,13 @@ Our project will be divided into three main epochs that tackle specific features
   - Rename sounds within the archive.
 - **Technology**: Python, simpleaudio library.
 
+Contributions: 
+Oliver:
+Grant:
+Gabe:
+Steven:
+
+
 ### Epoch 2: Enhanced Listening and Sound Organization
 - **Functionality**:
   - Advanced playback options (e.g., playing sounds backward, random snippets).

@@ -1,6 +1,9 @@
 import argparse
 from audio import * 
 from manager import FileManager
+import os
+from os import walk
+
 class Interface():
     """
     attributes:
@@ -43,7 +46,8 @@ class Interface():
     def init_args(self):
         """
         initializes list of commands for CLI
-
+        -h and --help list all of the optional commands
+        
         If you need to add a new command line arguement, add it here
             first two args are the specific command string
             metavar is the variable that the args will be stored under as self."metavar"
@@ -59,11 +63,16 @@ class Interface():
         self.parser.add_argument("-rm","--remove",metavar="remove",action = "extend",nargs="+", help = "Deletes sound in directory, usage: -rm <directory name> <target filename>")
         self.parser.add_argument("-ly","--layer", metavar="layer", action="extend",nargs="+",help="layer the audio")
         self.parser.add_argument("-sq","--sequence",metavar="sequence", action="extend",nargs="+",help="sequences one sound after another")
+        
 #-l 
     def delegate_args(self):
         """
         this method is meant to delegate arguements to the corrosponding objects
         """
+        if (self.play):
+            AudioEffect=AudioEffects()
+            AudioEffect.play(self.get_play_args())
+            
         if (self.list):
             file_manager = FileManager()
             file_manager.list_files(self.list)
@@ -77,8 +86,12 @@ class Interface():
             file_manager.delete(self.remove[0], self.remove[1])
             
         if(self.layer):
-            AE=AudioEffects()
-            AE.layer(self.get_layer_args())
+            AudioEffect=AudioEffects()
+            AudioEffect.layer(self.get_layer_args())
+        
+        if(self.sequence):
+            AudioEffect=AudioEffects()
+            AudioEffect.sequence(self.get_sequence_args())
     
     def get_play_args(self):
         """
@@ -112,16 +125,27 @@ class Interface():
             elif os.path.isdir(self.layer[0]):
                 for (dir_path,dir,files) in walk(item):
                     for file in files:
-                        l.append('./'+dir_path+'/'+file)
+                        if file.endswith(".wav"):
+                            l.append('./'+dir_path+'/'+file)
         return l
     
     def get_sequence_args(self):
 
         """
-        returns the arguements passed in with the -ly command
+        returns the arguements passed in with the -seq command
         """
-        
-        return self.sequence
+        l=[]
+        if self.sequence==None:
+            return None
+        for item in self.sequence:
+            if os.path.isfile(item):
+                l.append(item)
+            elif os.path.isdir(self.sequence[0]):
+                for (dir_path,dir,files) in walk(item):
+                    for file in files:
+                        if file.endswith('.wav'):
+                            l.append('./'+dir_path+'/'+file)
+        return l
     
     def delegate(self,type):
         """

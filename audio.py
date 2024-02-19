@@ -1,6 +1,4 @@
-import sys
 import simpleaudio as sa
-import os
 from os import walk
 
 class Player:
@@ -14,12 +12,15 @@ class Player:
         """
         play is a function that recieves a file name and path and plays the sound that is at that filepath
         """
+        print("play")
         wave_obj = sa.WaveObject.from_wave_file(filename)
         play_obj = wave_obj.play()
-        play_obj.wait_done()  # Wait until sound has finished playing    
+        return play_obj.wait_done()  # Wait until sound has finished playing  
         
     def isPlaying(self):
-        print("is playing")
+        if self.play_obj:
+            return not self.play_obj.is_playing()
+        return True
         
 class AudioEffects(Player):
     """
@@ -38,13 +39,22 @@ class AudioEffects(Player):
             playlist.append(wave.play())
         for wave in playlist:
             wave.wait_done()  # Wait until sound has finished playing
-            
-            
             #self.play(file)
         
     def backward(self):
         print("backward")
         
-    def sequence(self):
-        print("sequence")
+    def sequence(self,files):
+        for file in files:
+            self.play(file)
+            
+
+def play(filename):
+        """
+        play is a function that recieves a file name and path and plays the sound that is at that filepath
+        """
+        print("play")
+        wave_obj = sa.WaveObject.from_wave_file(filename)
+        play_obj = wave_obj.play()
+        play_obj.wait_done()  # Wait until sound has finished playing 
         
