@@ -18,8 +18,6 @@ class Interface():
         self.init_parser()
         self.init_tools()
         self.parser.parse_args(namespace = self)
-        
-
 
     def init_tools(self):
         self.audio = AudioEffects()
@@ -46,7 +44,7 @@ class Interface():
         TODO:
          - is there a better way to add arguements? 
         """
-        self.parser.add_argument("-p","--play",metavar="play",action = "extend", nargs = "+" ,help = "play sound ")
+        self.parser.add_argument("-p","--play",metavar="play",action = "store" ,help = "play sound ")
         self.parser.add_argument("-l","--list",metavar="list",action = "store",nargs="?",help = "Lists files in directory, usage: -l <directory name>")
         self.parser.add_argument("-rn","--rename",metavar="rename",action = "extend",nargs="+", help = "Renames sound in directory, usage: -rn <directory name> <target filename> <new filename>")
         self.parser.add_argument("-rm","--remove",metavar="remove",action = "extend",nargs="+", help = "Deletes sound in directory, usage: -rm <directory name> <target filename>")
