@@ -28,7 +28,7 @@ Contributions:
 Oliver:
   worked on getting the file manager and the interface to work so that we can parse the arguments and rename files and stuff like that.
 Grant:
-  worked on original argparser that ended up turning in to our current command line interface
+  worked on original argparser that ended up turning in to our current command line interface, created unittests
 Gabe:
   worked on getting layering and playing to work as wel as ended up not being able to get sequencing to work(had someone else take a look).
 Steven:
