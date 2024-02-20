@@ -24,6 +24,16 @@ Our project will be divided into three main epochs that tackle specific features
   - Rename sounds within the archive.
 - **Technology**: Python, simpleaudio library.
 
+Contributions: 
+Oliver:
+  worked on getting the file manager and the interface to work so that we can parse the arguments and rename files and stuff like that.
+Grant:
+  worked on original argparser that ended up turning in to our current command line interface
+Gabe:
+  worked on getting layering and playing to work as wel as ended up not being able to get sequencing to work(had someone else take a look).
+Steven:
+
+
 ### Epoch 2: Enhanced Listening and Sound Organization
 - **Functionality**:
   - Advanced playback options (e.g., playing sounds backward, random snippets).
