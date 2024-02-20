@@ -27,7 +27,7 @@ class AudioEffects(Player):
     
     """
     def __init__(self):
-        print("AudioEffects")
+        pass
         
     def layer(self,files):
         wavlist=[]
