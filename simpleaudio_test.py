@@ -9,7 +9,19 @@ def play_sound(filename):
 
 interface = Interface()
 
-for filename in interface.play:
-    play_sound(filename)
+
+if interface.play:
+    for filename in interface.play:
+        play_sound(filename)
+
+if interface.layer:
+    play_objs = [sa.WaveObject.from_wave_file(filename).play() for filename in interface.layer]
+    for play_obj in play_objs:
+        play_obj.wait_done()
+
+if interface.sequence:
+    for filename in interface.sequence:
+        play_sound(filename)
+
 
 

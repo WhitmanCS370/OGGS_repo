@@ -69,7 +69,7 @@ class FileManager():
         This method will list all of the files in a directory or all subdirectories within the sounds directory
         default case is listing all the directories within the sound archive
          """
-        
+        files = []
         if (dir != "sounds") and (dir in self.directories): # path in case directory is specified
             path = "./sounds/" + str(dir) + "/"
         elif (dir == "sounds"): # path if directory is not specified
@@ -77,11 +77,13 @@ class FileManager():
         
         try:
             for file in os.listdir(path):
+                files.append(file)
                 print(file)
         except UnboundLocalError:
             print("file or directory not found")
         except FileNotFoundError:
             print("file or directory not found")
+        return files
 
 if __name__ == '__main__':
     pass
