@@ -38,7 +38,6 @@ class Audio_test(unittest.TestCase):
         audio_effects.sequence(files)
         self.assertEqual(mock_wave.call_count, len(files))
 
-
 class FileManager_test(unittest.TestCase):
     """
     test funtctionality of the FileManager

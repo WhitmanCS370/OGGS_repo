@@ -3,7 +3,6 @@ from audio import *
 from manager import FileManager
 import os
 from os import walk
-
 class Interface():
     """
     attributes:
@@ -19,8 +18,6 @@ class Interface():
         self.init_tools()
         self.parser.parse_args(namespace = self)
         
-
-
     def init_tools(self):
         self.audio = AudioEffects()
         self.files = FileManager()
@@ -46,7 +43,7 @@ class Interface():
         TODO:
          - is there a better way to add arguements? 
         """
-        self.parser.add_argument("-p","--play",metavar="play",action = "extend", nargs = "+" ,help = "play sound ")
+        self.parser.add_argument("-p","--play",metavar="play" ,help = "play sound ")
         self.parser.add_argument("-l","--list",metavar="list",action = "store",nargs="?",help = "Lists files in directory, usage: -l <directory name>")
         self.parser.add_argument("-rn","--rename",metavar="rename",action = "extend",nargs="+", help = "Renames sound in directory, usage: -rn <directory name> <target filename> <new filename>")
         self.parser.add_argument("-rm","--remove",metavar="remove",action = "extend",nargs="+", help = "Deletes sound in directory, usage: -rm <directory name> <target filename>")
@@ -91,13 +88,10 @@ class Interface():
     def get_list_args(self):
         """
         handle args for the list command
-
         """
         pass
-        
-    
-    def get_rename_args(self):
 
+    def get_rename_args(self):
         """
         returns the arguements passed in with the -rn command
         """
@@ -121,7 +115,6 @@ class Interface():
         return l
     
     def get_sequence_args(self):
-
         """
         returns the arguements passed in with the -seq command
         """
