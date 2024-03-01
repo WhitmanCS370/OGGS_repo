@@ -1,145 +1,119 @@
-import argparse
-from audio import * 
+import cmd
+from audio import AudioEffects
 from manager import FileManager
-import os
 from os import walk
-class Interface():
-    """
-    attributes:
-    parser : instance of the argparser ArguementParser
-    arguements : added to object on parse_args stored as self."argname", not listed on intialization
 
-    methods:
-    init_args : initializes the list of arguements that interface can recognize
-    init_parser : initializes the arguement parser
+class Interface(cmd.Cmd):
     """
+    A command-line interface class using the cmd module.
+
+    To add new command line arguements, add a method to this class with the prefix "do_" and the parameters self, args.
+    args will be the arguements passed after the command and are interpreted as one string.
+    do parsing of the string into parameters suitable for the necessary other method in it's appropriate "do_" method.
+
+    """
+    
     def __init__(self):
-        self.init_parser()
-        self.init_tools()
-        self.parser.parse_args(namespace = self)
-        
-    def init_tools(self):
+        super().__init__()
+        self.intro = "Welcome to the audio library CLI, enter 'help' for a list of commands"
         self.audio = AudioEffects()
         self.files = FileManager()
 
-    def init_parser(self):
-        """
-        initialize the arguement parser
-        """
-        self.parser = argparse.ArgumentParser()
-        self.init_args()
+    def provide_arg(self):
+        print("*** please provide a valid arguement")
+        print("*** type 'help' for list of commands")
 
-    def init_args(self):
+    def validate_list_args(self, args, nArgs): 
         """
-        initializes list of commands for CLI
-        -h and --help list all of the optional commands
-        
-        If you need to add a new command line arguement, add it here
-            first two args are the specific command string
-            metavar: is the variable that the args will be stored under as self."metavar"
-            action: is how the arg is handled, extend stores args as list, store just stores verbaitm
-            help: is the help text associated with the command
-
-        TODO:
-         - is there a better way to add arguements? 
+        validate that a given string args can be interpreted as list of nArgs length
+        args: arguements to be validated
+        nArgs: target length for arguement list
         """
-        self.parser.add_argument("-p","--play",metavar="play" ,help = "play sound ")
-        self.parser.add_argument("-l","--list",metavar="list",action = "store",nargs="?",help = "Lists files in directory, usage: -l <directory name>")
-        self.parser.add_argument("-rn","--rename",metavar="rename",action = "extend",nargs="+", help = "Renames sound in directory, usage: -rn <directory name> <target filename> <new filename>")
-        self.parser.add_argument("-rm","--remove",metavar="remove",action = "extend",nargs="+", help = "Deletes sound in directory, usage: -rm <directory name> <target filename>")
-        self.parser.add_argument("-ly","--layer", metavar="layer", action="extend",nargs="+",help="layer the audio")
-        self.parser.add_argument("-sq","--sequence",metavar="sequence", action="extend",nargs="+",help="sequences one sound after another")
-        
-#-l 
-    def delegate_args(self):
-        """
-        this method is meant to delegate arguements to the corrosponding objects
-        """
-        if (self.play):
-            AudioEffect=AudioEffects()
-            AudioEffect.play(self.get_play_args())
-            
-        if (self.list):
-            file_manager = FileManager()
-            file_manager.list_files(self.list)
-
-        if (self.rename):
-            file_manager = FileManager()
-            file_manager.rename(self.rename[0], self.rename[1], self.rename[2])
-            
-        if (self.remove):
-            file_manager = FileManager()
-            file_manager.delete(self.remove[0], self.remove[1])
-            
-        if(self.layer):
-            AudioEffect=AudioEffects()
-            AudioEffect.layer(self.get_layer_args())
-        
-        if(self.sequence):
-            AudioEffect=AudioEffects()
-            AudioEffect.sequence(self.get_sequence_args())
+        if (len(args.split()) != nArgs):
+            return False
+        return True
     
-    def get_play_args(self):
+    def validate_single_arg(self, args):
         """
-        return the arguemnts passed in with the -p command
+        validate that args is a single arguement, not a list
+        args: arguements to be validated
         """
-        return self.play
+        if ((len(args.split()) > 1) or args == ""):
+            return False
+        return True
 
-    def get_list_args(self):
+    def do_play(self, args):
         """
-        handle args for the list command
+        Desc: Play a sound from the library.
+        Usage: play <filepath>
         """
-        pass
+        if (self.validate_single_arg(args)):
+            self.audio.play(args)
+        else:
+            self.provide_arg()
 
-    def get_rename_args(self):
+    def do_list(self, args):
         """
-        returns the arguements passed in with the -rn command
+        Desc: List files in one of the library's directorys
+        Usage: list <directoryName>
         """
-        return self.rename
-    
-    def get_layer_args(self):
-        """
-        returns the arguements passed in with the -ly command
-        """
-        l=[]
-        if self.layer==None:
-            return None
-        for item in self.layer:
-            if os.path.isfile(item):
-                l.append(item)
-            elif os.path.isdir(self.layer[0]):
-                for (dir_path,dir,files) in walk(item):
-                    for file in files:
-                        if file.endswith(".wav"):
-                            l.append('./'+dir_path+'/'+file)
-        return l
-    
-    def get_sequence_args(self):
-        """
-        returns the arguements passed in with the -seq command
-        """
-        l=[]
-        if self.sequence==None:
-            return None
-        for item in self.sequence:
-            if os.path.isfile(item):
-                l.append(item)
-            elif os.path.isdir(self.sequence[0]):
-                for (dir_path,dir,files) in walk(item):
-                    for file in files:
-                        if file.endswith('.wav'):
-                            l.append('./'+dir_path+'/'+file)
-        return l
-    
-    def delegate(self,type):
-        """
-        should delegate the arguments that were recieved and parsed to their individual class so that they can run them
+        if (self.validate_single_arg(args)):
+            self.files.list_files(args)
+        else:
+            self.provide_arg()
 
-        Args:
-            type:
+    def do_rename(self, args):
         """
-        return type
+        Desc: Rename sound in directory.
+        Usage: rename <directory> <oldFilename> <newFilename>
+        """
+        if (self.validate_list_args(args=args, nArgs=3)):
+            args = args.split()
+            self.files.rename(args[0], args[1], args[2])
+        else:
+            self.provide_arg()
+
+    def do_remove(self, args):
+        """
+        Desc: Delete sound in directory.
+        Usage: delete <directory> <filename>
+        """
+        if (self.validate_list_args(args=args, nArgs=2)):
+            args = args.split()
+            self.files.delete(args[0], args[1])
+        else:
+            self.provide_arg()
+
+    def do_layer(self, args):
+        """
+        Desc: Play a list of files at the same time. 
+        Usage: layer [filePath, ...]
+        """
+        if (self.validate_list_args(args=args, nArgs=2)):
+            args = args.split()
+            self.audio.layer(args)
+        else:
+            self.provide_arg()
+
+    def do_seq(self, args):
+        """
+        Desc: Play a list of files one after another. 
+        Usage: seq [filePath, ...]
+        """
+        if (self.validate_list_args(args=args, nArgs=2)):
+            args = args.split()
+            self.audio.sequence(args)
+        else:
+            self.provide_arg()
+
+    def do_exit(self, args):
+        """
+        Desc: Exit the interface.
+        Usage: exit
+        """
+        return True
 
 if __name__ == "__main__":
     CLI_interface = Interface()
-    CLI_interface.delegate_args()
+    CLI_interface.prompt = ">> "
+    CLI_interface.cmdloop()
