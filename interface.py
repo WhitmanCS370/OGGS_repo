@@ -10,12 +10,12 @@ class Interface(cmd.Cmd):
     To add new command line arguements, add a method to this class with the prefix "do_" and the parameters self, args.
     args will be the arguements passed after the command and are interpreted as one string.
     do parsing of the string into parameters suitable for the necessary other method in it's appropriate "do_" method.
-
     """
     
     def __init__(self):
         super().__init__()
         self.intro = "Welcome to the audio library CLI, enter 'help' for a list of commands"
+        self.prompt = ">>"
         self.audio = AudioEffects()
         self.files = FileManager()
 
@@ -115,5 +115,4 @@ class Interface(cmd.Cmd):
 
 if __name__ == "__main__":
     CLI_interface = Interface()
-    CLI_interface.prompt = ">> "
     CLI_interface.cmdloop()

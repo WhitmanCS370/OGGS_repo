@@ -147,7 +147,6 @@ class Interface():
             self.parser.parse_args(command.split(" "))
 
 
-
 if __name__ == "__main__":
     CLI_interface = Interface()
     CLI_interface.delegate_args()
