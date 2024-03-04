@@ -15,11 +15,11 @@ class Interface(cmd.Cmd):
     def __init__(self):
         super().__init__()
         self.intro = "Welcome to the audio library CLI, enter 'help' for a list of commands"
-        self.prompt = ">>"
+        self.prompt = ">> "
         self.audio = AudioEffects()
         self.files = FileManager()
 
-    def provide_arg(self):
+    def provide_arg_msg(self):
         print("*** please provide a valid arguement")
         print("*** type 'help' for list of commands")
 
@@ -50,7 +50,7 @@ class Interface(cmd.Cmd):
         if (self.validate_single_arg(args)):
             self.audio.play(args)
         else:
-            self.provide_arg()
+            self.provide_arg_msg()
 
     def do_list(self, args):
         """
@@ -60,7 +60,7 @@ class Interface(cmd.Cmd):
         if (self.validate_single_arg(args)):
             self.files.list_files(args)
         else:
-            self.provide_arg()
+            self.provide_arg_msg()
 
     def do_rename(self, args):
         """
@@ -71,7 +71,7 @@ class Interface(cmd.Cmd):
             args = args.split()
             self.files.rename(args[0], args[1], args[2])
         else:
-            self.provide_arg()
+            self.provide_arg_msg()
 
     def do_remove(self, args):
         """
@@ -82,7 +82,7 @@ class Interface(cmd.Cmd):
             args = args.split()
             self.files.delete(args[0], args[1])
         else:
-            self.provide_arg()
+            self.provide_arg_msg()
 
     def do_layer(self, args):
         """
@@ -93,7 +93,7 @@ class Interface(cmd.Cmd):
             args = args.split()
             self.audio.layer(args)
         else:
-            self.provide_arg()
+            self.provide_arg_msg()
 
     def do_seq(self, args):
         """
@@ -104,7 +104,7 @@ class Interface(cmd.Cmd):
             args = args.split()
             self.audio.sequence(args)
         else:
-            self.provide_arg()
+            self.provide_arg_msg()
 
     def do_exit(self, args):
         """
