@@ -8,14 +8,17 @@ cursor = conn.cursor()
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS audio_files (
         id INTEGER PRIMARY KEY,
-        title TEXT,
+        title TEXT UNIQUE,
         artist TEXT,
-        album TEXT,
+        album TEXT, 
         genre TEXT,
         filepath TEXT,
         duration INTEGER
     )
 """)
+
+# I think the artist, album, genre, are maybe unnecessary or should be allowed to be null
+
 
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS playlists (
