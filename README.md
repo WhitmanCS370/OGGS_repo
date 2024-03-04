@@ -28,9 +28,9 @@ Contributions:
 Oliver:
   worked on getting the file manager and the interface to work so that we can parse the arguments and rename files and stuff like that.
 Grant:
-  worked on original argparser that ended up turning in to our current command line interface
+  worked on original argparser that ended up turning in to our current command line interface, created unittests
 Gabe:
-  worked on getting layering and playing to work as wel as ended up not being able to get sequencing to work(had someone else take a look).
+  worked on getting layering and playing to work as well as ended up not being able to get sequencing to work(had someone else take a look).
 Steven:
 
 
@@ -40,6 +40,26 @@ Steven:
   - Light sound editing and filtering.
   - Organize sounds with a database, including tagging and metadata updates.
 - **Tools**: Selection of appropriate Python libraries.
+
+
+Use cases for epoch two:
+- audio manipulation program
+- find satanic messages in audio
+- catagorization and classification of audio
+
+
+Features:
+- transcribe text to audio
+- metadata / tagging
+- searching
+- sorting 
+- duplicate audio file
+- basic graphic interface
+- play backwards
+- play clips by timecode
+- record audio
+- filters w/ customization
+
 
 ### Epoch 3: Advanced Extensions
 - **Possible Extensions**:
