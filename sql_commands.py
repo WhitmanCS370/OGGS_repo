@@ -30,6 +30,26 @@ class databaseManager():
         """, (title, artist, album, genre, insertPath, duration))
         self.conn.commit()
 
+    def get_playlist_id(self, playlist):
+        self.cursor.execute(
+            """
+                SELECT DISTINCT id, title FROM playlists
+                WHERE name == (?);
+            """,(playlist,)
+        )
+        playlistid = self.cursor.fetchall()
+        return playlistid
+
+    def get_song_id(self, filename):
+        self.cursor.execute(
+            """
+                SELECT DISTINCT id, title FROM audio_files
+                WHERE title == (?);
+            """,(filename,)
+        )
+        songid = self.cursor.fetchall()
+        return songid
+
     def get_filepath(self, filename):
         self.cursor.execute(
             """
@@ -55,6 +75,28 @@ class databaseManager():
             INSERT INTO audio_files (title, artist, album, genre, filepath, duration)
             VALUES (?, ?, ?, ?, ?, ?);
         """, (title, artist, album, genre, filepath, duration))
+        self.conn.commit()
+
+    def add_playlist(self, name):
+        """
+        This method will add a new playlist to the database.
+        """
+        self.cursor.execute("""
+            INSERT INTO playlists (name)
+            VALUES (?)
+        """, (name,))
+        self.conn.commit()
+
+    def song_to_playlist(self, playlist ,song):
+        """
+        add a song to a playlist.
+        """
+        playlistid = self.get_playlist_id(playlist)
+        songid = self.get_song_id(song)
+        self.cursor.execute("""
+            INSERT INTO playlists_items (playlist_id, audio_file_id)
+            VALUES (?, ?)
+        """, (playlistid, songid))
         self.conn.commit()
 
 if __name__ == "__main__":
