@@ -1,6 +1,6 @@
 import sys
 import simpleaudio as sa
-from interface import Interface
+from old_interface import Interface
 
 def play_sound(filename):
     wave_obj = sa.WaveObject.from_wave_file(filename)
