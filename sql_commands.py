@@ -2,6 +2,7 @@ import os
 import sqlite3
 import wave
 from audio import *
+from database_init import init
 
 
 class databaseManager():
@@ -17,38 +18,38 @@ class databaseManager():
         self.os = os
         self.directories = self.os.listdir("./sounds/")
         
-    def add_audio_file(self, title, artist, album, genre, filepath, duration):
-        """
-        This method will move a new audio file to the sound library and update database with the new file.
-        """
-        insertPath = self.soundFilePath + title + ".mp3"
-        self.os.rename(filepath, insertPath)
+    # def add_audio_file(self, title, artist, album, genre, filepath, duration):
+    #     """
+    #     This method will move a new audio file to the sound library and update database with the new file.
+    #     """
+    #     insertPath = self.soundFilePath + title + ".mp3"
+    #     self.os.rename(filepath, insertPath)
 
-        self.cursor.execute("""
-            INSERT INTO audio_files (title, artist, album, genre, filepath, duration)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (title, artist, album, genre, insertPath, duration))
-        self.conn.commit()
+    #     self.cursor.execute("""
+    #         INSERT INTO audio_files (title, artist, album, genre, filepath, duration)
+    #         VALUES (?, ?, ?, ?, ?, ?)
+    #     """, (title, artist, album, genre, insertPath, duration))
+    #     self.conn.commit()
 
     def get_playlist_id(self, playlist):
         self.cursor.execute(
             """
-                SELECT DISTINCT id, title FROM playlists
+                SELECT DISTINCT id FROM playlists
                 WHERE name == (?);
             """,(playlist,)
         )
         playlistid = self.cursor.fetchall()
-        return playlistid
+        return playlistid[0][0]
 
     def get_song_id(self, filename):
         self.cursor.execute(
             """
-                SELECT DISTINCT id, title FROM audio_files
+                SELECT DISTINCT id FROM audio_files
                 WHERE title == (?);
             """,(filename,)
         )
         songid = self.cursor.fetchall()
-        return songid
+        return songid[0][0]
 
     def get_filepath(self, filename):
         self.cursor.execute(
@@ -94,10 +95,47 @@ class databaseManager():
         playlistid = self.get_playlist_id(playlist)
         songid = self.get_song_id(song)
         self.cursor.execute("""
-            INSERT INTO playlists_items (playlist_id, audio_file_id)
+            INSERT INTO playlist_items (playlist_id, audio_file_id)
             VALUES (?, ?)
         """, (playlistid, songid))
         self.conn.commit()
 
+
+
+    def get_playlist(self, playlist):
+        """
+        get all songs in a playlist
+        """
+        playlistid = self.get_playlist_id(playlist)
+        self.cursor.execute("""
+            SELECT DISTINCT audio_files.*
+            FROM audio_files
+            JOIN playlist_items ON audio_files.id = playlist_items.audio_file_id
+            WHERE playlist_items.playlist_id = (?);
+        """, (playlistid,))
+        files = self.cursor.fetchall()
+        return files
+
+    def clear_tables(self):
+        self.cursor.execute("""
+            DELETE FROM audio_files;
+        """)
+        self.cursor.execute("""
+            DELETE FROM playlists;
+        """)
+        self.cursor.execute("""
+            DELETE FROM playlist_items;
+        """)
+
+        self.conn.commit()
+
 if __name__ == "__main__":
+    init()
     dbm = databaseManager()
+    dbm.add_from_file("toast", "sounds/old-sounds/toaster.wav")
+    dbm.add_from_file("toast-2", "sounds/old-sounds/toaster-2.wav")
+    dbm.add_playlist("test_playlist")
+    dbm.song_to_playlist("test_playlist", "toast")
+    dbm.song_to_playlist("test_playlist", "toast-2")
+    print(dbm.get_playlist("test_playlist"))
+    dbm.clear_tables()
