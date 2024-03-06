@@ -17,7 +17,7 @@ class databaseManager():
         self.cursor = self.conn.cursor()
         self.os = os
         self.directories = self.os.listdir("./sounds/")
-        
+    
     # def add_audio_file(self, title, artist, album, genre, filepath, duration):
     #     """
     #     This method will move a new audio file to the sound library and update database with the new file.
@@ -82,11 +82,15 @@ class databaseManager():
         calculate duration from filepath
         """
         duration = self.get_duration(filepath)
-        self.cursor.execute("""
-            INSERT INTO audio_files (title, artist, album, genre, filepath, duration)
-            VALUES (?, ?, ?, ?, ?, ?);
-        """, (title, artist, album, genre, filepath, duration))
-        self.conn.commit()
+        try:
+            self.cursor.execute("""
+                INSERT INTO audio_files (title, artist, album, genre, filepath, duration)
+                VALUES (?, ?, ?, ?, ?, ?);
+            """, (title, artist, album, genre, filepath, duration))
+            self.conn.commit()
+        except sqlite3.IntegrityError:
+            print("File already exists in the database.")
+            return
 
     def add_playlist(self, name):
         """
@@ -110,8 +114,6 @@ class databaseManager():
         """, (playlistid, songid))
         self.conn.commit()
 
-
-
     def get_playlist(self, playlist):
         """
         get all songs in a playlist
@@ -125,22 +127,26 @@ class databaseManager():
         """, (playlistid,))
         files = self.cursor.fetchall()
         return files
-
-    def clear_tables(self):
+    
+    def list_playlists(self):
         """
-        helper function to clear tables for testing or reseting the database
+        list all playlists
         """
+        self.cursor.execute("""
+            SELECT DISTINCT name FROM playlists;
+        """)
+        playlists = self.cursor.fetchall()
+        return playlists
 
+    def list_files(self):
+        """
+        list all files
+        """
         self.cursor.execute("""
-            DELETE FROM audio_files;
+            SELECT DISTINCT title FROM audio_files;
         """)
-        self.cursor.execute("""
-            DELETE FROM playlists;
-        """)
-        self.cursor.execute("""
-            DELETE FROM playlist_items;
-        """)
-        self.conn.commit()
+        files = self.cursor.fetchall()
+        return files
 
 
     def add_tag(self, name, desc):
@@ -167,14 +173,59 @@ class databaseManager():
         self.conn.commit()
 
 
+    def get_from_tag(self, tag):
+        """
+        get all files with a tag
+        """
+        tagid = self.get_tag_id(tag)
+        self.cursor.execute("""
+            SELECT DISTINCT audio_files.*
+            FROM audio_files
+            JOIN file_tag ON audio_files.id = file_tag.audio_file_id
+            WHERE file_tag.tag_id = (?);
+        """, (tagid,))
+        files = self.cursor.fetchall()
+        return files
+
+# helper methods for testing
+    def clear_tables(self):
+        """
+        helper function to clear tables for testing or reseting the database
+        """
+
+        self.cursor.execute("""
+            DELETE FROM audio_files;
+        """)
+        self.cursor.execute("""
+            DELETE FROM playlists;
+        """)
+        self.cursor.execute("""
+            DELETE FROM playlist_items;
+        """)
+        self.conn.commit()
+        
+
+    def add_all(self):
+        """
+        helper function to add all files in the sounds directory to the database
+        """
+        for file in self.directories:
+            if file.endswith(".wav"):
+                # print(
+                #     "Adding " + file + " to the database."
+                # )
+                self.add_from_file(file, "./sounds/" + file)
+
+
 if __name__ == "__main__":
     init()
     dbm = databaseManager()
-    
-    dbm.add_from_file("toast", "sounds/old-sounds/toaster.wav")
-    dbm.add_from_file("toast-2", "sounds/old-sounds/toaster-2.wav")
-    dbm.add_playlist("test_playlist")
-    dbm.song_to_playlist("test_playlist", "toast")
-    dbm.song_to_playlist("test_playlist", "toast-2")
-    print(dbm.get_playlist("test_playlist"))
+    dbm.add_all()
+    print(dbm.list_files())
+    # dbm.add_from_file("toast", "sounds/old-sounds/toaster.wav")
+    # dbm.add_from_file("toast-2", "sounds/old-sounds/toaster-2.wav")
+    # dbm.add_playlist("test_playlist")
+    # dbm.song_to_playlist("test_playlist", "toast")
+    # dbm.song_to_playlist("test_playlist", "toast-2")
+    # print(dbm.get_playlist("test_playlist"))
     dbm.clear_tables()
