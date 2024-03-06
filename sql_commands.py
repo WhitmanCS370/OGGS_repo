@@ -50,6 +50,16 @@ class databaseManager():
         )
         songid = self.cursor.fetchall()
         return songid[0][0]
+    
+    def get_tag_id(self, tag):
+        self.cursor.execute(
+            """
+                SELECT DISTINCT id FROM tags
+                WHERE name == (?);
+            """,(tag,)
+        )
+        tagid = self.cursor.fetchall()
+        return tagid[0][0]
 
     def get_filepath(self, filename):
         self.cursor.execute(
@@ -117,6 +127,10 @@ class databaseManager():
         return files
 
     def clear_tables(self):
+        """
+        helper function to clear tables for testing or reseting the database
+        """
+
         self.cursor.execute("""
             DELETE FROM audio_files;
         """)
@@ -126,12 +140,37 @@ class databaseManager():
         self.cursor.execute("""
             DELETE FROM playlist_items;
         """)
-
         self.conn.commit()
+
+
+    def add_tag(self, name, desc):
+        """
+        add a tag to the database
+        """
+        self.cursor.execute("""
+            INSERT INTO tags (name, desc)
+            VALUES (?, ?)
+        """, (name, desc))
+        self.conn.commit()
+
+
+    def add_tag_to_file(self, tag, filename):
+        """
+        add a tag to a file
+        """
+        tagid = self.get_tag_id(tag)
+        songid = self.get_song_id(filename)
+        self.cursor.execute("""
+            INSERT INTO file_tag (tag_id, audio_file_id)
+            VALUES (?, ?)
+        """, (tagid, songid))
+        self.conn.commit()
+
 
 if __name__ == "__main__":
     init()
     dbm = databaseManager()
+    
     dbm.add_from_file("toast", "sounds/old-sounds/toaster.wav")
     dbm.add_from_file("toast-2", "sounds/old-sounds/toaster-2.wav")
     dbm.add_playlist("test_playlist")

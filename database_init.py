@@ -31,6 +31,24 @@ def init():
             FOREIGN KEY (audio_file_id) REFERENCES audio_files(id) 
         )
     """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS tags (
+        id INTEGER PRIMARY KEY,
+        name TEXT UNIQUE,
+        desc TEXT
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS file_tag (
+        id INTEGER PRIMARY KEY,
+        tag_id INTEGER,
+        audio_file_id INTEGER,
+        FOREIGN KEY (tag_id) REFERENCES tags(id),
+        FOREIGN KEY (audio_file_id) REFERENCES audio_files(id)
+    )
+    """)
     conn.commit()
     conn.close()
 
