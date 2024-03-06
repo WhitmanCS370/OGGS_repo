@@ -13,7 +13,7 @@ class databaseManager():
     """
     soundFilePath = "./sounds/"
     def __init__(self):
-        self.conn = sqlite3.connect('audio_library.db')
+        self.conn = sqlite3.connect('audio_library.sqlite')
         self.cursor = self.conn.cursor()
         self.os = os
         self.directories = self.os.listdir("./sounds/")

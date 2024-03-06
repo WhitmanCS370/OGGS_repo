@@ -1,7 +1,7 @@
 import sqlite3
 def init():
     # Connect to the database
-    conn = sqlite3.connect('audio_library.db')
+    conn = sqlite3.connect('audio_library.sqlite')
     cursor = conn.cursor()
 
     # Create the tables (if they don't exist)
