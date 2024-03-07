@@ -41,7 +41,7 @@ def init():
     """)
 
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS file_tag (
+    CREATE TABLE IF NOT EXISTS file_tags (
         id INTEGER PRIMARY KEY,
         tag_id INTEGER,
         audio_file_id INTEGER,
