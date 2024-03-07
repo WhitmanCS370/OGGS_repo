@@ -183,7 +183,10 @@ class Interface(cmd.Cmd):
         """
         files = self.db.get_from_tag(tag)
         for file in files:
-            print(file)
+            print(file[1])
+    
+    # def do_rename(self, args):
+
 
     def do_exit(self, args):
         """

@@ -75,6 +75,20 @@ class databaseManager():
         with wave.open(filepath, 'rb') as wf:
             duration = float(wf.getnframes()) / wf.getframerate()
         return duration
+    
+    def get_playlist(self, playlist):
+        """
+        get all songs in a playlist
+        """
+        playlistid = self.get_playlist_id(playlist)
+        self.cursor.execute("""
+            SELECT DISTINCT audio_files.*
+            FROM audio_files
+            JOIN playlist_items ON audio_files.id = playlist_items.audio_file_id
+            WHERE playlist_items.playlist_id = (?);
+        """, (playlistid,))
+        files = self.cursor.fetchall()
+        return files
 
     def add_from_file(self, title, filepath, artist = "NULL", album = "NULL", genre = "NULL"):
         """
@@ -114,19 +128,7 @@ class databaseManager():
         """, (playlistid, songid))
         self.conn.commit()
 
-    def get_playlist(self, playlist):
-        """
-        get all songs in a playlist
-        """
-        playlistid = self.get_playlist_id(playlist)
-        self.cursor.execute("""
-            SELECT DISTINCT audio_files.*
-            FROM audio_files
-            JOIN playlist_items ON audio_files.id = playlist_items.audio_file_id
-            WHERE playlist_items.playlist_id = (?);
-        """, (playlistid,))
-        files = self.cursor.fetchall()
-        return files
+
     
     def list_playlists(self):
         """
@@ -167,7 +169,7 @@ class databaseManager():
         tagid = self.get_tag_id(tag)
         songid = self.get_song_id(filename)
         self.cursor.execute("""
-            INSERT INTO file_tag (tag_id, audio_file_id)
+            INSERT INTO file_tags (tag_id, audio_file_id)
             VALUES (?, ?)
         """, (tagid, songid))
         self.conn.commit()
@@ -181,8 +183,8 @@ class databaseManager():
         self.cursor.execute("""
             SELECT DISTINCT audio_files.*
             FROM audio_files
-            JOIN file_tag ON audio_files.id = file_tag.audio_file_id
-            WHERE file_tag.tag_id = (?);
+            JOIN file_tags ON audio_files.id = file_tags.audio_file_id
+            WHERE file_tags.tag_id = (?);
         """, (tagid,))
         files = self.cursor.fetchall()
         return files
