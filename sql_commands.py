@@ -214,7 +214,7 @@ class databaseManager():
                 # print(
                 #     "Adding " + file + " to the database."
                 # )
-                self.add_from_file(file, "./sounds/" + file)
+                self.add_from_file(file.removesuffix(".wav"), "./sounds/" + file)
 
 
 if __name__ == "__main__":
