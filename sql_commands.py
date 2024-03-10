@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import wave
+import numpy as np
 from audio import *
 from database_init import init
 
@@ -90,7 +91,7 @@ class databaseManager():
         files = self.cursor.fetchall()
         return files
 
-    def add_from_file(self, title, filepath, artist = "NULL", album = "NULL", genre = "NULL"):
+    def add_from_file(self, title, filepath, artist = None, album = None, genre = None):
         """
         album, artist, genre allowed null
         calculate duration from filepath
@@ -128,7 +129,6 @@ class databaseManager():
         """, (playlistid, songid))
         self.conn.commit()
 
-
     
     def list_playlists(self):
         """
@@ -137,8 +137,8 @@ class databaseManager():
         self.cursor.execute("""
             SELECT DISTINCT name FROM playlists;
         """)
-        playlists = self.cursor.fetchall()
-        return playlists
+        playlists = np.array(self.cursor.fetchall())
+        return playlists.ravel()
 
     def list_files(self):
         """
@@ -147,8 +147,8 @@ class databaseManager():
         self.cursor.execute("""
             SELECT DISTINCT title FROM audio_files;
         """)
-        files = self.cursor.fetchall()
-        return files
+        files = np.array(self.cursor.fetchall())
+        return files.ravel()
 
 
     def add_tag(self, name, desc):
@@ -174,7 +174,6 @@ class databaseManager():
         """, (tagid, songid))
         self.conn.commit()
 
-
     def get_from_tag(self, tag):
         """
         get all files with a tag
@@ -186,8 +185,30 @@ class databaseManager():
             JOIN file_tags ON audio_files.id = file_tags.audio_file_id
             WHERE file_tags.tag_id = (?);
         """, (tagid,))
-        files = self.cursor.fetchall()
-        return files
+        files = np.array(self.cursor.fetchall())
+        res = []
+        return files.ravel()
+    
+    def rename(self, oldFileName, newFileName):
+        """
+        rename a file in the database
+        """
+        self.cursor.execute("""
+            UPDATE audio_files
+            SET title = (?)
+            WHERE title = (?);
+        """, (newFileName, oldFileName))
+        self.conn.commit()
+
+    def list_tags(self):
+        """
+        show all tags
+        """
+        self.cursor.execute("""
+            SELECT DISTINCT name FROM tags;
+        """)
+        tags = np.array(self.cursor.fetchall())
+        return tags.ravel()
 
 # helper methods for testing
     def clear_tables(self):

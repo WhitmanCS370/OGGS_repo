@@ -135,23 +135,26 @@ class Interface(cmd.Cmd):
         else:
             self.provide_arg_msg()
     
-    def do_show_playlists(self, args):
+    def do_list_playlists(self, args):
         """
         Desc: Show all playlists in the database.
         Usage: show_playlists
         """
-        playlists = self.db.list_playlists()
-        for playlist in playlists:
-            print(playlist[0])
+        playlists = list(self.db.list_playlists())
+        self.columnize(playlists)
+        # for playlist in playlists:
+        #     print(playlist[0])
 
 
-    def do_show_files(self, args):
+    def do_list_files(self, args):
         """
         Desc: Show all files database
+        Usage: show_all
         """
-        files = self.db.list_files()
-        for file in files:
-            print(file[0])
+        files = list(self.db.list_files())
+        self.columnize(files)
+        # for file in files:
+        #     print(file[0])
 
     def do_new_tag(self, args):
         """
@@ -176,17 +179,37 @@ class Interface(cmd.Cmd):
         else:
             self.provide_arg_msg()
 
-    def do_show_tag(self, tag):
+    def do_list_tag(self, tag):
         """
         Desc: Show all files with a given tag.
         Usage: show_tag <tagName>
         """
-        files = self.db.get_from_tag(tag)
-        for file in files:
-            print(file[1])
+        files = list(self.db.get_from_tag(tag))
+        # self.columnize(files)
+        print(files)
+        # for file in files:
+        #     print(file[1])
     
-    # def do_rename(self, args):
+    def do_rename(self, args):
+        """
+        Desc: Rename a file in the archive
+        Usage: rename <oldFileName> <newFileName>
+        """
+        if (self.validate_list_args(args=args, nArgs=2)):
+            args = args.split()
+            self.files.rename(args[0], args[1])
+        else:
+            self.provide_arg_msg()
 
+    def do_list_tags(self, args):
+        """
+        Desc: List all tags in the database.
+        Usage: list_tags
+        """
+        tags = list(self.db.list_tags())
+        self.columnize(tags)
+        # for tag in tags:
+        #     print(tag[0])
 
     def do_exit(self, args):
         """

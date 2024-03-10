@@ -22,6 +22,7 @@ def init():
             name TEXT UNIQUE
         )
     """)
+    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS playlist_items (
             id INTEGER PRIMARY KEY,
