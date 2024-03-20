@@ -3,6 +3,39 @@ import unittest
 from unittest.mock import patch, MagicMock
 from manager import *
 from audio import *
+from interface import *
+
+
+class Interface_test(unittest.TestCase):
+
+    def setUp(self):
+        self.interface = Interface()
+
+    def test_validate_list_args(self):
+        self.assertTrue(self.interface.validate_list_args("arg1 arg2 arg3", 3))
+        self.assertFalse(self.interface.validate_list_args("arg1arg2arg3", 3))
+
+    def test_validate_arg(self):
+        self.assertTrue(self.interface.validate_single_arg("arg"))
+        self.assertFalse(self.interface.validate_single_arg("arg1 arg2 arg3"))
+
+    def test_play(self):
+        pass
+
+    def test_list(self):
+        pass
+
+    def test_rename(self):
+        pass
+
+    def test_layer(self):
+        pass
+
+    def test_seq(self):
+        pass
+
+    def test_exit(self):
+        pass
 
 
 class Audio_test(unittest.TestCase):

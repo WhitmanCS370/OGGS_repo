@@ -5,14 +5,15 @@ class Player:
     """
     
     """
-    def __init__(self):
+    def __init__(self): 
         print("Player")
         
     def play(self,filename):
         """
         play is a function that recieves a file name and path and plays the sound that is at that filepath
         """
-        print("play")
+        print("playing: ", filename)
+
         wave_obj = sa.WaveObject.from_wave_file(filename)
         play_obj = wave_obj.play()
         return play_obj.wait_done()  # Wait until sound has finished playing  

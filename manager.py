@@ -27,8 +27,6 @@ class FileManager():
         else:
             print("directory not found")
 
-
-
     def delete(self,dir,fileName):
         """
         This method will delete a specific file from a directory given directory and filename.
