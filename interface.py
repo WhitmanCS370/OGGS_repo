@@ -53,10 +53,10 @@ class Interface(cmd.Cmd):
     def do_play(self, args):
         """
         Desc: Play a sound from the library.
-        Usage: play <filepath>
+        Usage: play <filename>
         """
         if (self.validate_single_arg(args)):
-            self.audio.play(args)
+            self.audio.play(self.db.get_filepath(args))
         else:
             self.provide_arg_msg()
 

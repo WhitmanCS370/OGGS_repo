@@ -65,12 +65,12 @@ class databaseManager():
     def get_filepath(self, filename):
         self.cursor.execute(
             """
-                SELECT DISTINCT title, filepath FROM audio_files
+                SELECT DISTINCT filepath FROM audio_files
                 WHERE title == (?);
             """,(filename,)
         )
-        path = self.cursor.fetchall()
-        return path
+        path = np.array(self.cursor.fetchall()) # put the results in a numpy array
+        return path.ravel()[0] # return the array as a list and get the first element
     
     def get_duration(self, filepath): 
         with wave.open(filepath, 'rb') as wf:
@@ -137,8 +137,8 @@ class databaseManager():
         self.cursor.execute("""
             SELECT DISTINCT name FROM playlists;
         """)
-        playlists = np.array(self.cursor.fetchall())
-        return playlists.ravel()
+        playlists = np.array(self.cursor.fetchall()) # put the results in a numpy array
+        return playlists.ravel() # return the array as a list
 
     def list_files(self):
         """
