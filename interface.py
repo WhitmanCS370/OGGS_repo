@@ -185,8 +185,8 @@ class Interface(cmd.Cmd):
         Usage: show_tag <tagName>
         """
         files = list(self.db.get_from_tag(tag))
-        # self.columnize(files)
-        print(files)
+        self.columnize(files)
+        # print(files)
         # for file in files:
         #     print(file[1])
     

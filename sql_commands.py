@@ -180,13 +180,12 @@ class databaseManager():
         """
         tagid = self.get_tag_id(tag)
         self.cursor.execute("""
-            SELECT DISTINCT audio_files.*
+            SELECT DISTINCT audio_files.title
             FROM audio_files
             JOIN file_tags ON audio_files.id = file_tags.audio_file_id
             WHERE file_tags.tag_id = (?);
         """, (tagid,))
         files = np.array(self.cursor.fetchall())
-        res = []
         return files.ravel()
     
     def rename(self, oldFileName, newFileName):
