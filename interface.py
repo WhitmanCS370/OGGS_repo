@@ -2,6 +2,8 @@ import cmd
 from audio import AudioEffects
 from audio import Recorder
 from manager import FileManager
+from sql_commands import databaseManager
+from database_init import init
 from os import walk
 
 class Interface(cmd.Cmd):
@@ -19,7 +21,11 @@ class Interface(cmd.Cmd):
         self.prompt = ">> "
         self.audio = AudioEffects()
         self.files = FileManager()
+        init()
         self.recorder=Recorder()
+        self.db = databaseManager()
+        #for development purposes, populate database with example files
+        self.db.add_all()
 
     def provide_arg_msg(self):
         print("*** please provide a valid arguement")
@@ -43,48 +49,50 @@ class Interface(cmd.Cmd):
         if ((len(args.split()) > 1) or args == ""):
             return False
         return True
+    
+
 
     def do_play(self, args):
         """
         Desc: Play a sound from the library.
-        Usage: play <filepath>
+        Usage: play <filename>
         """
         if (self.validate_single_arg(args)):
-            self.audio.play(args)
+            self.audio.play(self.db.get_filepath(args))
         else:
             self.provide_arg_msg()
 
-    def do_list(self, args):
-        """
-        Desc: List files in one of the library's directorys
-        Usage: list <directoryName>
-        """
-        if (self.validate_single_arg(args)):
-            self.files.list_files(args)
-        else:
-            self.provide_arg_msg()
+    # def do_list(self, args):
+    #     """
+    #     Desc: List files in one of the library's directorys
+    #     Usage: list <directoryName>
+    #     """
+    #     if (self.validate_single_arg(args)):
+    #         self.files.list_files(args)
+    #     else:
+    #         self.provide_arg_msg()
 
-    def do_rename(self, args):
-        """
-        Desc: Rename sound in directory.
-        Usage: rename <directory> <oldFilename> <newFilename>
-        """
-        if (self.validate_list_args(args=args, nArgs=3)):
-            args = args.split()
-            self.files.rename(args[0], args[1], args[2])
-        else:
-            self.provide_arg_msg()
+    # def do_rename(self, args):
+    #     """
+    #     Desc: Rename sound in directory.
+    #     Usage: rename <directory> <oldFilename> <newFilename>
+    #     """
+    #     if (self.validate_list_args(args=args, nArgs=3)):
+    #         args = args.split()
+    #         self.files.rename(args[0], args[1], args[2])
+    #     else:
+    #         self.provide_arg_msg()
 
-    def do_remove(self, args):
-        """
-        Desc: Delete sound in directory.
-        Usage: delete <directory> <filename>
-        """
-        if (self.validate_list_args(args=args, nArgs=2)):
-            args = args.split()
-            self.files.delete(args[0], args[1])
-        else:
-            self.provide_arg_msg()
+    # def do_remove(self, args):
+    #     """
+    #     Desc: Delete sound in directory.
+    #     Usage: delete <directory> <filename>
+    #     """
+    #     if (self.validate_list_args(args=args, nArgs=2)):
+    #         args = args.split()
+    #         self.files.delete(args[0], args[1])
+    #     else:
+    #         self.provide_arg_msg()
 
     def do_layer(self, args):
         """
@@ -107,6 +115,103 @@ class Interface(cmd.Cmd):
             self.audio.sequence(args)
         else:
             self.provide_arg_msg()
+
+    def do_new_playlist(self, args):
+        """
+        Desc: Add a playlist to the database.
+        Usage: new_playlist <playlistName>
+        """
+        if (self.validate_single_arg(args)):
+            self.db.add_playlist(args)
+        else:
+            self.provide_arg_msg()
+
+    def do_playlist_add(self, args):
+        """
+        Desc: Add a song to a playlist.
+        Usage: playlist_add <playlistName> <songName>
+        """
+        if (self.validate_list_args(args=args, nArgs=2)):
+            args = args.split()
+            self.db.song_to_playlist(args[0], args[1])
+        else:
+            self.provide_arg_msg()
+    
+    def do_list_playlists(self, args):
+        """
+        Desc: Show all playlists in the database.
+        Usage: show_playlists
+        """
+        playlists = list(self.db.list_playlists())
+        self.columnize(playlists)
+        # for playlist in playlists:
+        #     print(playlist[0])
+
+
+    def do_list_files(self, args):
+        """
+        Desc: Show all files database
+        Usage: show_all
+        """
+        files = list(self.db.list_files())
+        self.columnize(files)
+        # for file in files:
+        #     print(file[0])
+
+    def do_new_tag(self, args):
+        """
+        Desc: Add a tag to the database.
+        Usage: add_tag <tagName> <tagDesc>
+        """
+        if (self.validate_list_args(args=args, nArgs=2)):
+            args = args.split()
+            self.db.add_tag(args[0], args[1])
+        else:
+            self.provide_arg_msg()
+
+
+    def do_tag_add(self, args):
+        """
+        Desc: Add a tag to a song.
+        Usage: tag_add <tagName> <songName>
+        """
+        if (self.validate_list_args(args=args, nArgs=2)):
+            args = args.split()
+            self.db.add_tag_to_file(args[0], args[1])
+        else:
+            self.provide_arg_msg()
+
+    def do_list_tag(self, tag):
+        """
+        Desc: Show all files with a given tag.
+        Usage: show_tag <tagName>
+        """
+        files = list(self.db.get_from_tag(tag))
+        self.columnize(files)
+        # print(files)
+        # for file in files:
+        #     print(file[1])
+    
+    def do_rename(self, args):
+        """
+        Desc: Rename a file in the archive
+        Usage: rename <oldFileName> <newFileName>
+        """
+        if (self.validate_list_args(args=args, nArgs=2)):
+            args = args.split()
+            self.files.rename(args[0], args[1])
+        else:
+            self.provide_arg_msg()
+
+    def do_list_tags(self, args):
+        """
+        Desc: List all tags in the database.
+        Usage: list_tags
+        """
+        tags = list(self.db.list_tags())
+        self.columnize(tags)
+        # for tag in tags:
+        #     print(tag[0])
 
     def do_exit(self, args):
         """
@@ -132,6 +237,7 @@ class Interface(cmd.Cmd):
         else:
             self.provide_arg_msg()
     
+
 
 if __name__ == "__main__":
     CLI_interface = Interface()
