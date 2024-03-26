@@ -1,5 +1,6 @@
 import cmd
 from audio import AudioEffects
+from audio import Recorder
 from manager import FileManager
 from os import walk
 
@@ -18,6 +19,7 @@ class Interface(cmd.Cmd):
         self.prompt = ">> "
         self.audio = AudioEffects()
         self.files = FileManager()
+        self.recorder=Recorder()
 
     def provide_arg_msg(self):
         print("*** please provide a valid arguement")
@@ -112,6 +114,24 @@ class Interface(cmd.Cmd):
         Usage: exit
         """
         return True
+    def do_rec(self,args):
+        """
+        Desc: start recording and wait for keyboard input to stop
+        Usage: rec
+        """
+        self.recorder.record()
+        
+    def do_record(self, args="NoArgs"):
+        """
+        Desc: start recording and wait for keyboard input to stop
+        Usage: record [filepath/name]
+        """
+        
+        if (self.validate_single_arg(args=args)):
+            self.recorder.record(args)
+        else:
+            self.provide_arg_msg()
+    
 
 if __name__ == "__main__":
     CLI_interface = Interface()
