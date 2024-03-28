@@ -67,18 +67,11 @@ class Recorder(Player):
             print(f"[{index}] {device}")
             
     def record(self,path=[".\\sounds\\"]):
-        print("Press ctrl + c/command + c to stop recording")
-        print(path)
-        print(path[-4:])
-        
-        #for if we can get no argument to work
-        #if path[-4:]!=".wav":
-        #    path[0]=path[0]+self.get_DateTime()+".wav"
+        print("Press ctrl+c / command+c to stop recording")        
         if path[-4:]!=".wav":
             path=[".\\sounds\\"+path+".wav"]
         else:
             path=[".\\sounds\\"+path]
-        print(path)
         recorder = PvRecorder(device_index=0, frame_length=512) #(32 milliseconds of 16 kHz audio)
         audio = []
         try:
@@ -93,8 +86,4 @@ class Recorder(Player):
                 f.writeframes(struct.pack("h" * len(audio), *audio))
         finally:
             recorder.delete()
-            
-    def get_DateTime(self):
-        today=datetime.now()
-        return today.strftime("%d-%m-%Y-%H-%M-%S")
         

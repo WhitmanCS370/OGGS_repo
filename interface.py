@@ -220,15 +220,22 @@ class Interface(cmd.Cmd):
         """
         return True
         
-    def do_record(self, args="NoArgs"):
+    def do_rec(self,args):
         """
-        Desc: start recording and wait for keyboard input to stop
-        Usage: record name
+        Desc: starret recording and wait for keyboard input to stop
+        Usage: rec [name of new file]
         """
         if (self.validate_single_arg(args=args)):
             self.recorder.record(args)
         else:
             self.provide_arg_msg()
+            
+    def do_check_inputs(self,args):
+        """
+        Desc: start recording and wait for keyboard input to stop
+        Usage: record [name of new file]
+        """
+        self.recorder.check_inputs()
     
 
 
