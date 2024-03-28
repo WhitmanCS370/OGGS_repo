@@ -1,3 +1,4 @@
+# import simpleaudio as sa
 import simpleaudio as sa
 from os import walk
 from pvrecorder import PvRecorder
@@ -12,6 +13,7 @@ class Player:
     """
     def __init__(self): 
         print("Player")
+        self.current_playing = None
         
     def play(self,filename):
         """
