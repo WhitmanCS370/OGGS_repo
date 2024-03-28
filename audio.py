@@ -5,6 +5,7 @@ import wave, struct
 from datetime import datetime
 from pydub import AudioSegment
 from pydub.playback import play
+import sql_commands
 
 class Player:
     """
@@ -67,9 +68,17 @@ class Recorder(Player):
             
     def record(self,path=[".\\sounds\\"]):
         print("Press ctrl + c/command + c to stop recording")
-        print(path[0][-4:])
-        if path[0][-4:]!=".wav":
-            path[0]=path[0]+self.get_DateTime()+".wav"
+        print(path)
+        print(path[-4:])
+        
+        #for if we can get no argument to work
+        #if path[-4:]!=".wav":
+        #    path[0]=path[0]+self.get_DateTime()+".wav"
+        if path[-4:]!=".wav":
+            path=[".\\sounds\\"+path+".wav"]
+        else:
+            path=[".\\sounds\\"+path]
+        print(path)
         recorder = PvRecorder(device_index=0, frame_length=512) #(32 milliseconds of 16 kHz audio)
         audio = []
         try:

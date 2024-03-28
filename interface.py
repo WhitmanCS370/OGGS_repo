@@ -219,19 +219,12 @@ class Interface(cmd.Cmd):
         Usage: exit
         """
         return True
-    def do_rec(self,args):
-        """
-        Desc: start recording and wait for keyboard input to stop
-        Usage: rec
-        """
-        self.recorder.record()
         
     def do_record(self, args="NoArgs"):
         """
         Desc: start recording and wait for keyboard input to stop
-        Usage: record [filepath/name]
+        Usage: record name
         """
-        
         if (self.validate_single_arg(args=args)):
             self.recorder.record(args)
         else:
