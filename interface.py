@@ -237,6 +237,13 @@ class Interface(cmd.Cmd):
         """
         self.recorder.check_inputs()
     
+    def do_duplicate_file(self,args):
+        """
+        Desc: duplicate the specified file
+        Usage: duplicate_file [name of new file]
+        """
+        self.files.duplicate_file(args,self.db)
+    
 
 
 if __name__ == "__main__":

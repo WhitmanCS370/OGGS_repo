@@ -1,5 +1,7 @@
 import os
 from audio import *
+import shutil 
+import sql_commands
 
 class FileManager():
 
@@ -82,6 +84,18 @@ class FileManager():
         except FileNotFoundError:
             print("file or directory not found")
         return files
-
+    
+    def duplicate_file(self,file, sql):
+        srcFile=file
+        if file[-5].isnumeric():
+            num=int(file[-5])+1
+            file=str(num).join(file.rsplit(str(num-1), 1))
+        else: 
+            hashlist = list(file)
+            hashlist.insert(-4, '_2')
+            file=''.join(hashlist)
+        shutil.copyfile(".\\sounds\\"+srcFile,".\\sounds\\"+file) 
+        sql.add_from_file(self, file, ".\\sounds\\")
+        
 if __name__ == '__main__':
     pass
