@@ -2,7 +2,6 @@ import simpleaudio as sa
 from os import walk
 from pvrecorder import PvRecorder
 import wave, struct 
-from datetime import datetime
 from pydub import AudioSegment
 from pydub.playback import play
 import sql_commands
