@@ -8,27 +8,36 @@ from pydub import AudioSegment
 from pydub.playback import play
 
 class Player:
-    """
-    
-    """
+
     def __init__(self): 
         print("Player")
         self.current_playing = None
-        
+                
     def play(self,filename):
         """
         play is a function that recieves a file name and path and plays the sound that is at that filepath
         """
-        print("playing: ", filename)
-        if filename[-4:]==".wav":
+        if filename.endswith(".wav"):
             wave_obj = sa.WaveObject.from_wave_file(filename)
-            play_obj = wave_obj.play()
-            return play_obj.wait_done()  # Wait until sound has finished playing  
+
+            try:
+                play_obj = wave_obj.play()
+                input("Press ctr + c to stop audio\n")
+            except KeyboardInterrupt:
+                play_obj.stop()
+                return
+            finally:
+                return play_obj.wait_done()
+            print("Playback paused. Press Enter to resume...")
+            self.resume()
+
+            return play_obj.wait_done()  # Wait until sound has finished playing
         elif filename[-4:]==".mp3":
             song = AudioSegment.from_mp3(filename)
             print('playing sound using  pydub')
             play(song)
-        
+
+
     def isPlaying(self):
         if self.play_obj:
             return not self.play_obj.is_playing()
@@ -39,7 +48,7 @@ class AudioEffects(Player):
     
     """
     def __init__(self):
-        pass
+        super()
         
     def layer(self,files):
         wavlist=[]
