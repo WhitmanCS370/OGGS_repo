@@ -55,17 +55,51 @@ class AudioEffects(Player):
         print("backward")
         
     def sequence(self,files):
+        """
+        plays 
+        """
         for file in files:
             self.play(file)
             
+    def echo(self,filename):
+        """
+        creates a file with echo 
+        """
+        wave_obj = sa.WaveObject.from_wave_file(".\\sounds\\"+filename)
+        hashlist = list(filename)
+        hashlist.insert(-4, '_echoed')
+        filename=''.join(hashlist)
+        wave_obj.apply_effect(echo=0.1, n=3).export(".\\sounds\\"+filename,format="wav")
+    
+    def trim(self,filename,startTimeStamp,endTimeStamp):
+        """
+        trims the specified file at the sime stamps stated
+        """
+        filename=".\\sounds\\"+filename
+        sound = AudioSegment.from_wav(filename)
+        duration = sound.duration_seconds
+        sound_export = sound[float(startTimeStamp)*1000:float(endTimeStamp)*1000]
+        
+        print(sound_export.duration_seconds)
+        hashlist = list(filename)
+        hashlist.insert(-4, '_trim')
+        filename=''.join(hashlist)
+
+        sound_export.export(filename,format="wav")
+
 class Recorder(Player):
     
     def check_inputs(self):
-        print("check_inputs")
+        """
+        checks the amount of microphone inputs available and prints them out one by one
+        """
         for index, device in enumerate(PvRecorder.get_available_devices()):
             print(f"[{index}] {device}")
             
-    def record(self,path=[".\\sounds\\"]):
+    def record(self,path):
+        """
+        starts recording and waits for the user to press ctrl+c or command+c to stop recording
+        """
         print("Press ctrl+c / command+c to stop recording")        
         if path[-4:]!=".wav":
             path=[".\\sounds\\"+path+".wav"]
