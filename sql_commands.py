@@ -48,7 +48,7 @@ class databaseManager():
         return duration
     
     # END SONG METHODS
-    
+
     # START PLAYLIST METHODS
 
     def get_playlist_id(self, playlist):
@@ -221,9 +221,6 @@ class databaseManager():
         return files.ravel()
     
     # END TAG METHODS
-
-    
-    
     
 
 # helper methods for testing
