@@ -9,14 +9,14 @@ import sql_commands
 
 class Player:
     """
-    
+    This class is responsible for the base functionality of playing a sound file
     """
     def __init__(self): 
         print("Player")
         
     def play(self,filename):
         """
-        play is a function that recieves a file name and path and plays the sound that is at that filepath
+        This method recieves a filepath and plays it, only accepts .wav or .mp3 files
         """
         print("playing: ", filename)
         if filename[-4:]==".wav":
@@ -29,6 +29,9 @@ class Player:
             play(song)
         
     def isPlaying(self):
+        """
+        This method indicates whether the 
+        """
         if self.play_obj:
             return not self.play_obj.is_playing()
         return True
