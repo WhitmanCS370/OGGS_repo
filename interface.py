@@ -1,6 +1,6 @@
 import cmd
 from audio import AudioEffects
-from manager import FileManager
+from file_system import FileManager
 from sql_commands import databaseManager
 from database_init import init
 from os import walk
