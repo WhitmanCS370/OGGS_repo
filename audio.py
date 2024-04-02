@@ -30,7 +30,7 @@ class Player:
         
     def isPlaying(self):
         """
-        This method indicates whether the 
+        This method indicates whether there is an audio file playing
         """
         if self.play_obj:
             return not self.play_obj.is_playing()
@@ -38,12 +38,15 @@ class Player:
         
 class AudioEffects(Player):
     """
-    
+    This class will be responsible for applying effects to audio files that are being played
     """
     def __init__(self):
         pass
         
     def layer(self,files):
+        """
+        This method will layer a list of audio files on top of one another
+        """
         wavlist=[]
         for file in files:
             if file.endswith('.wav'):
@@ -56,20 +59,32 @@ class AudioEffects(Player):
             #self.play(file)
         
     def backward(self):
+        """
+        This method will play an audio file backwards
+        """
         print("backward")
         
     def sequence(self,files):
+        """
+        This method will play a given list of audio files in sequence
+        """
         for file in files:
             self.play(file)
             
 class Recorder(Player):
     
     def check_inputs(self):
+        """
+        This method checks that there is an availble audio input
+        """
         print("check_inputs")
         for index, device in enumerate(PvRecorder.get_available_devices()):
             print(f"[{index}] {device}")
             
     def record(self,path=[".\\sounds\\"]):
+        """
+        This method records a sound using the default input
+        """
         print("Press ctrl+c / command+c to stop recording")        
         if path[-4:]!=".wav":
             path=[".\\sounds\\"+path+".wav"]
