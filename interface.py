@@ -247,13 +247,14 @@ class Interface(cmd.Cmd):
         else:
             self.provide_arg_msg()
             
-    def do_echo(self,args):
+    def do_speed_up(self,args):
         """
-        Desc: add echo to a specific file
-        Usage: echo [name of new file]
+        Desc: speed up file by specified amount
+        Usage: speed [name of new file] [sped up amount]
         """
-        if (self.validate_single_arg(args=args)):
-            self.audio.echo(args)
+        if (self.validate_list_args(args=args,nArgs=2)):
+            args=args.split()
+            self.audio.speed_up(args[0],args[1])
         else: 
             self.provide_arg_msg()
     def do_trim(self,args):
@@ -266,6 +267,17 @@ class Interface(cmd.Cmd):
             self.audio.trim(args[0],args[1],args[2])
         else: 
             self.provide_arg_msg()
+            
+    def do_backward(self,args):
+        """
+        Desc: creates backward file
+        Usage: backward [name of new file]
+        """
+        if (self.validate_single_arg(args=args)):
+            self.audio.backward(args)
+        else: 
+            self.provide_arg_msg()
+        
     
 
 
