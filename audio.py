@@ -15,7 +15,7 @@ class Player:
 
     def set_currently_playing_file(self, filename):
         """
-        This is a helper method to set the currently playing file from a filepath
+        This is a method to set the currently playing file from a filepath
         """
         if filename.endswith(".wav"):
             self.current_playing = AudioSegment.from_wav(filename)
@@ -46,8 +46,9 @@ class Player:
         if self.current_playing:
             elapsed = self.pause_time - self.start_time # calculate the time elapsed in the current audio clip
             self.time_left = self.length - (elapsed.total_seconds() * 1000) # calculate the time left in the current audio clip
-            self.current_playing = self.current_playing[-self.time_left:] # select only the time left in the audio segment
-            play(AudioSegment.empty()) # play an empty audio segment
+            elapsed = (elapsed.total_seconds() * 1000)
+            self.current_playing = self.current_playing[elapsed:] # select only the time left in the audio segment
+            # play(AudioSegment.empty()) # play an empty audio segment
         
 
     def resume(self):
