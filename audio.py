@@ -98,8 +98,13 @@ class AudioEffects(Player):
         hashlist = list(filename)
         hashlist.insert(-4, '_trim')
         filename=''.join(hashlist)
-
         sound_export.export(filename,format="wav")
+        
+    def check_length(self,filename):
+        filename=".\\sounds\\"+filename
+        sound = AudioSegment.from_wav(filename)
+        duration = sound.duration_seconds
+        print(duration)
 
 class Recorder(Player):
     

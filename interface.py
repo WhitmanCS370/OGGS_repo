@@ -277,7 +277,16 @@ class Interface(cmd.Cmd):
             self.audio.backward(args)
         else: 
             self.provide_arg_msg()
-        
+    
+    def do_check_length(self,args):
+        """
+            Desc: checks to see how long the dile is in milliseconds
+            Usage: deck_inputs [name of the file]
+        """
+        if (self.validate_single_arg(args=args)):
+            self.audio.check_length(args)
+        else: 
+            self.provide_arg_msg()
     
 
 
