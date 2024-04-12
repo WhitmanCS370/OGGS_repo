@@ -58,9 +58,17 @@ class Interface(cmd.Cmd):
         Usage: play <filename>
         """
         if (self.validate_single_arg(args)):
-            self.audio.play(self.db.get_filepath(args))
+            self.audio.set_currently_playing_file(self.db.get_filepath(args))
+            self.audio.play()
         else:
             self.provide_arg_msg()
+
+    def do_resume(self, args):
+        """
+        Desc: Resume a paused sound.
+        Usage: resume
+        """
+        self.audio.resume()
 
     # def do_list(self, args):
     #     """
