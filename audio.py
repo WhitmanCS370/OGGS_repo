@@ -1,5 +1,3 @@
-# import simpleaudio as sa
-import simpleaudio as sa
 from os import walk
 from pvrecorder import PvRecorder
 import wave, struct 
@@ -10,38 +8,51 @@ from pydub.playback import play
 class Player:
 
     def __init__(self): 
-        print("Player")
-        self.current_playing = None
-                
-    def play(self,filename):
+        self.current_playing = None # the currently playing audio file
+        self.start_time = 0 # time that the audio clip began playing
+        self.pause_time = 0 # time that the audio clip was paused
+        self.length = 0 # the overall length of the audio clip
+
+    def set_currently_playing_file(self, filename):
+        """
+        This is a helper method to set the currently playing file from a filepath
+        """
+        if filename.endswith(".wav"):
+            self.current_playing = AudioSegment.from_wav(filename)
+            self.length = len(self.current_playing)
+        elif filename.endswith(".mp3"):
+            self.current_playing = AudioSegment.from_mp3(filename)
+            self.length = len(self.current_playing)
+
+    def play(self):
         """
         play is a function that recieves a file name and path and plays the sound that is at that filepath
         """
-        if filename.endswith(".wav"):
-            wave_obj = sa.WaveObject.from_wave_file(filename)
-
-            try:
-                play_obj = wave_obj.play()
-                input("Press ctr + c to stop audio\n")
-            except KeyboardInterrupt:
-                play_obj.stop()
-                return
-            finally:
-                return play_obj.wait_done()
-            print("Playback paused. Press Enter to resume...")
-            self.resume()
-
-            return play_obj.wait_done()  # Wait until sound has finished playing
-        elif filename[-4:]==".mp3":
-            song = AudioSegment.from_mp3(filename)
-            print('playing sound using  pydub')
-            play(song)
+        self.start_time = datetime.now() # get time to calculate the time_elapsed
+        try:
+            print(len(self.current_playing))
+            play(self.current_playing)
+        except KeyboardInterrupt: # probably better way to do this in interface (reserach custom exeption?)
+            self.pause()
+        else: 
+            self.current_playing = None # once done playing, clear the currently playing
 
 
-    def isPlaying(self):
-        if self.play_obj:
-            return not self.play_obj.is_playing()
-        return True
+    def pause(self):
+        """
+        pause a currently playing audio clip
+        """
+        self.pause_time = datetime.now() # set the time paused
+        if self.current_playing:
+            elapsed = self.pause_time - self.start_time # calculate the time elapsed in the current audio clip
+            self.time_left = self.length - (elapsed.total_seconds() * 1000) # calculate the time left in the current audio clip
+            self.current_playing = self.current_playing[-self.time_left:] # select only the time left in the audio segment
+            play(AudioSegment.empty()) # play an empty audio segment
+        
+
+    def resume(self):
+        print(len(self.current_playing))
+        self.play() # simply play the currently playing audio clip
         
 class AudioEffects(Player):
     """
@@ -100,3 +111,4 @@ class Recorder(Player):
         today=datetime.now()
         return today.strftime("%d-%m-%Y-%H-%M-%S")
         
+
