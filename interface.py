@@ -1,5 +1,6 @@
 import cmd
 from audio import AudioEffects
+from audio import Recorder
 from manager import FileManager
 from sql_commands import databaseManager
 from database_init import init
@@ -21,6 +22,7 @@ class Interface(cmd.Cmd):
         self.audio = AudioEffects()
         self.files = FileManager()
         init()
+        self.recorder=Recorder()
         self.db = databaseManager()
         #for development purposes, populate database with example files
         self.db.add_all()
@@ -53,12 +55,20 @@ class Interface(cmd.Cmd):
     def do_play(self, args):
         """
         Desc: Play a sound from the library.
-        Usage: play <filepath>
+        Usage: play <filename>
         """
         if (self.validate_single_arg(args)):
-            self.audio.play(args)
+            self.audio.set_currently_playing_file(self.db.get_filepath(args))
+            self.audio.play()
         else:
             self.provide_arg_msg()
+
+    def do_resume(self, args):
+        """
+        Desc: Resume a paused sound.
+        Usage: resume
+        """
+        self.audio.resume()
 
     # def do_list(self, args):
     #     """
@@ -185,8 +195,8 @@ class Interface(cmd.Cmd):
         Usage: show_tag <tagName>
         """
         files = list(self.db.get_from_tag(tag))
-        # self.columnize(files)
-        print(files)
+        self.columnize(files)
+        # print(files)
         # for file in files:
         #     print(file[1])
     
@@ -217,6 +227,24 @@ class Interface(cmd.Cmd):
         Usage: exit
         """
         return True
+    def do_rec(self,args):
+        """
+        Desc: start recording and wait for keyboard input to stop
+        Usage: rec
+        """
+        self.recorder.record()
+        
+    def do_record(self, args="NoArgs"):
+        """
+        Desc: start recording and wait for keyboard input to stop
+        Usage: record [filepath/name]
+        """
+        
+        if (self.validate_single_arg(args=args)):
+            self.recorder.record(args)
+        else:
+            self.provide_arg_msg()
+    
 
 
 if __name__ == "__main__":
