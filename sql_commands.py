@@ -114,12 +114,12 @@ class databaseManager():
     def get_filepath(self, filename):
         self.cursor.execute(
             """
-                SELECT DISTINCT title, filepath FROM audio_files
+                SELECT DISTINCT filepath FROM audio_files
                 WHERE title == (?);
             """,(filename,)
         )
-        path = self.cursor.fetchall()
-        return path
+        path = np.array(self.cursor.fetchall())
+        return path[0][0]
 
     def add_from_file(self, title, filepath, artist = None, album = None, genre = None):
         """
