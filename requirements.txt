@@ -1,0 +1,6 @@
+simpleaudio
+pvrecorder
+pydub
+sqlite3
+numpy
+shutil

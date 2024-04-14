@@ -70,6 +70,38 @@ class Audio_test(unittest.TestCase):
         files = ['sounds/old-sounds/coffee-slurp-2.wav', 'sounds/old-sounds/coffee-slurp-3.wav']
         audio_effects.sequence(files)
         self.assertEqual(mock_wave.call_count, len(files))
+        
+    @patch('simpleaudio.WaveObject.from_wave_file')
+    def test_speed_up_sounds(self, mock_wave):
+        """
+        Test sequencing sounds.
+        """
+        audio_effects = AudioEffects()
+        audio_effects.speed_up('sounds/old-sounds/coffee-slurp-2.wav',2.0)
+        self.assertEqual(self.audio.check_length('sounds/old-sounds/coffee-slurp-2_speed2.0.wav'), 0.5999773242630385)
+        os.remove('sounds/old-sounds/coffee-slurp-2.wav')
+        
+    @patch('simpleaudio.WaveObject.from_wave_file')
+    
+    #dont know how to test for this
+    def test_backward_sounds(self, mock_wave):
+        """
+        Test sequencing sounds.
+        """
+        audio_effects = AudioEffects()
+        audio_effects.backward('sounds/old-sounds/coffee-slurp-2.wav')
+        self.assertTrue(os.path.exists('sounds/old-sounds/coffee-slurp-2_backward.wav'))
+        os.remove('sounds/old-sounds/coffee-slurp-2_backward.wav')
+        
+    @patch('simpleaudio.WaveObject.from_wave_file')
+    def test_trim_sounds(self, mock_wave):
+        """
+        Test sequencing sounds.
+        """
+        audio_effects = AudioEffects()
+        audio_effects.trim('sounds/old-sounds/coffee-slurp-2.wav',0.5,0.9)
+        self.assertEqual(self.audio.check_length('sounds/old-sounds/coffee-slurp-2_trim.wav'), 0.4)
+        os.remove('sounds/old-sounds/coffee-slurp-2_trim.wav')
 
 class FileManager_test(unittest.TestCase):
     """
@@ -89,7 +121,7 @@ class FileManager_test(unittest.TestCase):
         original_filename = self.test_file
         new_filename = 'temp_test_rename.wav'
         self.file_manager.rename(self.test_dir, original_filename, new_filename)
-        self.assertTrue(os.path.exists(os.path.join('./sounds/', self.test_dir, new_filename)))
+        self.assertTrue(os.path.exists(os.path.join('./sounds/', new_filename)))
         # Cleanup
         self.file_manager.rename(self.test_dir, new_filename, original_filename)
 
@@ -108,6 +140,12 @@ class FileManager_test(unittest.TestCase):
         self.assertIn(self.test_file, files, f"{self.test_file} should be listed in {self.test_dir}")
 
 
+    def test_duplicate_file(self):
+        self.file_manager.duplicate_file(self)
+        file=self.test_file[:4] + '_2' + self.test_file[4:]
+        self.assertTrue(os.path.exists(os.path.join('./sounds/', file,)))
+        os.remove(os.path.join('./sounds/', file,))
+        
 if __name__ == "__main__":
     print("Current Working Directory:", os.getcwd())
     unittest.main()

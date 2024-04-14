@@ -1,12 +1,11 @@
 from os import walk
 from pvrecorder import PvRecorder
 import wave, struct 
-from datetime import datetime
 from pydub import AudioSegment
 from pydub.playback import play
+import sql_commands
 
 class Player:
-
     def __init__(self): 
         self.current_playing = None # the currently playing audio file
         self.start_time = 0 # time that the audio clip began playing
@@ -26,7 +25,7 @@ class Player:
 
     def play(self):
         """
-        play is a function that recieves a file name and path and plays the sound that is at that filepath
+        This method recieves a filepath and plays it, only accepts .wav or .mp3 files
         """
         self.start_time = datetime.now() # get time to calculate the time_elapsed
         try:
@@ -57,12 +56,15 @@ class Player:
         
 class AudioEffects(Player):
     """
-    
+    This class will be responsible for applying effects to audio files that are being played
     """
     def __init__(self):
         super()
         
     def layer(self,files):
+        """
+        This method will layer a list of audio files on top of one another
+        """
         wavlist=[]
         for file in files:
             if file.endswith('.wav'):
@@ -74,25 +76,84 @@ class AudioEffects(Player):
             wave.wait_done()  # Wait until sound has finished playing
             #self.play(file)
         
-    def backward(self):
-        print("backward")
+    def backward(self,filename):
+        """
+        This method will play an audio file backwards
+        """
+        filename=".\\sounds\\"+filename
+        wave_object=AudioSegment.from_wav(filename)
+        reversed= wave_object.reverse()
+        hashlist = list(filename)
+        hashlist.insert(-4, '_backward')
+        filename=''.join(hashlist)
+        reversed.export(filename,format="wav")
         
     def sequence(self,files):
+        """
+        This method will play a given list of audio files in sequence
+        """
         for file in files:
             self.play(file)
             
+    def speed_up(self,filename,speed):
+        """
+        creates a new file but speeds it up
+        """
+        if speed.isnumeric():
+            speed=str(int(speed)*1.0)
+        filename=".\\sounds\\"+filename
+        sound = AudioSegment.from_wav(filename)
+        so = sound.speedup(float(speed), 150, 25)
+        if filename.endswith("_speed",-13,-7) and filename[-7].isnumeric():
+            num=float(filename[-7:-4])+float(speed)
+            filename=filename[:-7]+str(num)+".wav"
+        else:
+            hashlist = list(filename)
+            hashlist.insert(-4, '_speed'+speed)
+            filename=''.join(hashlist)
+        so.export(filename,format="wav")
+        
+            
+    def trim(self,filename,startTimeStamp,endTimeStamp):
+        """
+        trims the specified file at the sime stamps stated
+        """
+        filename=".\\sounds\\"+filename
+        sound = AudioSegment.from_wav(filename)
+        duration = sound.duration_seconds
+        sound_export = sound[float(startTimeStamp)*1000:float(endTimeStamp)*1000]
+        hashlist = list(filename)
+        hashlist.insert(-4, '_trim')
+        filename=''.join(hashlist)
+        sound_export.export(filename,format="wav")
+        
+    def check_length(self,filename):
+        filename=".\\sounds\\"+filename
+        sound = AudioSegment.from_wav(filename)
+        duration = sound.duration_seconds
+        print(duration)
+
 class Recorder(Player):
     
     def check_inputs(self):
+        """
+        This method checks that there is an availble audio input
+        """
         print("check_inputs")
         for index, device in enumerate(PvRecorder.get_available_devices()):
             print(f"[{index}] {device}")
+
             
-    def record(self,path=[".\\sounds\\"]):
-        print("Press ctrl + c/command + c to stop recording")
-        print(path[0][-4:])
-        if path[0][-4:]!=".wav":
-            path[0]=path[0]+self.get_DateTime()+".wav"
+    def record(self,path):
+        """
+        starts recording and waits for the user to press ctrl+c or command+c to stop recording
+
+        """
+        print("Press ctrl+c / command+c to stop recording")        
+        if path[-4:]!=".wav":
+            path=[".\\sounds\\"+path+".wav"]
+        else:
+            path=[".\\sounds\\"+path]
         recorder = PvRecorder(device_index=0, frame_length=512) #(32 milliseconds of 16 kHz audio)
         audio = []
         try:
