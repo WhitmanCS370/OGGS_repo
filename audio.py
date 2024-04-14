@@ -61,7 +61,6 @@ class AudioEffects(Player):
         """
         This method will play an audio file backwards
         """
-        def backward(self,filename):
         filename=".\\sounds\\"+filename
         wave_object=sa.WaveObject.from_wave_file(filename)
         reversed= wave_object.reverse()
