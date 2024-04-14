@@ -77,38 +77,6 @@ class Interface(cmd.Cmd):
         """
         self.audio.resume()
 
-    # def do_list(self, args):
-    #     """
-    #     Desc: List files in one of the library's directorys
-    #     Usage: list <directoryName>
-    #     """
-    #     if (self.validate_single_arg(args)):
-    #         self.files.list_files(args)
-    #     else:
-    #         self.provide_arg_msg()
-
-    # def do_rename(self, args):
-    #     """
-    #     Desc: Rename sound in directory.
-    #     Usage: rename <directory> <oldFilename> <newFilename>
-    #     """
-    #     if (self.validate_list_args(args=args, nArgs=3)):
-    #         args = args.split()
-    #         self.files.rename(args[0], args[1], args[2])
-    #     else:
-    #         self.provide_arg_msg()
-
-    # def do_remove(self, args):
-    #     """
-    #     Desc: Delete sound in directory.
-    #     Usage: delete <directory> <filename>
-    #     """
-    #     if (self.validate_list_args(args=args, nArgs=2)):
-    #         args = args.split()
-    #         self.files.delete(args[0], args[1])
-    #     else:
-    #         self.provide_arg_msg()
-
     def do_layer(self, args):
         """
         Desc: Play a list of files at the same time. 
@@ -119,17 +87,6 @@ class Interface(cmd.Cmd):
             self.audio.layer(args)
         else:
             self.provide_arg_msg()
-
-    # def do_seq(self, args):
-    #     """
-    #     Desc: Play a list of files one after another. 
-    #     Usage: seq [filePath, ...]
-    #     """
-    #     if (self.validate_list_args(args=args, nArgs=2)):
-    #         args = args.split()
-    #         self.audio.sequence(args)
-    #     else:
-    #         self.provide_arg_msg()
 
     def do_new_playlist(self, args):
         """
@@ -260,7 +217,9 @@ class Interface(cmd.Cmd):
             self.recorder.record(args)
         else:
             self.provide_arg_msg()
-    
+
+
+
 
 
 if __name__ == "__main__":
