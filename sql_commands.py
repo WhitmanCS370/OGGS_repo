@@ -58,7 +58,7 @@ class databaseManager():
                 WHERE name == (?);
             """,(playlist,)
         )
-        playlistid = self.cursor.fetchall()
+        playlistid = np.array(self.cursor.fetchall())
         return playlistid[0][0]
     
     def list_playlists(self):
@@ -77,13 +77,13 @@ class databaseManager():
         """
         playlistid = self.get_playlist_id(playlist)
         self.cursor.execute("""
-            SELECT DISTINCT audio_files.*
+            SELECT DISTINCT audio_files.filepath
             FROM audio_files
             JOIN playlist_items ON audio_files.id = playlist_items.audio_file_id
             WHERE playlist_items.playlist_id = (?);
         """, (playlistid,))
-        files = self.cursor.fetchall()
-        return files
+        files = np.array(self.cursor.fetchall())
+        return files.ravel()
     
     def add_playlist(self, name):
         """
@@ -106,6 +106,16 @@ class databaseManager():
             VALUES (?, ?)
         """, (playlistid, songid))
         self.conn.commit()
+
+    def show_playlist(self, playlist):
+        self.cursor.execute("""
+            SELECT DISTINCT audio_files.title
+            FROM audio_files
+            JOIN playlist_items ON audio_files.id = playlist_items.audio_file_id
+            WHERE playlist_items.playlist_id = (?); 
+        """, (playlist,))
+        songs = np.array(self.cursor.fetchall())
+        return songs.ravel()
     
     # END PLAYLIST METHODS
 

@@ -57,11 +57,20 @@ class Interface(cmd.Cmd):
         Desc: Play a sound from the library.
         Usage: play <filename>
         """
-        if (self.validate_single_arg(args)):
-            self.audio.set_currently_playing_file(self.db.get_filepath(args))
-            self.audio.play()
+        
+        if args.split()[0] == "-p":
+            if (self.validate_list_args(args, 2)):
+                files = self.db.get_playlist(args.split()[1])
+                if files:
+                    for file in files:
+                        self.audio.set_currently_playing_file(file)
+                        self.audio.play()
         else:
-            self.provide_arg_msg()
+            if (self.validate_single_arg(args)):
+                self.audio.set_currently_playing_file(self.db.get_filepath(args))
+                self.audio.play()
+            else:
+                self.provide_arg_msg()
 
     def do_resume(self, args):
         """
@@ -154,6 +163,15 @@ class Interface(cmd.Cmd):
         self.columnize(playlists)
         # for playlist in playlists:
         #     print(playlist[0])
+
+    def do_show_playlist(self, args):
+        """
+        Desc: Show the files in a playlist
+        Usage: show_playlist <playlist_name>
+        """
+        if self.validate_single_arg(args):
+            songs = self.db.show_playlist(args)
+            self.columnize(songs)
 
 
     def do_list_files(self, args):

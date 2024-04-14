@@ -45,12 +45,11 @@ class Player:
         self.pause_time = datetime.now() # set the time paused
         if self.current_playing:
             elapsed = self.pause_time - self.start_time # calculate the time elapsed in the current audio clip
-            self.time_left = self.length - (elapsed.total_seconds() * 1000) # calculate the time left in the current audio clip
+            # self.time_left = self.length - (elapsed.total_seconds() * 1000) # calculate the time left in the current audio clip
             elapsed = (elapsed.total_seconds() * 1000)
             self.current_playing = self.current_playing[elapsed:] # select only the time left in the audio segment
             # play(AudioSegment.empty()) # play an empty audio segment
         
-
     def resume(self):
         print(len(self.current_playing))
         self.play() # simply play the currently playing audio clip
