@@ -1,7 +1,6 @@
 import os
 from audio import *
 import shutil 
-import sql_commands
 
 class FileManager():
 

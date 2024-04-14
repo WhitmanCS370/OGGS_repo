@@ -2,7 +2,6 @@ import simpleaudio as sa
 from os import walk
 from pvrecorder import PvRecorder
 import wave, struct 
-from datetime import datetime
 from pydub import AudioSegment
 from pydub.playback import play
 import sql_commands
@@ -58,11 +57,18 @@ class AudioEffects(Player):
             wave.wait_done()  # Wait until sound has finished playing
             #self.play(file)
         
-    def backward(self):
+    def backward(self,filename):
         """
         This method will play an audio file backwards
         """
-        print("backward")
+        def backward(self,filename):
+        filename=".\\sounds\\"+filename
+        wave_object=sa.WaveObject.from_wave_file(filename)
+        reversed= wave_object.reverse()
+        hashlist = list(filename)
+        hashlist.insert(-4, '_backward')
+        filename=''.join(hashlist)
+        reversed.export(filename,format="wav")
         
     def sequence(self,files):
         """
@@ -71,6 +77,44 @@ class AudioEffects(Player):
         for file in files:
             self.play(file)
             
+    def speed_up(self,filename,speed):
+        """
+        creates a new file but speeds it up
+        """
+        if speed.isnumeric():
+            speed=str(int(speed)*1.0)
+        filename=".\\sounds\\"+filename
+        sound = AudioSegment.from_wav(filename)
+        so = sound.speedup(float(speed), 150, 25)
+        if filename.endswith("_speed",-13,-7) and filename[-7].isnumeric():
+            num=float(filename[-7:-4])+float(speed)
+            filename=filename[:-7]+str(num)+".wav"
+        else:
+            hashlist = list(filename)
+            hashlist.insert(-4, '_speed'+speed)
+            filename=''.join(hashlist)
+        so.export(filename,format="wav")
+        
+            
+    def trim(self,filename,startTimeStamp,endTimeStamp):
+        """
+        trims the specified file at the sime stamps stated
+        """
+        filename=".\\sounds\\"+filename
+        sound = AudioSegment.from_wav(filename)
+        duration = sound.duration_seconds
+        sound_export = sound[float(startTimeStamp)*1000:float(endTimeStamp)*1000]
+        hashlist = list(filename)
+        hashlist.insert(-4, '_trim')
+        filename=''.join(hashlist)
+        sound_export.export(filename,format="wav")
+        
+    def check_length(self,filename):
+        filename=".\\sounds\\"+filename
+        sound = AudioSegment.from_wav(filename)
+        duration = sound.duration_seconds
+        print(duration)
+
 class Recorder(Player):
     
     def check_inputs(self):
@@ -84,6 +128,15 @@ class Recorder(Player):
     def record(self,path=[".\\sounds\\"]):
         """
         This method records a sound using the default input
+        checks the amount of microphone inputs available and prints them out one by one
+        """
+        for index, device in enumerate(PvRecorder.get_available_devices()):
+            print(f"[{index}] {device}")
+            
+    def record(self,path):
+        """
+        starts recording and waits for the user to press ctrl+c or command+c to stop recording
+
         """
         print("Press ctrl+c / command+c to stop recording")        
         if path[-4:]!=".wav":

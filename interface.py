@@ -242,7 +242,51 @@ class Interface(cmd.Cmd):
         Desc: duplicate the specified file
         Usage: duplicate_file [name of new file]
         """
-        self.files.duplicate_file(args,self.db)
+        if (self.validate_single_arg(args=args)):
+            self.files.duplicate_file(args,self.db)
+        else:
+            self.provide_arg_msg()
+            
+    def do_speed_up(self,args):
+        """
+        Desc: speed up file by specified amount
+        Usage: speed [name of new file] [sped up amount]
+        """
+        if (self.validate_list_args(args=args,nArgs=2)):
+            args=args.split()
+            self.audio.speed_up(args[0],args[1])
+        else: 
+            self.provide_arg_msg()
+    def do_trim(self,args):
+        """
+        Desc: trims off the start and end of the .wav file
+        Usage: trim [name of new file] startTimeStamp endTimeStamp
+        """
+        if (self.validate_list_args(args=args,nArgs=3)):
+            args=args.split()
+            self.audio.trim(args[0],args[1],args[2])
+        else: 
+            self.provide_arg_msg()
+            
+    def do_backward(self,args):
+        """
+        Desc: creates backward file
+        Usage: backward [name of new file]
+        """
+        if (self.validate_single_arg(args=args)):
+            self.audio.backward(args)
+        else: 
+            self.provide_arg_msg()
+    
+    def do_check_length(self,args):
+        """
+            Desc: checks to see how long the dile is in milliseconds
+            Usage: deck_inputs [name of the file]
+        """
+        if (self.validate_single_arg(args=args)):
+            self.audio.check_length(args)
+        else: 
+            self.provide_arg_msg()
     
 
 
