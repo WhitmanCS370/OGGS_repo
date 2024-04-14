@@ -4,8 +4,12 @@ import wave, struct
 from pydub import AudioSegment
 from pydub.playback import play
 import sql_commands
+import datetime
 
 class Player:
+    """
+    This is a class responsible for playing media
+    """
     def __init__(self): 
         self.current_playing = None # the currently playing audio file
         self.start_time = 0 # time that the audio clip began playing
