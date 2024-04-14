@@ -70,6 +70,15 @@ class Audio_test(unittest.TestCase):
         files = ['sounds/old-sounds/coffee-slurp-2.wav', 'sounds/old-sounds/coffee-slurp-3.wav']
         audio_effects.sequence(files)
         self.assertEqual(mock_wave.call_count, len(files))
+        
+    @patch('simpleaudio.WaveObject.from_wave_file')
+    def test_speed_up_sounds(self, mock_wave):
+        """
+        Test sequencing sounds.
+        """
+        audio_effects = AudioEffects()
+        audio_effects.speed_up('sounds/old-sounds/coffee-slurp-2.wav',2)
+        self.assertEqual('sounds/old-sounds/coffee-slurp-2.wav', len())
 
 class FileManager_test(unittest.TestCase):
     """
