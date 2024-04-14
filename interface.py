@@ -50,18 +50,15 @@ class Interface(cmd.Cmd):
             return False
         return True
     
-
-
     def do_play(self, args):
         """
         Desc: Play a sound from the library.
         Usage: play <filename>
         """
-        
         if args.split()[0] == "-p":
             if (self.validate_list_args(args, 2)):
                 files = self.db.get_playlist(args.split()[1])
-                if files:
+                if any(files):
                     for file in files:
                         self.audio.set_currently_playing_file(file)
                         self.audio.play()
@@ -122,16 +119,16 @@ class Interface(cmd.Cmd):
         else:
             self.provide_arg_msg()
 
-    def do_seq(self, args):
-        """
-        Desc: Play a list of files one after another. 
-        Usage: seq [filePath, ...]
-        """
-        if (self.validate_list_args(args=args, nArgs=2)):
-            args = args.split()
-            self.audio.sequence(args)
-        else:
-            self.provide_arg_msg()
+    # def do_seq(self, args):
+    #     """
+    #     Desc: Play a list of files one after another. 
+    #     Usage: seq [filePath, ...]
+    #     """
+    #     if (self.validate_list_args(args=args, nArgs=2)):
+    #         args = args.split()
+    #         self.audio.sequence(args)
+    #     else:
+    #         self.provide_arg_msg()
 
     def do_new_playlist(self, args):
         """
