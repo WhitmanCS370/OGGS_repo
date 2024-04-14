@@ -1,7 +1,7 @@
 import cmd
 from audio import AudioEffects
 from audio import Recorder
-from manager import FileManager
+from file_system import FileManager
 from sql_commands import databaseManager
 from database_init import init
 from os import walk
@@ -151,10 +151,10 @@ class Interface(cmd.Cmd):
             self.provide_arg_msg()
 
 
-    def do_tag_add(self, args):
+    def do_add_tag(self, args):
         """
         Desc: Add a tag to a song.
-        Usage: tag_add <tagName> <songName>
+        Usage: add_tag <tagName> <songName>
         """
         if (self.validate_list_args(args=args, nArgs=2)):
             args = args.split()
