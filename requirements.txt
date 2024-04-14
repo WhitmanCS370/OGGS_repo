@@ -1,0 +1,5 @@
+simpleaudio
+complexaudio
+pvrecorder
+pydub
+numpy
