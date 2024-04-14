@@ -54,6 +54,7 @@ class Interface(cmd.Cmd):
         """
         Desc: Play a sound from the library.
         Usage: play <filename>
+               play -p <playlist_name>
         """
         if args.split()[0] == "-p":
             if (self.validate_list_args(args, 2)):
