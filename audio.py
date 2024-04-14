@@ -8,14 +8,14 @@ import sql_commands
 
 class Player:
     """
-    
+    This class is responsible for the base functionality of playing a sound file
     """
     def __init__(self): 
         print("Player")
         
     def play(self,filename):
         """
-        play is a function that recieves a file name and path and plays the sound that is at that filepath
+        This method recieves a filepath and plays it, only accepts .wav or .mp3 files
         """
         print("playing: ", filename)
         if filename[-4:]==".wav":
@@ -28,18 +28,24 @@ class Player:
             play(song)
         
     def isPlaying(self):
+        """
+        This method indicates whether there is an audio file playing
+        """
         if self.play_obj:
             return not self.play_obj.is_playing()
         return True
         
 class AudioEffects(Player):
     """
-    
+    This class will be responsible for applying effects to audio files that are being played
     """
     def __init__(self):
         pass
         
     def layer(self,files):
+        """
+        This method will layer a list of audio files on top of one another
+        """
         wavlist=[]
         for file in files:
             if file.endswith('.wav'):
@@ -52,6 +58,10 @@ class AudioEffects(Player):
             #self.play(file)
         
     def backward(self,filename):
+        """
+        This method will play an audio file backwards
+        """
+        def backward(self,filename):
         filename=".\\sounds\\"+filename
         wave_object=sa.WaveObject.from_wave_file(filename)
         reversed= wave_object.reverse()
@@ -60,10 +70,9 @@ class AudioEffects(Player):
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
         
-        
     def sequence(self,files):
         """
-        plays 
+        This method will play a given list of audio files in sequence
         """
         for file in files:
             self.play(file)
@@ -110,6 +119,15 @@ class Recorder(Player):
     
     def check_inputs(self):
         """
+        This method checks that there is an availble audio input
+        """
+        print("check_inputs")
+        for index, device in enumerate(PvRecorder.get_available_devices()):
+            print(f"[{index}] {device}")
+            
+    def record(self,path=[".\\sounds\\"]):
+        """
+        This method records a sound using the default input
         checks the amount of microphone inputs available and prints them out one by one
         """
         for index, device in enumerate(PvRecorder.get_available_devices()):
@@ -118,6 +136,7 @@ class Recorder(Player):
     def record(self,path):
         """
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
+
         """
         print("Press ctrl+c / command+c to stop recording")        
         if path[-4:]!=".wav":
