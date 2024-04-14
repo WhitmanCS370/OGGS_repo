@@ -61,9 +61,8 @@ class AudioEffects(Player):
         """
         This method will play an audio file backwards
         """
-        def backward(self,filename):
         filename=".\\sounds\\"+filename
-        wave_object=sa.WaveObject.from_wave_file(filename)
+        wave_object=AudioSegment.from_wav(filename)
         reversed= wave_object.reverse()
         hashlist = list(filename)
         hashlist.insert(-4, '_backward')
@@ -124,14 +123,7 @@ class Recorder(Player):
         print("check_inputs")
         for index, device in enumerate(PvRecorder.get_available_devices()):
             print(f"[{index}] {device}")
-            
-    def record(self,path=[".\\sounds\\"]):
-        """
-        This method records a sound using the default input
-        checks the amount of microphone inputs available and prints them out one by one
-        """
-        for index, device in enumerate(PvRecorder.get_available_devices()):
-            print(f"[{index}] {device}")
+
             
     def record(self,path):
         """

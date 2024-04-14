@@ -220,10 +220,10 @@ class Interface(cmd.Cmd):
         """
         return True
         
-    def do_rec(self,args):
+    def do_record(self,args):
         """
         Desc: starret recording and wait for keyboard input to stop
-        Usage: rec [name of new file]
+        Usage: record [name of new file]
         """
         if (self.validate_single_arg(args=args)):
             self.recorder.record(args)
@@ -257,6 +257,7 @@ class Interface(cmd.Cmd):
             self.audio.speed_up(args[0],args[1])
         else: 
             self.provide_arg_msg()
+            
     def do_trim(self,args):
         """
         Desc: trims off the start and end of the .wav file
