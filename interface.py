@@ -50,6 +50,20 @@ class Interface(cmd.Cmd):
             return False
         return True
     
+    def do_add_all(self, args):
+        """
+        Desc: Add all files in the sounds directory to the database.
+        Used only for initialization.
+        Usage: add_all
+        """
+        confirmation = ""
+        while confirmation.lower() not in ["y","n"]:
+            confirmation = input("adding all existing files to database, Y/N? ")
+            if confirmation.lower() == "y":
+                print("adding all files: \n--------------------")
+                self.db.add_all()
+                print("--------------------\nall files added to database.")
+    
     def do_play(self, args):
         """
         Desc: Play a sound from the library.

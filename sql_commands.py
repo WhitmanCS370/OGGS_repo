@@ -181,7 +181,7 @@ class databaseManager():
             """,(tag,)
         )
         tagid = self.cursor.fetchall()
-        return tagid[0][0]
+        return tagid[0][0] if tagid else None
 
     def list_tags(self):
         """
