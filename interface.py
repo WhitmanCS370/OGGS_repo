@@ -1,7 +1,6 @@
 import cmd
-from audio import AudioEffects
-from audio import Recorder
-from manager import FileManager
+from audio import AudioEffects, Recorder
+from file_system import FileManager
 from sql_commands import databaseManager
 from database_init import init
 from os import walk
@@ -50,18 +49,39 @@ class Interface(cmd.Cmd):
             return False
         return True
     
-
-
+    def do_add_all(self, args):
+        """
+        Desc: Add all files in the sounds directory to the database.
+        Used only for initialization.
+        Usage: add_all
+        """
+        confirmation = ""
+        while confirmation.lower() not in ["y","n"]:
+            confirmation = input("adding all existing files to database, Y/N? ")
+            if confirmation.lower() == "y":
+                print("adding all files: \n--------------------")
+                self.db.add_all()
+                print("--------------------\nall files added to database.")
+    
     def do_play(self, args):
         """
         Desc: Play a sound from the library.
         Usage: play <filename>
+               play -p <playlist_name>
         """
-        if (self.validate_single_arg(args)):
-            self.audio.set_currently_playing_file(self.db.get_filepath(args))
-            self.audio.play()
+        if args.split()[0] == "-p":
+            if (self.validate_list_args(args, 2)):
+                files = self.db.get_playlist(args.split()[1])
+                if any(files):
+                    for file in files:
+                        self.audio.set_currently_playing_file(file)
+                        self.audio.play()
         else:
-            self.provide_arg_msg()
+            if (self.validate_single_arg(args)):
+                self.audio.set_currently_playing_file(self.db.get_filepath(args))
+                self.audio.play()
+            else:
+                self.provide_arg_msg()
 
     def do_resume(self, args):
         """
@@ -69,38 +89,6 @@ class Interface(cmd.Cmd):
         Usage: resume
         """
         self.audio.resume()
-
-    # def do_list(self, args):
-    #     """
-    #     Desc: List files in one of the library's directorys
-    #     Usage: list <directoryName>
-    #     """
-    #     if (self.validate_single_arg(args)):
-    #         self.files.list_files(args)
-    #     else:
-    #         self.provide_arg_msg()
-
-    # def do_rename(self, args):
-    #     """
-    #     Desc: Rename sound in directory.
-    #     Usage: rename <directory> <oldFilename> <newFilename>
-    #     """
-    #     if (self.validate_list_args(args=args, nArgs=3)):
-    #         args = args.split()
-    #         self.files.rename(args[0], args[1], args[2])
-    #     else:
-    #         self.provide_arg_msg()
-
-    # def do_remove(self, args):
-    #     """
-    #     Desc: Delete sound in directory.
-    #     Usage: delete <directory> <filename>
-    #     """
-    #     if (self.validate_list_args(args=args, nArgs=2)):
-    #         args = args.split()
-    #         self.files.delete(args[0], args[1])
-    #     else:
-    #         self.provide_arg_msg()
 
     def do_layer(self, args):
         """
@@ -155,6 +143,15 @@ class Interface(cmd.Cmd):
         # for playlist in playlists:
         #     print(playlist[0])
 
+    def do_show_playlist(self, args):
+        """
+        Desc: Show the files in a playlist
+        Usage: show_playlist <playlist_name>
+        """
+        if self.validate_single_arg(args):
+            songs = self.db.show_playlist(args)
+            self.columnize(songs)
+
 
     def do_list_files(self, args):
         """
@@ -178,10 +175,10 @@ class Interface(cmd.Cmd):
             self.provide_arg_msg()
 
 
-    def do_tag_add(self, args):
+    def do_add_tag(self, args):
         """
         Desc: Add a tag to a song.
-        Usage: tag_add <tagName> <songName>
+        Usage: add_tag <tagName> <songName>
         """
         if (self.validate_list_args(args=args, nArgs=2)):
             args = args.split()
@@ -265,6 +262,7 @@ class Interface(cmd.Cmd):
             self.audio.speed_up(args[0],args[1])
         else: 
             self.provide_arg_msg()
+    
             
     def do_trim(self,args):
         """
@@ -296,8 +294,6 @@ class Interface(cmd.Cmd):
             self.audio.check_length(args)
         else: 
             self.provide_arg_msg()
-    
-
 
 if __name__ == "__main__":
     CLI_interface = Interface()
