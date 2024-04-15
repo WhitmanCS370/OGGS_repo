@@ -62,6 +62,7 @@ Features:
 
 Contributions: 
 Oliver:
+  I wrote the new interface, sql commands, and rewrote the audio handler to use pydub instead of simpleaudio. This allowed us to implement features like pausing / playing audio, creating and playing playlists, adding tags to specific files, and having a constant command line interface to use the program. 
 
 Grant:
 
