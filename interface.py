@@ -292,8 +292,8 @@ class Interface(cmd.Cmd):
     
     def do_check_length(self,args):
         """
-            Desc: checks to see how long the dile is in milliseconds
-            Usage: deck_inputs [name of the file]
+            Desc: checks to see how long the file is in milliseconds
+            Usage: check_lenght <filename>
         """
         if (self.validate_single_arg(args=args)):
             self.audio.check_length(args)
