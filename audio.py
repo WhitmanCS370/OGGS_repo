@@ -130,11 +130,10 @@ class AudioEffects(Player):
         return filename
         
     def check_length(self,filename):
-        filename=".\\sounds\\"+filename
         sound = AudioSegment.from_wav(filename)
         duration = sound.duration_seconds
-        print(duration)
-
+        return duration
+    
 class Recorder(Player):
     
     def check_inputs(self):
