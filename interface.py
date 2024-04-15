@@ -277,11 +277,13 @@ class Interface(cmd.Cmd):
             
     def do_backward(self,args):
         """
-        Desc: creates backward file
-        Usage: backward [name of new file]
+        Desc: reverses the selected file and saves to a new audio file
+        Usage: backward <filename>
         """
         if (self.validate_single_arg(args=args)):
-            self.audio.backward(args)
+            filepath = self.db.get_filepath(args)
+            new_file = str(self.audio.backward(filepath))
+            self.db.add_from_file(new_file)
         else: 
             self.provide_arg_msg()
     

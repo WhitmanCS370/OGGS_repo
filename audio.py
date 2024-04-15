@@ -3,7 +3,6 @@ from pvrecorder import PvRecorder
 import wave, struct 
 from pydub import AudioSegment
 from pydub.playback import play
-import sql_commands
 from datetime import datetime
 
 class Player:
@@ -83,13 +82,13 @@ class AudioEffects(Player):
         """
         This method will play an audio file backwards
         """
-        filename=".\\sounds\\"+filename
         wave_object=AudioSegment.from_wav(filename)
         reversed= wave_object.reverse()
         hashlist = list(filename)
         hashlist.insert(-4, '_backward')
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
+        return filename
         
     def sequence(self,files):
         """

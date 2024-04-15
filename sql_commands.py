@@ -131,12 +131,13 @@ class databaseManager():
         path = np.array(self.cursor.fetchall())
         return path[0][0]
 
-    def add_from_file(self, title, filepath, artist = None, album = None, genre = None):
+    def add_from_file(self, filepath, artist = None, album = None, genre = None):
         """
         album, artist, genre allowed null
         calculate duration from filepath
         """
         duration = self.get_duration(filepath)
+        title = filepath.split("/")[-1].split(".")[0]
         try:
             self.cursor.execute("""
                 INSERT INTO audio_files (title, artist, album, genre, filepath, duration)
@@ -259,7 +260,7 @@ class databaseManager():
                 # print(
                 #     "Adding " + file + " to the database."
                 # )
-                self.add_from_file(file.removesuffix(".wav"), "./sounds/" + file)
+                self.add_from_file( "./sounds/" + file)
 
 
 if __name__ == "__main__":
