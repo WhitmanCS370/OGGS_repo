@@ -4,7 +4,7 @@ import wave, struct
 from pydub import AudioSegment
 from pydub.playback import play
 import sql_commands
-import datetime
+from datetime import datetime
 
 class Player:
     """
@@ -31,7 +31,7 @@ class Player:
         """
         This method recieves a filepath and plays it, only accepts .wav or .mp3 files
         """
-        self.start_time = datetime.time() # get time to calculate the time_elapsed
+        self.start_time = datetime.now() # get time to calculate the time_elapsed
         try:
             print(len(self.current_playing))
             play(self.current_playing)
