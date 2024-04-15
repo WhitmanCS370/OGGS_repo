@@ -103,7 +103,6 @@ class AudioEffects(Player):
         """
         if speed.isnumeric():
             speed=str(int(speed)*1.0)
-        filename=".\\sounds\\"+filename
         sound = AudioSegment.from_wav(filename)
         so = sound.speedup(float(speed), 150, 25)
         if filename.endswith("_speed",-13,-7) and filename[-7].isnumeric():
@@ -114,6 +113,7 @@ class AudioEffects(Player):
             hashlist.insert(-4, '_speed'+speed)
             filename=''.join(hashlist)
         so.export(filename,format="wav")
+        return filename
         
             
     def trim(self,filename,startTimeStamp,endTimeStamp):

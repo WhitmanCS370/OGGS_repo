@@ -259,7 +259,9 @@ class Interface(cmd.Cmd):
         """
         if (self.validate_list_args(args=args,nArgs=2)):
             args=args.split()
-            self.audio.speed_up(args[0],args[1])
+            filename = self.db.get_filepath(args[0])
+            new_file = self.audio.speed_up(filename, args[1])
+            self.db.add_from_file(new_file)
         else: 
             self.provide_arg_msg()
     
