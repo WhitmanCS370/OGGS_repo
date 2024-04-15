@@ -120,14 +120,14 @@ class AudioEffects(Player):
         """
         trims the specified file at the sime stamps stated
         """
-        filename=".\\sounds\\"+filename
         sound = AudioSegment.from_wav(filename)
-        duration = sound.duration_seconds
+        # duration = sound.duration_seconds
         sound_export = sound[float(startTimeStamp)*1000:float(endTimeStamp)*1000]
         hashlist = list(filename)
         hashlist.insert(-4, '_trim')
         filename=''.join(hashlist)
         sound_export.export(filename,format="wav")
+        return filename
         
     def check_length(self,filename):
         filename=".\\sounds\\"+filename

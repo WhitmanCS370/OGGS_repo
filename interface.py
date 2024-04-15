@@ -265,7 +265,6 @@ class Interface(cmd.Cmd):
         else: 
             self.provide_arg_msg()
     
-            
     def do_trim(self,args):
         """
         Desc: trims off the start and end of the .wav file
@@ -273,7 +272,9 @@ class Interface(cmd.Cmd):
         """
         if (self.validate_list_args(args=args,nArgs=3)):
             args=args.split()
-            self.audio.trim(args[0],args[1],args[2])
+            filename = self.db.get_filepath(args[0])
+            new_file = self.audio.trim(filename,args[1],args[2])
+            self.db.add_from_file(new_file)
         else: 
             self.provide_arg_msg()
             
