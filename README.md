@@ -48,17 +48,15 @@ Use cases for epoch two:
 - catagorization and classification of audio
 
 
-Features:
-- transcribe text to audio
+New Features:
 - metadata / tagging
-- searching
-- sorting 
+- create playlists
+- sort by tag
 - duplicate audio file
-- basic graphic interface
 - play backwards
-- play clips by timecode
+- speed up audio files
 - record audio
-- filters w/ customization
+- trim audio files 
 
 Program Usage:
 
