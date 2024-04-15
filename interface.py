@@ -296,7 +296,9 @@ class Interface(cmd.Cmd):
             Usage: check_lenght <filename>
         """
         if (self.validate_single_arg(args=args)):
-            self.audio.check_length(args)
+            filename = self.db.get_filepath(args)
+            duration = self.audio.check_length(filename)
+            print(f'{args} is {duration} seconds long')
         else: 
             self.provide_arg_msg()
 
