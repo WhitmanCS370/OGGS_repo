@@ -60,6 +60,19 @@ Features:
 - record audio
 - filters w/ customization
 
+Program Usage:
+
+# To start the program:
+  1. navigate into the directory that this program is stored in
+  2. run "python main.py" in command line
+  
+# To play a files:
+  1. If you do not know the name of the file or playlist you want to play, run list_files or list_playlists
+  2. In the program's command line interface, type play <filename> or play -p <playlist>, in the case of filename, do not include file extensions. 
+
+# To find out the functionality of other commands
+  - Type "help" or "help <command_name>" for specific command usage
+
 Contributions: 
 Oliver:
   I wrote the new interface, sql commands, and rewrote the audio handler to use pydub instead of simpleaudio. This allowed us to implement features like pausing / playing audio, creating and playing playlists, adding tags to specific files, and having a constant command line interface to use the program. 
