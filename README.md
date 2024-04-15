@@ -79,8 +79,9 @@ Grant:
 
 Gabe:
   I got playing it backward to work, creating a sped-up version of a file, duplicating a file, recording new audio from an input, and trimming a file at certain specified points. I also added some helper functions such as check_inputs and check_length which are there to beable to check certain things
-Steven:
 
+Steven:
+  Changes to sql commands, error checking for sql commands and some other functions. Unified file system handling to make sure there's only one folder being used. Created a separate implementation of the audio player and CLI using pyaudio as pydubs doesn't want to work properly on Windows. The separate audio player has streaming, pause/play/stop implemented.
 
 ### Epoch 3: Advanced Extensions
 - **Possible Extensions**:
