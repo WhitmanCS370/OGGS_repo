@@ -173,10 +173,10 @@ class databaseManager():
                 SELECT DISTINCT title FROM audio_files;
             """)
             files = np.array(self.cursor.fetchall())
-            return files.ravel() if files else None
+            return files.ravel() if files else []
         except Exception as e:
             print(f"An error occurred: {e}")
-            return None
+            return []
 
     def rename(self, oldFileName, newFileName):
         try:

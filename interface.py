@@ -160,8 +160,8 @@ class Interface(cmd.Cmd):
         """
         files = list(self.db.list_files())
         self.columnize(files)
-        # for file in files:
-        #     print(file[0])
+        for file in files:
+            print(file[0])
 
     def do_new_tag(self, args):
         """
