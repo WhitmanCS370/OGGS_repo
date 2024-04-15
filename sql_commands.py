@@ -154,18 +154,9 @@ class databaseManager():
             return None
 
     def add_from_file(self, filepath, artist = None, album = None, genre = None):
-<<<<<<< HEAD
-        """
-        album, artist, genre allowed null
-        calculate duration from filepath
-        """
-        duration = self.get_duration(filepath)
-        title = filepath.split("/")[-1][:-4]
-=======
->>>>>>> cddf273b31074020b9fa55f78edd3a47ecfd1f0a
         try:
             duration = self.get_duration(filepath)
-            title = filepath.split("/")[-1].split(".")[0]
+            title = filepath.split("/")[-1][:-4]
             self.cursor.execute("""
                 INSERT INTO audio_files (title, artist, album, genre, filepath, duration)
                 VALUES (?, ?, ?, ?, ?, ?);
