@@ -4,6 +4,7 @@ from file_system import FileManager
 from sql_commands import databaseManager
 from database_init import init
 from os import walk
+from os import path
 
 class Interface(cmd.Cmd):
     """
@@ -20,7 +21,8 @@ class Interface(cmd.Cmd):
         self.prompt = ">> "
         self.audio = AudioEffects()
         self.files = FileManager()
-        init()
+        if not (path.exists("./audio_library.sqlite")):
+            init()
         self.recorder=Recorder()
         self.db = databaseManager()
         #for development purposes, populate database with example files
