@@ -23,11 +23,10 @@ class Interface(cmd.Cmd):
         self.files = FileManager()
         if not (path.exists("./audio_library.sqlite")):
             init()
-            self.db.add_all()
         self.recorder=Recorder()
         self.db = databaseManager()
         #for development purposes, populate database with example files
-        
+        self.db.add_all()
 
     def provide_arg_msg(self):
         print("*** please provide a valid arguement")
