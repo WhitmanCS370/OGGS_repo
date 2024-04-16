@@ -110,7 +110,10 @@ class Interface(cmd.Cmd):
         """
         if (self.validate_list_args(args=args, nArgs=2)):
             args = args.split()
-            self.audio.sequence(args)
+            files = []
+            for arg in args:
+                files.append(self.db.get_filepath(arg))
+            self.audio.sequence(files)
         else:
             self.provide_arg_msg()
 

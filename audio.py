@@ -4,7 +4,6 @@ import wave, struct
 from pydub import AudioSegment
 from pydub.playback import play
 from datetime import datetime
-
 class Player:
     """
     This is a class responsible for playing media
@@ -32,7 +31,7 @@ class Player:
         """
         self.start_time = datetime.now() # get time to calculate the time_elapsed
         try:
-            print(len(self.current_playing))
+            # print(len(self.current_playing))
             play(self.current_playing)
         except KeyboardInterrupt: # probably better way to do this in interface (reserach custom exeption?)
             self.pause()
@@ -95,7 +94,8 @@ class AudioEffects(Player):
         This method will play a given list of audio files in sequence
         """
         for file in files:
-            self.play(file)
+            sound = AudioSegment.from_wav(file)
+            play(sound)
             
     def speed_up(self,filename,speed):
         """
@@ -148,7 +148,6 @@ class Recorder(Player):
     def record(self,path):
         """
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
-
         """
         print("Press ctrl+c / command+c to stop recording")        
         if path[-4:]!=".wav":
