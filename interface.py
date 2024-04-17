@@ -95,7 +95,8 @@ class Interface(cmd.Cmd):
     def do_layer(self, args):
         """
         Desc: Play a list of files at the same time. 
-        Usage: layer [filePath, ...]
+              Enter fileNames seperated by single spaces.
+        Usage: layer <fileNames...>
         """
         if (self.validate_list_args(args=args, nArgs=2)):
             args = args.split()
@@ -106,7 +107,8 @@ class Interface(cmd.Cmd):
     def do_seq(self, args):
         """
         Desc: Play a list of files one after another. 
-        Usage: seq [filePath, ...]
+              Enter fileNames seperated by single spaces.
+        Usage: seq <fileNames...>
         """
         if (self.validate_list_args(args=args, nArgs=2)):
             args = args.split()
@@ -129,8 +131,8 @@ class Interface(cmd.Cmd):
 
     def do_playlist_add(self, args):
         """
-        Desc: Add a song to a playlist.
-        Usage: playlist_add <playlistName> <songName>
+        Desc: Add a file to a playlist.
+        Usage: playlist_add <playlistName> <fileName>
         """
         if (self.validate_list_args(args=args, nArgs=2)):
             args = args.split()
@@ -176,7 +178,6 @@ class Interface(cmd.Cmd):
             self.db.add_tag(args[0], args[1])
         else:
             self.provide_arg_msg()
-
 
     def do_add_tag(self, args):
         """
@@ -230,8 +231,8 @@ class Interface(cmd.Cmd):
         
     def do_record(self,args):
         """
-        Desc: starret recording and wait for keyboard input to stop
-        Usage: record [name of new file]
+        Desc: start recording to 
+        Usage: record <recording_name>
         """
         if (self.validate_single_arg(args=args)):
             self.recorder.record(args)
@@ -248,7 +249,7 @@ class Interface(cmd.Cmd):
     def do_duplicate_file(self,args):
         """
         Desc: duplicate the specified file
-        Usage: duplicate_file [name of new file]
+        Usage: duplicate_file <filename>
         """
         if (self.validate_single_arg(args=args)):
             self.files.duplicate_file(args,self.db)
@@ -258,7 +259,7 @@ class Interface(cmd.Cmd):
     def do_speed_up(self,args):
         """
         Desc: speed up file by specified amount
-        Usage: speed [name of new file] [sped up amount]
+        Usage: speed <filename> <speedModifier>
         """
         if (self.validate_list_args(args=args,nArgs=2)):
             args=args.split()
@@ -271,7 +272,7 @@ class Interface(cmd.Cmd):
     def do_trim(self,args):
         """
         Desc: trims off the start and end of the .wav file
-        Usage: trim [name of new file] startTimeStamp endTimeStamp
+        Usage: trim <filename> <startTimeStamp> <endTimeStamp>
         """
         if (self.validate_list_args(args=args,nArgs=3)):
             args=args.split()
@@ -295,8 +296,8 @@ class Interface(cmd.Cmd):
     
     def do_check_length(self,args):
         """
-            Desc: checks to see how long the file is in milliseconds
-            Usage: check_lenght <filename>
+            Desc: checks to see how long the file is in seconds
+            Usage: check_length <filename>
         """
         if (self.validate_single_arg(args=args)):
             filename = self.db.get_filepath(args)
