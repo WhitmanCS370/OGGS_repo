@@ -235,7 +235,8 @@ class Interface(cmd.Cmd):
         Usage: record <recording_name>
         """
         if (self.validate_single_arg(args=args)):
-            self.recorder.record(args)
+            filePath = self.recorder.record(args)
+            self.db.add_from_file(filePath)
         else:
             self.provide_arg_msg()
             

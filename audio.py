@@ -168,6 +168,7 @@ class Recorder(Player):
                 f.writeframes(struct.pack("h" * len(audio), *audio))
         finally:
             recorder.delete()
+        return filePath
             
     def get_DateTime(self):
         today=datetime.now()
