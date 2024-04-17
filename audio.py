@@ -1,4 +1,6 @@
 from os import walk
+from os import path
+from os import getcwd
 from pvrecorder import PvRecorder
 import wave, struct 
 from pydub import AudioSegment
@@ -145,15 +147,13 @@ class Recorder(Player):
             print(f"[{index}] {device}")
 
             
-    def record(self,path):
+    def record(self,fileName):
         """
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
         """
+        cwd = getcwd()
         print("Press ctrl+c / command+c to stop recording")        
-        if path[-4:]!=".wav":
-            path=[".\\sounds\\"+path+".wav"]
-        else:
-            path=[".\\sounds\\"+path]
+        filePath = path.join(cwd, "sounds", str(fileName)+".wav")
         recorder = PvRecorder(device_index=0, frame_length=512) #(32 milliseconds of 16 kHz audio)
         audio = []
         try:
@@ -163,7 +163,7 @@ class Recorder(Player):
                 audio.extend(frame)
         except KeyboardInterrupt:
             recorder.stop()
-            with wave.open(path[0], 'w') as f:
+            with wave.open(filePath, 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack("h" * len(audio), *audio))
         finally:
