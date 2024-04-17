@@ -9,8 +9,15 @@ from database_init import init
 
 class gui():
     def __init__(self):
+        self.audio = AudioEffects()
+        self.files = FileManager()
+        init()
+        self.recorder=Recorder()
+        self.db = databaseManager()
+        #for development purposes, populate database with example files
+        self.db.add_all()
         self.root = tk.Tk()
-
+        self.root.title("Audio Manager")
         style = ttk.Style(self.root)
 
         frame = ttk.Frame(self.root)
@@ -24,11 +31,13 @@ class gui():
         name_entry.bind("<FocusIn>", lambda e: name_entry.delete('0', 'end'))
         name_entry.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
 
-
-        button = ttk.Button(widgets_frame, text="Insert")
+        button = ttk.Button(widgets_frame, text="play")
+        button.grid(row=2, column=0, padx=5, pady=5, sticky="nsew")
+        
+        button = ttk.Button(widgets_frame, text="Backward")
         button.grid(row=3, column=0, padx=5, pady=5, sticky="nsew")
 
-        button = ttk.Button(widgets_frame, text="Insert")
+        button = ttk.Button(widgets_frame, text="Speed Up")
         button.grid(row=4, column=0, padx=5, pady=5, sticky="nsew")
 
         separator = ttk.Separator(widgets_frame)
@@ -39,14 +48,20 @@ class gui():
         treeScroll = ttk.Scrollbar(treeFrame)
         treeScroll.pack(side="right", fill="y")
 
-        cols = ("Name", "Age", "Subscription", "Employment")
-        treeview = ttk.Treeview(treeFrame, show="headings",
-                                yscrollcommand=treeScroll.set, columns=cols, height=13)
+        cols = ("Title", "Artist", "Album", "Genre", "Filepath", "Duration")
+        treeview = ttk.Treeview(treeFrame, show="headings", yscrollcommand=treeScroll.set, columns=cols, height=13)
 
-        treeview.column("Name", width=100)
-        treeview.column("Age", width=50)
-        treeview.column("Subscription", width=100)
-        treeview.column("Employment", width=100)
+        treeview.heading("#0",text="File")
+        treeview.heading("Title", text="Title")
+        treeview.heading("Artist", text="Artist")
+        treeview.heading("Album", text="Album")
+        treeview.heading("Genre", text="Genre")
+        treeview.heading("Filepath", text="Filepath")
+        treeview.heading("Duration", text="Duration")
+        
+        for item in self.db.list_files():
+            filepath=self.db.get_filepath(item)
+            treeview.insert("",tk.END,text="File",values=(item,self.db.get_artist(item),self.db.get_album(item),self.db.get_genre(item),filepath,self.db.get_duration(filepath)))
         treeview.pack()
         treeScroll.config(command=treeview.yview)
 
