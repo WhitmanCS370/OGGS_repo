@@ -1,4 +1,4 @@
-from os import walk
+import os
 from pvrecorder import PvRecorder
 import wave, struct 
 from pydub import AudioSegment
@@ -25,6 +25,9 @@ class Player:
         elif filename.endswith(".mp3"):
             self.current_playing = AudioSegment.from_mp3(filename)
             self.length = len(self.current_playing)
+        else:
+            self.current_playing=filename
+            self.length=len(self.current_playing)
 
     def play(self):
         """
@@ -63,20 +66,15 @@ class AudioEffects(Player):
     def __init__(self):
         super()
         
-    def layer(self,files):
+    def layer(self,file1,file2):
         """
         This method will layer a list of audio files on top of one another
         """
         wavlist=[]
-        for file in files:
-            if file.endswith('.wav'):
-                wavlist.append(sa.WaveObject.from_wave_file(file))
-        playlist=[]
-        for wave in wavlist:
-            playlist.append(wave.play())
-        for wave in playlist:
-            wave.wait_done()  # Wait until sound has finished playing
-            #self.play(file)
+        sound1= AudioSegment.from_wav(file1)
+        sound2= AudioSegment.from_wav(file2)
+        wav=sound1+sound2
+        play(wav)
         
     def backward(self,filename):
         """
@@ -152,9 +150,10 @@ class Recorder(Player):
         """
         print("Press ctrl+c / command+c to stop recording")        
         if path[-4:]!=".wav":
-            path=[".\\sounds\\"+path+".wav"]
+            file=path+".wav"
+            path=os.path.join(os.path.curdir, "sounds",file)
         else:
-            path=[".\\sounds\\"+path]
+            path=os.path.join(os.path.curdir, 'sounds',path)
         recorder = PvRecorder(device_index=0, frame_length=512) #(32 milliseconds of 16 kHz audio)
         audio = []
         try:
@@ -164,7 +163,8 @@ class Recorder(Player):
                 audio.extend(frame)
         except KeyboardInterrupt:
             recorder.stop()
-            with wave.open(path[0], 'w') as f:
+            print(path.split("/")[-1])
+            with wave.open(path.split("/")[-1], 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack("h" * len(audio), *audio))
         finally:

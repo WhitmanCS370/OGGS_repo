@@ -166,6 +166,7 @@ class databaseManager():
             print("File already exists in the database.")
         except Exception as e:
             print(f"An error occurred: {e}")
+            
 
     def list_files(self):
         try:
@@ -177,6 +178,48 @@ class databaseManager():
         except Exception as e:
             print(f"An error occurred: {e}")
             return []
+        
+    def get_artist(self, filename):
+        try:
+            self.cursor.execute(
+                """
+                    SELECT DISTINCT artist FROM audio_files
+                    WHERE title == (?);
+                """,(filename,)
+            )
+            path = np.array(self.cursor.fetchall())
+            return path[0][0] if path[0][0] else None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+        
+    def get_album(self, filename):
+        try:
+            self.cursor.execute(
+                """
+                    SELECT DISTINCT album FROM audio_files
+                    WHERE title == (?);
+                """,(filename,)
+            )
+            path = np.array(self.cursor.fetchall())
+            return path[0][0] if path[0][0] else None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+        
+    def get_genre(self, filename):
+        try:
+            self.cursor.execute(
+                """
+                    SELECT DISTINCT genre FROM audio_files
+                    WHERE title == (?);
+                """,(filename,)
+            )
+            path = np.array(self.cursor.fetchall())
+            return path[0][0] if path[0][0] else None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
 
     def rename(self, oldFileName, newFileName):
         try:

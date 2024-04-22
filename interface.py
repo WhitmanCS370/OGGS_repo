@@ -99,7 +99,7 @@ class Interface(cmd.Cmd):
         """
         if (self.validate_list_args(args=args, nArgs=2)):
             args = args.split()
-            self.audio.layer(args)
+            self.audio.layer(self.db.get_filepath(args[0]),self.db.get_filepath(args[1]))
         else:
             self.provide_arg_msg()
 
