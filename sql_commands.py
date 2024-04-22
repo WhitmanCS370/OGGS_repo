@@ -167,6 +167,18 @@ class databaseManager():
         except Exception as e:
             print(f"An error occurred: {e}")
             
+    def delete_file_by_name(self,filename):
+        try:
+            self.cursor.execute(
+                """
+                DELETE FROM audio_files WHERE title==(?);
+                """,(filename,)
+            )
+            os.remove(os.path.join(os.path.curdir,"sounds", filename+'.wav'))
+            return None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None            
 
     def list_files(self):
         try:
