@@ -73,8 +73,8 @@ def init_default_tags():
         """
         INSERT INTO tags (name, desc)
         VALUES 
-        ("wav", "a .wav file"),
-        ("mp3", "a .mp3 file"),
+        (".wav", "a .wav file"),
+        (".mp3", "a .mp3 file"),
         ("backwards", "a backwards audio file"),
         ("sped up", "a sped up audio file"),
         ("trimmed","a trimmed audio file"),
