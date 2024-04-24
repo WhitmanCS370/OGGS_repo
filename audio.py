@@ -143,17 +143,12 @@ class Recorder(Player):
             print(f"[{index}] {device}")
 
             
-    def record(self,path):
+    def record(self,outfileName):
         """
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
         """
-        print("Press ctrl+c / command+c to stop recording")        
-        if path[-4:]!=".wav":
-            file=path+".wav"
-            path=os.path.join(os.path.curdir, "sounds",file)
-        else:
-            path=os.path.join(os.path.curdir, 'sounds',path)
+        filepath = os.path.join(os.curdir, "sounds", str(outfileName)+".wav")
         recorder = PvRecorder(device_index=0, frame_length=512) #(32 milliseconds of 16 kHz audio)
         audio = []
         try:
@@ -163,12 +158,13 @@ class Recorder(Player):
                 audio.extend(frame)
         except KeyboardInterrupt:
             recorder.stop()
-            print(path.split("/")[-1])
-            with wave.open(path.split("/")[-1], 'w') as f:
+            print(filepath.split("/")[-1])
+            with wave.open(filepath, 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack("h" * len(audio), *audio))
         finally:
             recorder.delete()
+        return filepath
             
     def get_DateTime(self):
         today=datetime.now()

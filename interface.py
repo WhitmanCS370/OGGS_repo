@@ -231,7 +231,9 @@ class Interface(cmd.Cmd):
         Usage: record [name of new file]
         """
         if (self.validate_single_arg(args=args)):
-            self.recorder.record(args)
+            print("Press ctrl+c / command+c to stop recording")        
+            filepath = self.recorder.record(args)
+            self.db.add_from_file(filepath)
         else:
             self.provide_arg_msg()
             
