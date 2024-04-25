@@ -36,9 +36,15 @@ class FileManager():
         Does not add to database, will require updating the database
         """
         try:
-            self.os.rename(fileOriginPath, self.path + str(os.path.basename(fileOriginPath)))
+            assert self.os.path.isfile(fileOriginPath)
+            assert fileOriginPath.endswith(".wav")
+            newpath = self.os.path.join(self.path , str(os.path.basename(fileOriginPath)))
+            self.os.rename(fileOriginPath, newpath)
+            return newpath
         except FileNotFoundError:
             print(f"file: {fileOriginPath} not found")
+        except AssertionError:
+            print("File invalid")
 
     def add_file_menu(self):
         """

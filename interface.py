@@ -65,6 +65,18 @@ class Interface(cmd.Cmd):
                 self.db.add_all()
                 print("--------------------\nall files added to database.")
     
+    def do_add_file(self, args):
+        """
+        Desc: Add a file to the archive given a filepath
+        Usage: add_file <filepath>
+        """
+        if (self.validate_single_arg(args)):
+            new_path = self.files.add_file(args)
+            self.db.add_from_file(new_path)
+        else:
+            self.provide_arg_msg()
+
+
     def do_play(self, args):
         """
         Desc: Play a sound from the library.
