@@ -15,7 +15,7 @@ class FileManager():
         """
         try:
             self.os.rename(self.path + oldFileName, self.path + newFileName)
-        except FileNotFoundError:
+        except (FileNotFoundError , FileExistsError):
             print(f"file: {oldFileName} not found")
 
     def delete_file(self, fileName: str):

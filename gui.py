@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk,Label
+from tkinter import ttk,Label, Toplevel
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from audio import AudioEffects, Recorder
 from file_system import FileManager
@@ -7,17 +7,43 @@ from sql_commands import databaseManager
 from database_init import init
 from threading import Timer
 
-class gui():
-    def __init__(self):
+    
+class RenameWindow(object):
+    def __init__(self,master,db,fileManager,oldFileName):
+        self.master=master
+        self.top=Toplevel(master)
+        self.top.geometry('300x300')
+        lbl=tk.Label(self.top,text="Enter New filename")
+        lbl.grid(row=0,column=0, padx=5, pady=5,sticky="nsew")
+        self.e=tk.Entry(self.top)
+        self.e.grid(row=1,column=0,padx=5,pady=5,sticky="nsew")
+        self.b=tk.Button(self.top,text='Rename',command=lambda:[self.rename_file(db,fileManager,oldFileName)])
+        self.b.grid(row=2,column=0,padx=5,pady=5,sticky="nsew")
+        if oldFileName==None:
+            self.cleanup()
+        
+    def cleanup(self):
+        self.top.destroy()
+        
+    def rename_file(self,db,fileManager,oldFileName):
+        db.rename(oldFileName, self.e.get()+".wav")
+        fileManager.rename_file(oldFileName,self.e.get()+".wav")
+        self.value=True
+        self.top.destroy()
+        
+
+
+class mainWindow():
+    def __init__(self,root):
         self.audio = AudioEffects()
         self.files = FileManager()
-        init()
         self.recorder=Recorder()
         self.db = databaseManager()
-        
+        init()
+        self.root=root
         #for development purposes, populate database with example files
         self.db.add_all()
-        self.root = tk.Tk()
+
         self.root.title("Audio Manager")
         self.root.config(height=700)
         style = ttk.Style(self.root)
@@ -44,10 +70,10 @@ class gui():
         dropdown = ttk.Combobox(playlist_frame, width = 27, textvariable = n) 
         dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
         dropdown['values'] = (self.db.list_playlists())
-        create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[ self.db.add_playlist(name_entry.get()),self.update_playlist_list(dropdown)])
+        create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[ self.db.add_playlist(name_entry.get()),self.update_playlist_list(dropdown),self.rename])
         create_playlist.grid(row=3,column=0,padx=5, pady=5, sticky="nsew")
         
-        play_Button = ttk.Button(showing_frame, text="Play",command=lambda:[self.audio.set_currently_playing_file(self.db.get_filepath(name_entry.get())),self.audio.play()])
+        play_Button = ttk.Button(showing_frame, text="Play",command=lambda:[self.playSequence(self.get_selected_filepaths(treeview))])
         play_Button.grid(row=4, column=0, padx=5, pady=5, sticky="nsew")
         
         sequence_Button = ttk.Button(showing_frame, text="Sequece",command=lambda:self.audio.sequence(self.get_selected_filepaths(treeview)))
@@ -56,11 +82,13 @@ class gui():
         layer_Button = ttk.Button(showing_frame, text="Layer",command=lambda:self.audio.layer(self.get_selected_filepaths(treeview)))
         layer_Button.grid(row=7, column=0, padx=5, pady=5, sticky="nsew")
         
-        delete_Button = ttk.Button(showing_frame, text="Delete",command=lambda:[self.db.delete_file_by_name(name_entry.get()),self.input_files(treeview)])
+        delete_Button = ttk.Button(showing_frame, text="Delete",command=lambda:[self.db.delete_file_by_name(name_entry.get()),self.files.delete_file(name_entry.get()),self.input_files(treeview)])
         delete_Button.grid(row=8, column=0, padx=5, pady=5, sticky="nsew")
-
-
         
+        rename_Button = ttk.Button(showing_frame, text="Rename",command=lambda:[self.renamePopup(name_entry),self.input_files(treeview)])
+        rename_Button.grid(row=9,column=0,padx=5,pady=5, sticky="nsew")
+        
+
         creating_frame = ttk.LabelFrame(left_frame, text="Create Files")
         creating_frame.grid(row=1, column=0, padx=20, pady=10)
         
@@ -102,7 +130,7 @@ class gui():
         treeview.heading("Filepath", text="Filepath")
         treeview.heading("Duration", text="Duration")
         
-        treeview.bind('<ButtonRelease-1>', lambda event:self.selectItem(event,treeview,name_entry))
+        treeview.bind('<ButtonRelease-1>', lambda event :[self.selectItem(treeview,name_entry)])
         
 
         self.input_files(treeview)
@@ -116,6 +144,39 @@ class gui():
 
         self.root.mainloop()
         
+    def test(self, entry):
+        self.top=Toplevel(self.root)
+        self.top.geometry('300x300')
+        lbl=tk.Label(self.top,text="Enter New filename")
+        lbl.grid(row=0,column=0, padx=5, pady=5,sticky="nsew")
+        self.e=tk.Entry(self.top)
+        self.e.grid(row=1,column=0,padx=5,pady=5,sticky="nsew")
+        self.b=tk.Button(self.top,text='Rename',command=lambda:[self.rename_file(entry.get()+".wav")])
+        self.b.grid(row=2,column=0,padx=5,pady=5,sticky="nsew")
+        if entry.get()+".wav"==None:
+            self.cleanup()
+        
+    def cleanup(self):
+        self.top.destroy()
+        
+    def rename_file(self,oldFileName):
+        self.db.rename(oldFileName, self.e.get()+".wav")
+        self.fileManager.rename_file(oldFileName,self.e.get()+".wav")
+        self.top.destroy()
+        
+    def renamePopup(self,entry):
+        try:
+
+            self.w=RenameWindow(self.root,self.db,self.files,entry.get()+".wav")
+            print("rename")
+        except Exception as error:
+            print("none selected: ",error)
+            
+    def playSequence(self,files):
+        for file in files:
+            self.audio.set_currently_playing_file(file)
+            self.audio.play()
+
     def update_playlist_list(self,dropdown):
         try:
             dropdown['values'] = (self.db.list_playlists()[0])
@@ -125,24 +186,32 @@ class gui():
     def get_selected_filepaths(self,treeview):
         filepathList=[]
         curItems = treeview.selection()
-        filepathList.append("\n".join([str(treeview.item(i)['values'][4]) for i in curItems]))
+        curItems=list(curItems)
+        for item in curItems:
+            filepathList.append(str(treeview.item(item)['values'][4]))
+
+        return filepathList
+    
+    def get_selected_filenames(self,treeview):
+        filepathList=[]
+        curItems = treeview.selection()
+        curItems=list(curItems)
+        for item in curItems:
+            filepathList.append(str(treeview.item(item)['values'][0]))
         return filepathList
     
     def input_files(self,treeview):
-        print("hi")
+        print()
         for item in treeview.get_children():
             treeview.delete(item)
         files=self.db.list_files()
+        print(files)
         for i in range(len(files)):
             filepath=self.db.get_filepath(files[i])
+            print(files[i])
             treeview.insert("",tk.END,text=f"Item #{i+1}",values=(files[i],self.db.get_artist(files[i]),self.db.get_album(files[i]),self.db.get_genre(files[i]),filepath,self.db.get_duration(filepath)))
-    
-    # def update_tree(self,treeview):
-    #     for line in treeview.get_children():
-    #         if treeview.item(line)['values'][0] == 
-    #         print(treeview.item(line)['values'][4])
-        
-    def selectItem(self,a,treeview,name_entry):
+
+    def selectItem(self,treeview,name_entry):
         try:
             curItem = treeview.focus()
             name_entry.delete(0,tk.END)
@@ -154,8 +223,10 @@ class gui():
     
     def all_files(self):
         self.db.list_tags
+        
 
 
 
-
-
+def open_gui():
+    root = tk.Tk()
+    m=mainWindow(root)

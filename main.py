@@ -1,4 +1,5 @@
-from gui import gui
+from gui import open_gui
 
 if (__name__ == "__main__"):
-    CLI_interface = gui()
+    open_gui()
+    

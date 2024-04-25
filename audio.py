@@ -66,15 +66,16 @@ class AudioEffects(Player):
     def __init__(self):
         super()
         
-    def layer(self,file1,file2):
+    def layer(self,files):
         """
         This method will layer a list of audio files on top of one another
         """
         wavlist=[]
-        sound1= AudioSegment.from_wav(file1)
-        sound2= AudioSegment.from_wav(file2)
-        wav=sound1+sound2
-        play(wav)
+        sound1=AudioSegment.from_wav(files[0])
+        for file in files[1:]:
+            sound2= AudioSegment.from_wav(file)
+            sound1=sound1+sound2
+        play(sound1)
         
     def backward(self,filename):
         """
@@ -93,7 +94,8 @@ class AudioEffects(Player):
         This method will play a given list of audio files in sequence
         """
         for file in files:
-            self.play(file)
+            self.set_currently_playing_file(file)
+            self.play()
             
     def speed_up(self,filename,speed):
         """

@@ -174,7 +174,6 @@ class databaseManager():
                 DELETE FROM audio_files WHERE title==(?);
                 """,(filename,)
             )
-            os.remove(os.path.join(os.path.curdir,"sounds", filename+'.wav'))
             return None
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -238,9 +237,11 @@ class databaseManager():
             self.cursor.execute("""
                 UPDATE audio_files
                 SET title = (?)
-                WHERE title = (?);
-            """, (newFileName, oldFileName))
+                WHERE title == (?);
+            """, (newFileName, oldFileName)
+            )
             self.conn.commit()
+            print(self.list_files())
         except Exception as e:
             print(f"An error occurred: {e}")
     
