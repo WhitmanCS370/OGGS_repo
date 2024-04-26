@@ -236,15 +236,16 @@ class databaseManager():
         try:
             self.cursor.execute("""
                 UPDATE audio_files
-                SET title = (?)
-                WHERE title == (?);
+                SET title = ?
+                WHERE title = ?;
             """, (newFileName, oldFileName)
             )
             self.conn.commit()
             print(self.list_files())
-        except Exception as e:
-            print(f"An error occurred: {e}")
-    
+        except sqlite3.Error:
+            print(f"An error occurred: ")
+            
+
     # END FILE METHODS
         
     # START TAG METHODS

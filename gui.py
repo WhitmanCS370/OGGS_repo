@@ -7,32 +7,6 @@ from sql_commands import databaseManager
 from database_init import init
 from threading import Timer
 
-    
-class RenameWindow(object):
-    def __init__(self,master,db,fileManager,oldFileName):
-        self.master=master
-        self.top=Toplevel(master)
-        self.top.geometry('300x300')
-        lbl=tk.Label(self.top,text="Enter New filename")
-        lbl.grid(row=0,column=0, padx=5, pady=5,sticky="nsew")
-        self.e=tk.Entry(self.top)
-        self.e.grid(row=1,column=0,padx=5,pady=5,sticky="nsew")
-        self.b=tk.Button(self.top,text='Rename',command=lambda:[self.rename_file(db,fileManager,oldFileName)])
-        self.b.grid(row=2,column=0,padx=5,pady=5,sticky="nsew")
-        if oldFileName==None:
-            self.cleanup()
-        
-    def cleanup(self):
-        self.top.destroy()
-        
-    def rename_file(self,db,fileManager,oldFileName):
-        db.rename(oldFileName, self.e.get()+".wav")
-        fileManager.rename_file(oldFileName,self.e.get()+".wav")
-        self.value=True
-        self.top.destroy()
-        
-
-
 class mainWindow():
     def __init__(self,root):
         self.audio = AudioEffects()
@@ -85,24 +59,15 @@ class mainWindow():
         delete_Button = ttk.Button(showing_frame, text="Delete",command=lambda:[self.db.delete_file_by_name(name_entry.get()),self.files.delete_file(name_entry.get()),self.input_files(treeview)])
         delete_Button.grid(row=8, column=0, padx=5, pady=5, sticky="nsew")
         
-        rename_Button = ttk.Button(showing_frame, text="Rename",command=lambda:[self.renamePopup(name_entry),self.input_files(treeview)])
+        rename_Button = ttk.Button(showing_frame, text="Rename",command=lambda:[self.rename(name_entry),self.input_files(treeview)])
         rename_Button.grid(row=9,column=0,padx=5,pady=5, sticky="nsew")
         
-
-        creating_frame = ttk.LabelFrame(left_frame, text="Create Files")
-        creating_frame.grid(row=1, column=0, padx=20, pady=10)
+        speed_Up_Button = ttk.Button(showing_frame, text="Speed Up",command=lambda:[self.db.add_from_file(self.audio.speed_up(self.db.get_filepath(name_entry.get()),amount_entry.get())),self.input_files(treeview)])
+        speed_Up_Button.grid(row=10, column=0, padx=5, pady=5, sticky="nsew")
         
-        backward_Button = ttk.Button(creating_frame, text="Backward",command=lambda:[self.db.add_from_file(self.audio.backward(self.db.get_filepath(name_entry.get()))),self.input_files(treeview)])
-        backward_Button.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
-        
-        speed_Up_Frame = ttk.Frame(creating_frame)
-        speed_Up_Frame.grid(row=2, column=0)
-        amount_entry = ttk.Entry(speed_Up_Frame,width=10)
-        amount_entry.insert(0, "Amount")
-        amount_entry.bind("<FocusIn>", lambda e: amount_entry.delete('0', 'end'))
-        amount_entry.grid(row=0, column=1, padx=5, pady=(0, 5), sticky="ew")
-        speed_Up_Button = ttk.Button(speed_Up_Frame, text="Speed Up",command=lambda:[self.db.add_from_file(self.audio.speed_up(self.db.get_filepath(name_entry.get()),amount_entry.get())),self.input_files(treeview)])
-        speed_Up_Button.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
+        backward_Button = ttk.Button(showing_frame, text="Backward",command=lambda:[self.db.add_from_file(self.audio.backward(self.db.get_filepath(name_entry.get()))),self.input_files(treeview)])
+        backward_Button.grid(row=11, column=0, padx=5, pady=5, sticky="nsew")
+    
         
         tree_frame = ttk.Frame(frame)
         tree_frame.grid(row=0, column=1, pady=10)
@@ -144,33 +109,45 @@ class mainWindow():
 
         self.root.mainloop()
         
-    def test(self, entry):
+    def rename(self, entry):
         self.top=Toplevel(self.root)
         self.top.geometry('300x300')
-        lbl=tk.Label(self.top,text="Enter New filename")
-        lbl.grid(row=0,column=0, padx=5, pady=5,sticky="nsew")
-        self.e=tk.Entry(self.top)
-        self.e.grid(row=1,column=0,padx=5,pady=5,sticky="nsew")
-        self.b=tk.Button(self.top,text='Rename',command=lambda:[self.rename_file(entry.get()+".wav")])
-        self.b.grid(row=2,column=0,padx=5,pady=5,sticky="nsew")
+        rename_Frame = ttk.Frame(self.top)
+        rename_Frame.grid(sticky= "we")
+        lbl=tk.Label(rename_Frame,text="Enter New filename")
+        lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
+        rename_entry=tk.Entry(rename_Frame)
+        rename_entry.grid(row=1,column=0,padx=5,pady=5,sticky="n")
+        rename_button=tk.Button(rename_Frame,text='Rename',command=lambda:[self.rename_file(rename_entry,entry.get()+".wav")])
+        rename_button.grid(row=2,column=0,padx=5,pady=5,sticky="n")
         if entry.get()+".wav"==None:
             self.cleanup()
         
     def cleanup(self):
         self.top.destroy()
         
-    def rename_file(self,oldFileName):
-        self.db.rename(oldFileName, self.e.get()+".wav")
-        self.fileManager.rename_file(oldFileName,self.e.get()+".wav")
+    def rename_file(self,entry,oldFileName):
+        print("hello")
+        self.db.rename(oldFileName, entry.get()+".wav")
+        self.files.rename_file(oldFileName,entry.get()+".wav")
         self.top.destroy()
         
-    def renamePopup(self,entry):
-        try:
-
-            self.w=RenameWindow(self.root,self.db,self.files,entry.get()+".wav")
-            print("rename")
-        except Exception as error:
-            print("none selected: ",error)
+    def speed_up(self, entry):
+        self.top=Toplevel(self.root)
+        self.top.geometry('300x300')
+        speed_up_Frame = ttk.Frame(self.top)
+        speed_up_Frame.place(anchor=tk.CENTER)
+        lbl=tk.Label(speed_up_Frame,text="How much do you want to speed it up by?")
+        lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
+        amount_entry = ttk.Entry(speed_up_Frame,width=10)
+        amount_entry.insert(0, "Amount")
+        amount_entry.bind("<FocusIn>", lambda e: amount_entry.delete('0', 'end'))
+        amount_entry.grid(row=0, column=1, padx=5, pady=(0, 5), sticky="ew")
+        rename_button=tk.Button(speed_up_Frame,text='Rename',command=lambda:[])
+        rename_button.grid(row=2,column=0,padx=5,pady=5,sticky="n")
+        if entry.get()+".wav"==None:
+            self.cleanup()
+        
             
     def playSequence(self,files):
         for file in files:
@@ -202,15 +179,15 @@ class mainWindow():
     
     def input_files(self,treeview):
         print()
-        for item in treeview.get_children():
-            treeview.delete(item)
-        files=self.db.list_files()
-        print(files)
-        for i in range(len(files)):
-            filepath=self.db.get_filepath(files[i])
-            print(files[i])
-            treeview.insert("",tk.END,text=f"Item #{i+1}",values=(files[i],self.db.get_artist(files[i]),self.db.get_album(files[i]),self.db.get_genre(files[i]),filepath,self.db.get_duration(filepath)))
-
+        try:
+            for item in treeview.get_children():
+                treeview.delete(item)
+            files=self.db.list_files()
+            for i in range(len(files)):
+                filepath=self.db.get_filepath(files[i])
+                treeview.insert("",tk.END,text=f"Item #{i+1}",values=(files[i],self.db.get_artist(files[i]),self.db.get_album(files[i]),self.db.get_genre(files[i]),filepath,self.db.get_duration(filepath)))
+        except:
+            print("didnt work")
     def selectItem(self,treeview,name_entry):
         try:
             curItem = treeview.focus()
