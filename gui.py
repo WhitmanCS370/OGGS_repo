@@ -6,10 +6,11 @@ from file_system import FileManager
 from sql_commands import databaseManager
 from database_init import init
 from threading import Timer
-
+from os import path
     
 class RenameWindow(object):
     def __init__(self,master,db,fileManager,oldFileName):
+        self.pathing = path
         self.master=master
         self.top=Toplevel(master)
         self.top.geometry('300x300')
@@ -26,8 +27,12 @@ class RenameWindow(object):
         self.top.destroy()
         
     def rename_file(self,db,fileManager,oldFileName):
-        db.rename(oldFileName, self.e.get()+".wav")
-        fileManager.rename_file(oldFileName,self.e.get()+".wav")
+        print("rename file called")
+        newFileName = self.e.get()+".wav"
+        print(oldFileName, newFileName)
+        fileManager.rename_file(oldFileName,newFileName) #first, rename the actual file
+        db.add_from_file(self.pathing.join(self.pathing.curdir, "sounds", newFileName))
+        db.delete_file_by_name(oldFileName[:-4])
         self.value=True
         self.top.destroy()
         
@@ -70,7 +75,7 @@ class mainWindow():
         dropdown = ttk.Combobox(playlist_frame, width = 27, textvariable = n) 
         dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
         dropdown['values'] = (self.db.list_playlists())
-        create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[ self.db.add_playlist(name_entry.get()),self.update_playlist_list(dropdown),self.rename])
+        create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.db.add_playlist(name_entry.get()),self.update_playlist_list(dropdown),self.rename])
         create_playlist.grid(row=3,column=0,padx=5, pady=5, sticky="nsew")
         
         play_Button = ttk.Button(showing_frame, text="Play",command=lambda:[self.playSequence(self.get_selected_filepaths(treeview))])
@@ -161,12 +166,13 @@ class mainWindow():
         
     def rename_file(self,oldFileName):
         self.db.rename(oldFileName, self.e.get()+".wav")
+        print("rename called")
         self.fileManager.rename_file(oldFileName,self.e.get()+".wav")
         self.top.destroy()
         
     def renamePopup(self,entry):
         try:
-
+            
             self.w=RenameWindow(self.root,self.db,self.files,entry.get()+".wav")
             print("rename")
         except Exception as error:
