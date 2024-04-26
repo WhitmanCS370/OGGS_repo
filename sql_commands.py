@@ -232,20 +232,17 @@ class databaseManager():
             print(f"An error occurred: {e}")
             return None
 
-    def rename(self, oldFileName, newFileName):
+    def rename(self, oldFileName, newFileName, newFilepath):
         try:
             self.cursor.execute("""
                 UPDATE audio_files
                 SET title = ?
                 WHERE title = ?;
-            """, (newFileName, oldFileName)
-            )
+            """, (newFileName, oldFileName))
             self.conn.commit()
-            print(self.list_files())
-        except sqlite3.Error:
-            print(f"An error occurred: ")
-            
-
+        except Exception as e:
+            print(f"An error occurred: {e}")
+    
     # END FILE METHODS
         
     # START TAG METHODS

@@ -44,7 +44,7 @@ class mainWindow():
         dropdown = ttk.Combobox(playlist_frame, width = 27, textvariable = n) 
         dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
         dropdown['values'] = (self.db.list_playlists())
-        create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[ self.db.add_playlist(name_entry.get()),self.update_playlist_list(dropdown),self.rename])
+        create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.db.add_playlist(name_entry.get()),self.update_playlist_list(dropdown),self.rename])
         create_playlist.grid(row=3,column=0,padx=5, pady=5, sticky="nsew")
         
         play_Button = ttk.Button(showing_frame, text="Play",command=lambda:[self.playSequence(self.get_selected_filepaths(treeview))])
