@@ -109,15 +109,19 @@ class databaseManager():
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def song_to_playlist(self, playlist ,song):
+    def song_to_playlist(self, playlist ,songs):
         try:
             playlistid = self.get_playlist_id(playlist)
-            songid = self.get_song_id(song)
-            self.cursor.execute("""
-                INSERT INTO playlist_items (playlist_id, audio_file_id)
-                VALUES (?, ?)
-            """, (playlistid, songid))
-            self.conn.commit()
+            if type(songs)==str:
+                songs=songs.split()
+            for song in songs:
+                title = song.split("/")[-1].split(".")[0]
+                songid = self.get_song_id(title)
+                self.cursor.execute("""
+                    INSERT INTO playlist_items (playlist_id, audio_file_id)
+                    VALUES (?, ?)
+                """, (playlistid, songid))
+                self.conn.commit()
         except Exception as e:
             print(f"An error occurred: {e}")
 

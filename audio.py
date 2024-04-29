@@ -150,7 +150,7 @@ class Recorder(Player):
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
         """
-        print("Press ctrl+c / command+c to stop recording")        
+    
         if path[-4:]!=".wav":
             file=path+".wav"
             path=os.path.join(os.path.curdir, "sounds",file)
