@@ -158,6 +158,20 @@ class databaseManager():
             print(f"An error occurred: {e}")
             print("as")
             return None
+    
+    def get_name(self, filepath):
+        try:
+            self.cursor.execute(
+                """
+                    SELECT DISTINCT title FROM audio_files
+                    WHERE filepath == (?);
+                """,(filepath,)
+            )
+            path = np.array(self.cursor.fetchall())
+            return path[0][0] if path[0][0] else None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
 
     def add_from_file(self, filepath):
         try:
