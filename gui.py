@@ -46,10 +46,10 @@ class mainWindow():
         playlist_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
         playlist_dropdown['values'] = (self.db.list_playlists())
         playlist_dropdown.bind("<<ComboboxSelected>>", lambda x:self.show_playlist(playlist_dropdown, treeview))
-        create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.db.add_playlist(name_entry.get()),self.update_playlist_list(playlist_dropdown)])
+        create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.add_playlist_popup(playlist_dropdown)])
         create_playlist.grid(row=3,column=0,padx=5, pady=5, sticky="nsew")
         
-        add_to_playlist=ttk.Button(showing_frame,text="Add To Playlist", command=lambda:[self.playlist_popup(self.get_selected_filepaths(treeview))])
+        add_to_playlist=ttk.Button(showing_frame,text="Add To Playlist", command=lambda:[self.to_playlist_popup(self.get_selected_filepaths(treeview))])
         add_to_playlist.grid(row=4,column=0,padx=5, pady=5, sticky="nsew")
         
         play_button = ttk.Button(showing_frame, text="Play",command=lambda:[self.playSequence(self.get_selected_filepaths(treeview))])
@@ -139,7 +139,7 @@ class mainWindow():
         self.top.geometry('300x300')
         self.pathing = path
         rename_Frame = ttk.Frame(self.top)
-        rename_Frame.grid(sticky= "we")
+        rename_Frame.pack()
         lbl=tk.Label(rename_Frame,text="Enter New filename")
         lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
         rename_entry=tk.Entry(rename_Frame)
@@ -186,11 +186,11 @@ class mainWindow():
 
 
 
-    def playlist_popup(self, entry):
+    def to_playlist_popup(self, entry):
         self.top=Toplevel(self.root)
-        self.top.geometry('400x300')
+        self.top.geometry('300x300')
         playlist_Frame = ttk.Frame(self.top)
-        playlist_Frame.grid(sticky= "we")
+        playlist_Frame.pack()
         lbl=tk.Label(playlist_Frame,text="Add file to playlist")
         lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
         n = tk.StringVar() 
@@ -198,6 +198,18 @@ class mainWindow():
         playlist_dropdown.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
         playlist_dropdown['values'] = (self.db.list_playlists()[0])
         playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.song_to_playlist(playlist_dropdown.get(),entry), self.cleanup(self.top)])
+        playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        
+    def add_playlist_popup(self,playlist_dropdown):
+        self.top=Toplevel(self.root)
+        self.top.geometry('300x300')
+        playlist_Frame = ttk.Frame(self.top)
+        playlist_Frame.pack()
+        name_entry=tk.Label(playlist_Frame,text="What is the playlist's name?")
+        name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+        amount_entry = ttk.Entry(playlist_Frame,width=10)
+        amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+        playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.add_playlist(name_entry.get()),self.update_playlist_list(playlist_dropdown), self.cleanup(self.top)])
         playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
             
     def trim_popup(self,entry):
