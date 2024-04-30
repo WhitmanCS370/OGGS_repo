@@ -159,14 +159,14 @@ class databaseManager():
             print("as")
             return None
 
-    def add_from_file(self, filepath, artist = None, album = None, genre = None):
+    def add_from_file(self, filepath):
         try:
             duration = self.get_duration(filepath)
             title = filepath.split("/")[-1][:-4]
             self.cursor.execute("""
-                INSERT INTO audio_files (title, artist, album, genre, filepath, duration)
-                VALUES (?, ?, ?, ?, ?, ?);
-            """, (title, artist, album, genre, filepath, duration))
+                INSERT INTO audio_files (title, filepath, duration)
+                VALUES (?, ?, ?);
+            """, (title, filepath, duration))
             self.conn.commit()
         except sqlite3.IntegrityError:
             print("File already exists in the database.")
@@ -312,8 +312,23 @@ class databaseManager():
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
-    
-    # END TAG METHODS
+        
+    def tags_from_file(self, file):
+        try:
+            fileID = self.get_song_id(file)
+            self.cursor.execute("""
+                SELECT DISTINCT tags.name
+                FROM tags
+                JOIN file_tags ON tags.id = file_tags.tag_id
+                WHERE file_tags.audio_file_id = ?;
+            """, (fileID,))
+            tags = np.array(self.cursor.fetchall())
+            return tags.ravel()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None    
+        
+        # END TAG METHODS
     
 
     # helper methods for testing

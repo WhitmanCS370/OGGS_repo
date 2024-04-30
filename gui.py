@@ -111,14 +111,12 @@ class mainWindow():
         treeScroll = ttk.Scrollbar(tree_frame)
         treeScroll.pack(side="right", fill="y")
 
-        cols = ("Title", "Artist", "Album", "Genre", "Filepath", "Duration")
+        cols = ("Title", "Filepath","Tags", "Duration")
         treeview = ttk.Treeview(tree_frame, show="headings", yscrollcommand=treeScroll.set, columns=cols, height=13)
 
         treeview.heading("#0",text="File")
         treeview.heading("Title", text="Title")
-        treeview.heading("Artist", text="Artist")
-        treeview.heading("Album", text="Album")
-        treeview.heading("Genre", text="Genre")
+        treeview.heading("Tags", text = "Tags")
         treeview.heading("Filepath", text="Filepath")
         treeview.heading("Duration", text="Duration")
         
@@ -299,7 +297,7 @@ class mainWindow():
             files=self.db.list_files()
             for i in range(len(files)):
                 filepath=self.db.get_filepath(files[i])
-                treeview.insert("",tk.END,text=f"Item #{i+1}",values=(files[i],self.db.get_artist(files[i]),self.db.get_album(files[i]),self.db.get_genre(files[i]),filepath,self.db.get_duration(filepath)))
+                treeview.insert("",tk.END,text=f"Item #{i+1}",values=(files[i],filepath,self.db.tags_from_file(files[i]),self.db.get_duration(filepath)))
         except:
             print("didnt work")
             
@@ -321,7 +319,7 @@ class mainWindow():
         files=self.db.get_playlist(playlist_dropdown.get())
         for i in range(len(files)):
             title = files[i].split("/")[-1].split(".")[0]
-            treeview.insert("",tk.END,text=f"Item #{i+1}",values=(title,self.db.get_artist(title),self.db.get_album(title),self.db.get_genre(title),files[i],self.db.get_duration(files[i])))
+            treeview.insert("",tk.END,text=f"Item #{i+1}",values=(title,files[i],self.db.tags_from_file(title),self.db.get_duration(files[i])))
 
         
         

@@ -10,19 +10,16 @@ def init():
     cursor = conn.cursor()
     
     # Drop ALL tables, revert to clean slate
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = cursor.fetchall()
-    for table in tables:
-        cursor.execute(f"DROP TABLE IF EXISTS {table[0]}")
+    # cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    # tables = cursor.fetchall()
+    # for table in tables:
+    #     cursor.execute(f"DROP TABLE IF EXISTS {table[0]}")
 
     # Create the tables
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS audio_files (
             id INTEGER PRIMARY KEY,
             title TEXT UNIQUE,
-            artist TEXT,
-            album TEXT, 
-            genre TEXT,
             filepath TEXT,
             duration INTEGER
         )
