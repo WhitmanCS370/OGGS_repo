@@ -79,9 +79,9 @@ class databaseManager():
                 SELECT DISTINCT name FROM playlists;
             """)
             playlists = np.array(self.cursor.fetchall())
-            return playlists.ravel() if playlists else None
+            return playlists.ravel()
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"An error occurred listing playlists: {e}")
             return None
 
     def get_playlist(self, playlist):
@@ -109,15 +109,19 @@ class databaseManager():
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def song_to_playlist(self, playlist ,song):
+    def song_to_playlist(self, playlist ,songs):
         try:
             playlistid = self.get_playlist_id(playlist)
-            songid = self.get_song_id(song)
-            self.cursor.execute("""
-                INSERT INTO playlist_items (playlist_id, audio_file_id)
-                VALUES (?, ?)
-            """, (playlistid, songid))
-            self.conn.commit()
+            if type(songs)==str:
+                songs=songs.split()
+            for song in songs:
+                title = song.split("/")[-1].split(".")[0]
+                songid = self.get_song_id(title)
+                self.cursor.execute("""
+                    INSERT INTO playlist_items (playlist_id, audio_file_id)
+                    VALUES (?, ?)
+                """, (playlistid, songid))
+                self.conn.commit()
         except Exception as e:
             print(f"An error occurred: {e}")
 
@@ -150,7 +154,9 @@ class databaseManager():
             path = np.array(self.cursor.fetchall())
             return path[0][0] if path[0][0] else None
         except Exception as e:
+            print("add")
             print(f"An error occurred: {e}")
+            print("as")
             return None
 
     def add_from_file(self, filepath, artist = None, album = None, genre = None):
@@ -167,6 +173,17 @@ class databaseManager():
         except Exception as e:
             print(f"An error occurred: {e}")
             
+    def delete_file_by_name(self,filename):
+        try:
+            self.cursor.execute(
+                """
+                DELETE FROM audio_files WHERE title==(?);
+                """,(filename,)
+            )
+            return None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None            
 
     def list_files(self):
         try:
@@ -221,12 +238,12 @@ class databaseManager():
             print(f"An error occurred: {e}")
             return None
 
-    def rename(self, oldFileName, newFileName):
+    def rename(self, oldFileName, newFileName, newFilepath):
         try:
             self.cursor.execute("""
                 UPDATE audio_files
-                SET title = (?)
-                WHERE title = (?);
+                SET title = ?
+                WHERE title = ?;
             """, (newFileName, oldFileName))
             self.conn.commit()
         except Exception as e:

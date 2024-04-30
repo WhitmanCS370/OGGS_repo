@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from pvrecorder import PvRecorder
 import wave, struct 
 from pydub import AudioSegment
@@ -66,17 +67,18 @@ class AudioEffects(Player):
     def __init__(self):
         super()
         
-    def layer(self,file1,file2):
+    def layer(self,files):
         """
         This method will layer a list of audio files on top of one another
         """
         wavlist=[]
-        sound1= AudioSegment.from_wav(file1)
-        sound2= AudioSegment.from_wav(file2)
-        wav=sound1+sound2
-        play(wav)
+        sound1=AudioSegment.from_wav(files[0])
+        for file in files[1:]:
+            sound2= AudioSegment.from_wav(file)
+            sound1=sound1+sound2
+        play(sound1)
         
-    def backward(self,filename):
+    def backward(self,filename,db):
         """
         This method will play an audio file backwards
         """
@@ -86,6 +88,7 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_backward')
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
+        db.add_from_file(filename)
         return filename
         
     def sequence(self,files):
@@ -93,9 +96,10 @@ class AudioEffects(Player):
         This method will play a given list of audio files in sequence
         """
         for file in files:
-            self.play(file)
+            self.set_currently_playing_file(file)
+            self.play()
             
-    def speed_up(self,filename,speed):
+    def speed_up(self,filename,speed,db):
         """
         creates a new file but speeds it up
         """
@@ -111,10 +115,11 @@ class AudioEffects(Player):
             hashlist.insert(-4, '_speed'+speed)
             filename=''.join(hashlist)
         so.export(filename,format="wav")
+        db.add_from_file(filename)
         return filename
         
             
-    def trim(self,filename,startTimeStamp,endTimeStamp):
+    def trim(self,filename,startTimeStamp,endTimeStamp,db):
         """
         trims the specified file at the sime stamps stated
         """
@@ -125,8 +130,34 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_trim')
         filename=''.join(hashlist)
         sound_export.export(filename,format="wav")
+        db.add_from_file(filename)
         return filename
-        
+
+    def apply_distortion(self, filename, gain=20):
+        """
+        apply a distortion effect to the audio file using specified gain factor
+        """
+        sound = AudioSegment.from_file(filename)
+        samples = np.array(sound.get_array_of_samples())
+        # amplify the sound by the gain factor
+        amplified_samples = samples * gain
+        # clip the samples to introduce distortion
+        clipped_samples = np.clip(amplified_samples, -32768, 32767)
+        # scaling samples back to the original audio range
+        max_int16 = np.max(np.abs(clipped_samples))
+        if max_int16 > 0:  # no division by zero
+            clipped_samples = clipped_samples * (32767 / max_int16)
+        # back to int16
+        clipped_samples = clipped_samples.astype(np.int16)
+        # create new audio from clipped samples
+        distorted_sound = sound._spawn(clipped_samples.tobytes())
+        # new filename for the distorted version
+        hashlist = list(filename)
+        hashlist.insert(-4, '_distorted')
+        distorted_filename = ''.join(hashlist)
+        distorted_sound.export(distorted_filename, format="wav")
+        return distorted_filename
+    
     def check_length(self,filename):
         sound = AudioSegment.from_wav(filename)
         duration = sound.duration_seconds
@@ -162,6 +193,7 @@ class Recorder(Player):
             with wave.open(filepath, 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack("h" * len(audio), *audio))
+            db.add_from_file(path)
         finally:
             recorder.delete()
         return filepath
