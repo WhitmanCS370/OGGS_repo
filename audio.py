@@ -77,7 +77,7 @@ class AudioEffects(Player):
             sound1=sound1+sound2
         play(sound1)
         
-    def backward(self,filename):
+    def backward(self,filename,db):
         """
         This method will play an audio file backwards
         """
@@ -87,6 +87,7 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_backward')
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
+        db.add_from_file(filename)
         return filename
         
     def sequence(self,files):
@@ -97,7 +98,7 @@ class AudioEffects(Player):
             self.set_currently_playing_file(file)
             self.play()
             
-    def speed_up(self,filename,speed):
+    def speed_up(self,filename,speed,db):
         """
         creates a new file but speeds it up
         """
@@ -113,10 +114,11 @@ class AudioEffects(Player):
             hashlist.insert(-4, '_speed'+speed)
             filename=''.join(hashlist)
         so.export(filename,format="wav")
+        db.add_from_file(filename)
         return filename
         
             
-    def trim(self,filename,startTimeStamp,endTimeStamp):
+    def trim(self,filename,startTimeStamp,endTimeStamp,db):
         """
         trims the specified file at the sime stamps stated
         """
@@ -127,6 +129,7 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_trim')
         filename=''.join(hashlist)
         sound_export.export(filename,format="wav")
+        db.add_from_file(filename)
         return filename
         
     def check_length(self,filename):
@@ -145,7 +148,7 @@ class Recorder(Player):
             print(f"[{index}] {device}")
 
             
-    def record(self,path):
+    def record(self,path,db):
         """
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
@@ -169,6 +172,7 @@ class Recorder(Player):
             with wave.open(path.split("/")[-1], 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack("h" * len(audio), *audio))
+            db.add_from_file(path)
         finally:
             recorder.delete()
             
