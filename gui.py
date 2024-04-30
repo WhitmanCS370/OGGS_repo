@@ -81,7 +81,7 @@ class mainWindow():
         trim_button = ttk.Button(showing_frame, text="Trim",command=lambda:[self.trim_popup(name_entry)])
         trim_button.grid(row=14, column=0, padx=5, pady=5, sticky="nsew")
         
-        add_file_button = ttk.Button(showing_frame, text="Add File",command=lambda:[self.add_file_popup(name_entry)])
+        add_file_button = ttk.Button(showing_frame, text="Add File", command=lambda: [self.add_file_popup(), self.input_files(treeview)])
         add_file_button.grid(row=15, column=0, padx=5, pady=5, sticky="nsew")
         
         duplicate_file_button = ttk.Button(showing_frame, text="Duplicate File",command=lambda:[self.duplicate_file_popup(name_entry)])
@@ -255,8 +255,12 @@ class mainWindow():
         playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
 
         
-    def add_file_popup(self,entry):
-        print('add file')
+    def add_file_popup(self):
+        filepath = askopenfilename()  # Open file dialog to choose a file
+        if filepath:
+            moved_filepath = self.files.add_file(filepath)
+            self.db.add_from_file(moved_filepath)
+            print('File added successfully')
         
     def duplicate_file_popup(self,entry):
         print('dup file')
