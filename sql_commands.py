@@ -154,7 +154,9 @@ class databaseManager():
             path = np.array(self.cursor.fetchall())
             return path[0][0] if path[0][0] else None
         except Exception as e:
+            print("add")
             print(f"An error occurred: {e}")
+            print("as")
             return None
 
     def add_from_file(self, filepath, artist = None, album = None, genre = None):

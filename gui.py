@@ -5,7 +5,7 @@ from audio import AudioEffects, Recorder
 from file_system import FileManager
 from sql_commands import databaseManager
 from database_init import init
-from threading import Timer
+from RangeSlider.RangeSlider import RangeSliderH
 from os import path
 
 class mainWindow():
@@ -135,17 +135,20 @@ class mainWindow():
         self.root.mainloop()
         
     def rename_popup(self, entry):
-        self.top=Toplevel(self.root)
-        self.top.geometry('300x300')
-        self.pathing = path
-        rename_Frame = ttk.Frame(self.top)
-        rename_Frame.pack()
-        lbl=tk.Label(rename_Frame,text="Enter New filename")
-        lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
-        rename_entry=tk.Entry(rename_Frame)
-        rename_entry.grid(row=1,column=0,padx=5,pady=5,sticky="n")
-        rename_button=tk.Button(rename_Frame,text='Rename',command=lambda:[self.rename_file(rename_entry,entry.get()+".wav"), self.cleanup(self.top)])
-        rename_button.grid(row=2,column=0,padx=5,pady=5,sticky="n")
+        try:
+            self.top=Toplevel(self.root)
+            self.top.geometry('300x300')
+            self.pathing = path
+            rename_Frame = ttk.Frame(self.top)
+            rename_Frame.pack()
+            lbl=tk.Label(rename_Frame,text="Enter New filename")
+            lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
+            rename_entry=tk.Entry(rename_Frame)
+            rename_entry.grid(row=1,column=0,padx=5,pady=5,sticky="n")
+            rename_button=tk.Button(rename_Frame,text='Rename',command=lambda:[self.rename_file(rename_entry,entry.get()+".wav"), self.cleanup(self.top)])
+            rename_button.grid(row=2,column=0,padx=5,pady=5,sticky="n")
+        except Exception as e:
+            print(f"An error occurred: {e}")
         
     def cleanup(self,win):
         win.destroy()
@@ -160,60 +163,92 @@ class mainWindow():
         self.top.destroy()
         
     def speed_up_popup(self, entry):
-        self.top=Toplevel(self.root)
-        self.top.geometry('300x300')
-        speed_up_Frame = ttk.Frame(self.top)
-        speed_up_Frame.pack()
-        lbl=tk.Label(speed_up_Frame,text="How much do you want to speed it up by?(needs to be numeric)")
-        lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
-        amount_entry = ttk.Entry(speed_up_Frame,width=10)
-        amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-        sp_popup_button=tk.Button(speed_up_Frame,text='Speed Up',command=lambda:[self.audio.speed_up(self.db.get_filepath(entry.get()),amount_entry.get()), self.cleanup(self.top)])
-        sp_popup_button.grid(row=2,column=0,padx=5,pady=5,sticky="n")
+        try:
+            self.top=Toplevel(self.root)
+            self.top.geometry('300x300')
+            speed_up_Frame = ttk.Frame(self.top)
+            speed_up_Frame.pack()
+            lbl=tk.Label(speed_up_Frame,text="How much do you want to speed it up by?(needs to be numeric)")
+            lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
+            amount_entry = ttk.Entry(speed_up_Frame,width=10)
+            amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+            sp_popup_button=tk.Button(speed_up_Frame,text='Speed Up',command=lambda:[self.audio.speed_up(self.db.get_filepath(entry.get()),amount_entry.get()), self.cleanup(self.top)])
+            sp_popup_button.grid(row=2,column=0,padx=5,pady=5,sticky="n")
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
 
     def record_popup(self, entry):
-        self.top=Toplevel(self.root)
-        self.top.geometry('300x300')
-        rename_Frame = ttk.Frame(self.top)
-        rename_Frame.pack()
-        lbl=tk.Label(rename_Frame,text="Enter New filename")
-        lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
-        amount_entry = ttk.Entry(rename_Frame,width=10)
-        amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-        rec_popup_button=tk.Button(rename_Frame, text='Record',command = lambda:[self.recorder.record(amount_entry.get())])
-        rec_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        try:
+            self.top=Toplevel(self.root)
+            self.top.geometry('300x300')
+            rename_Frame = ttk.Frame(self.top)
+            rename_Frame.pack()
+            lbl=tk.Label(rename_Frame,text="Enter New filename")
+            lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+            amount_entry = ttk.Entry(rename_Frame,width=10)
+            amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+            rec_popup_button=tk.Button(rename_Frame, text='Record',command = lambda:[self.recorder.record(amount_entry.get())])
+            rec_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            
 
 
 
     def to_playlist_popup(self, entry):
-        self.top=Toplevel(self.root)
-        self.top.geometry('300x300')
-        playlist_Frame = ttk.Frame(self.top)
-        playlist_Frame.pack()
-        lbl=tk.Label(playlist_Frame,text="Add file to playlist")
-        lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
-        n = tk.StringVar() 
-        playlist_dropdown = ttk.Combobox(playlist_Frame, width = 27, textvariable = n) 
-        playlist_dropdown.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
-        playlist_dropdown['values'] = (self.db.list_playlists()[0])
-        playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.song_to_playlist(playlist_dropdown.get(),entry), self.cleanup(self.top)])
-        playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        try:
+            self.top=Toplevel(self.root)
+            self.top.geometry('300x300')
+            playlist_Frame = ttk.Frame(self.top)
+            playlist_Frame.pack()
+            lbl=tk.Label(playlist_Frame,text="Add file to playlist")
+            lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+            n = tk.StringVar() 
+            playlist_dropdown = ttk.Combobox(playlist_Frame, width = 27, textvariable = n) 
+            playlist_dropdown.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
+            playlist_dropdown['values'] = (self.db.list_playlists()[0])
+            playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.song_to_playlist(playlist_dropdown.get(),entry), self.cleanup(self.top)])
+            playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        except TypeError:
+            print("error occured: Select file to add")
         
     def add_playlist_popup(self,playlist_dropdown):
-        self.top=Toplevel(self.root)
-        self.top.geometry('300x300')
-        playlist_Frame = ttk.Frame(self.top)
-        playlist_Frame.pack()
-        name_entry=tk.Label(playlist_Frame,text="What is the playlist's name?")
-        name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
-        amount_entry = ttk.Entry(playlist_Frame,width=10)
-        amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-        playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.add_playlist(name_entry.get()),self.update_playlist_list(playlist_dropdown), self.cleanup(self.top)])
-        playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        try:
+            self.top=Toplevel(self.root)
+            self.top.geometry('300x300')
+            playlist_Frame = ttk.Frame(self.top)
+            playlist_Frame.pack()
+            name_entry=tk.Label(playlist_Frame,text="What is the playlist's name?")
+            name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+            playlist_entry = ttk.Entry(playlist_Frame,width=10)
+            playlist_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+            playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.add_playlist(playlist_entry.get()),self.update_playlist_list(playlist_dropdown), self.cleanup(self.top)])
+            playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        except Exception as e:
+            print(f"An error occurred: {e}")
             
     def trim_popup(self,entry):
-        print('trim')
+        try:
+            self.top=Toplevel(self.root)
+            self.top.geometry('450x300')
+            trim_Frame = ttk.Frame(self.top)
+            trim_Frame.pack()
+            name_entry=tk.Label(trim_Frame,text="trim it?")
+            name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+            hLeft = tk.DoubleVar(value = 0)  #left handle variable initialised to value 0.2
+            filepath=self.db.get_filepath(entry.get())
+            duration=self.db.get_duration(filepath)
+            hRight = tk.DoubleVar(value = duration)  #right handle variable initialised to value 0.85
+            hSlider = RangeSliderH( trim_Frame , [hLeft, hRight], padX = 38.24, max_val=int(duration) ,step_marker = True, step_size = 0.1)   #horizontal slider
+            hSlider.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+            playlist_popup_button=tk.Button(trim_Frame, text='Trim',command = lambda:[self.audio.trim(filepath,int(hLeft.get()),int(hRight.get())), self.cleanup(self.top)])
+            playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        except Exception as e:
+            print("trim")
+            print(f"An error occurred: {e}")
+            print("after")
+            
         
     def add_file_popup(self,entry):
         print('add file')
