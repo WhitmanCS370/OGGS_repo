@@ -1,4 +1,4 @@
 numpy==1.26.4
 pvrecorder==1.2.2
 pydub==0.25.1
-RangeSlider=2023.07.2
+RangeSlider == 2023.07.2

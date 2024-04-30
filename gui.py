@@ -44,7 +44,7 @@ class mainWindow():
         n = tk.StringVar() 
         playlist_dropdown = ttk.Combobox(playlist_frame, width = 27, textvariable = n) 
         playlist_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
-        playlist_dropdown['values'] = (self.db.list_playlists())
+        playlist_dropdown['values'] = tuple(self.db.list_playlists())
         playlist_dropdown.bind("<<ComboboxSelected>>", lambda x:self.show_playlist(playlist_dropdown, treeview))
         create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.add_playlist_popup(playlist_dropdown)])
         create_playlist.grid(row=3,column=0,padx=5, pady=5, sticky="nsew")
@@ -52,11 +52,8 @@ class mainWindow():
         add_to_playlist=ttk.Button(showing_frame,text="Add To Playlist", command=lambda:[self.to_playlist_popup(self.get_selected_filepaths(treeview))])
         add_to_playlist.grid(row=4,column=0,padx=5, pady=5, sticky="nsew")
         
-        play_button = ttk.Button(showing_frame, text="Play",command=lambda:[self.playSequence(self.get_selected_filepaths(treeview))])
+        play_button = ttk.Button(showing_frame, text="Play",command=lambda:[self.audio.sequence(self.get_selected_filepaths(treeview))])
         play_button.grid(row=6, column=0, padx=5, pady=5, sticky="nsew")
-        
-        sequence_button = ttk.Button(showing_frame, text="Sequece",command=lambda:self.audio.sequence(self.get_selected_filepaths(treeview)))
-        sequence_button.grid(row=7, column=0, padx=5, pady=5, sticky="nsew")
         
         layer_button = ttk.Button(showing_frame, text="Layer",command=lambda:self.audio.layer(self.get_selected_filepaths(treeview)))
         layer_button.grid(row=8, column=0, padx=5, pady=5, sticky="nsew")
@@ -172,7 +169,7 @@ class mainWindow():
             lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
             amount_entry = ttk.Entry(speed_up_Frame,width=10)
             amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-            sp_popup_button=tk.Button(speed_up_Frame,text='Speed Up',command=lambda:[self.audio.speed_up(self.db.get_filepath(entry.get()),amount_entry.get()), self.cleanup(self.top)])
+            sp_popup_button=tk.Button(speed_up_Frame,text='Speed Up',command=lambda:[self.db.add_from_file(self.audio.speed_up(self.db.get_filepath(entry.get()),amount_entry.get())), self.cleanup(self.top)])
             sp_popup_button.grid(row=2,column=0,padx=5,pady=5,sticky="n")
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -188,7 +185,7 @@ class mainWindow():
             lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
             amount_entry = ttk.Entry(rename_Frame,width=10)
             amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-            rec_popup_button=tk.Button(rename_Frame, text='Record',command = lambda:[self.recorder.record(amount_entry.get())])
+            rec_popup_button=tk.Button(rename_Frame, text='Record',command = lambda:[self.recorder.record(amount_entry.get(),self.db)])
             rec_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -229,26 +226,27 @@ class mainWindow():
             print(f"An error occurred: {e}")
             
     def trim_popup(self,entry):
-        try:
-            self.top=Toplevel(self.root)
-            self.top.geometry('450x300')
-            trim_Frame = ttk.Frame(self.top)
-            trim_Frame.pack()
-            name_entry=tk.Label(trim_Frame,text="trim it?")
-            name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
-            hLeft = tk.DoubleVar(value = 0)  #left handle variable initialised to value 0.2
-            filepath=self.db.get_filepath(entry.get())
-            duration=self.db.get_duration(filepath)
-            hRight = tk.DoubleVar(value = duration)  #right handle variable initialised to value 0.85
-            hSlider = RangeSliderH( trim_Frame , [hLeft, hRight], padX = 38.24, max_val=int(duration) ,step_marker = True, step_size = 0.1)   #horizontal slider
-            hSlider.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-            playlist_popup_button=tk.Button(trim_Frame, text='Trim',command = lambda:[self.audio.trim(filepath,int(hLeft.get()),int(hRight.get())), self.cleanup(self.top)])
-            playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
-        except Exception as e:
-            print("trim")
-            print(f"An error occurred: {e}")
-            print("after")
-            
+
+        self.top=Toplevel(self.root)
+        self.top.geometry('450x300')
+        trim_Frame = ttk.Frame(self.top)
+        trim_Frame.pack()
+        name_entry=tk.Label(trim_Frame,text="trim it?")
+        name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+        filepath=self.db.get_filepath(entry.get())
+        duration=self.db.get_duration(filepath)
+        print(type(duration))
+        hLeft = tk.DoubleVar()  #left handle variable initialised to value 0
+        hRight = tk.DoubleVar()  #right handle variable initialised to duration of file
+        print(hRight.get())
+        hSlider = RangeSliderH( trim_Frame , [hLeft, hRight], min_val=0, max_val=duration, padX=96.76 ,step_marker = True, step_size = duration/10)   #horizontal slider
+        hSlider._RangeSliderH__moveBar(0, 0.0)   # 0.2 means 20 for range 0 to 100
+        hSlider._RangeSliderH__moveBar(1, 1.0)   # 0.8 means 80 for range 0 to 100
+
+        hSlider.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+        playlist_popup_button=tk.Button(trim_Frame, text='Trim',command = lambda:[self.db.add_from_file(self.audio.trim(filepath,int(hLeft.get()),int(hRight.get()))), self.cleanup(self.top)])
+        playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+
         
     def add_file_popup(self,entry):
         print('add file')
@@ -262,11 +260,6 @@ class mainWindow():
     def delete_tag_popup(self,entry):
         print('delete_tag')
         
-            
-    def playSequence(self,files):
-        for file in files:
-            self.audio.set_currently_playing_file(file)
-            self.audio.play()
 
     def update_playlist_list(self,dropdown):
         try:
