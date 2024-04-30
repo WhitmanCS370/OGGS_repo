@@ -79,9 +79,9 @@ class databaseManager():
                 SELECT DISTINCT name FROM playlists;
             """)
             playlists = np.array(self.cursor.fetchall())
-            return playlists.ravel() if playlists else None
+            return playlists.ravel()
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"An error occurred listing playlists: {e}")
             return None
 
     def get_playlist(self, playlist):

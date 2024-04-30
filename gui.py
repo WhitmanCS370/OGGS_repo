@@ -44,7 +44,7 @@ class mainWindow():
         n = tk.StringVar() 
         playlist_dropdown = ttk.Combobox(playlist_frame, width = 27, textvariable = n) 
         playlist_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
-        playlist_dropdown['values'] = (self.db.list_playlists())
+        playlist_dropdown['values'] = tuple(self.db.list_playlists())
         playlist_dropdown.bind("<<ComboboxSelected>>", lambda x:self.show_playlist(playlist_dropdown, treeview))
         create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.add_playlist_popup(playlist_dropdown)])
         create_playlist.grid(row=3,column=0,padx=5, pady=5, sticky="nsew")
@@ -207,7 +207,7 @@ class mainWindow():
             n = tk.StringVar() 
             playlist_dropdown = ttk.Combobox(playlist_Frame, width = 27, textvariable = n) 
             playlist_dropdown.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
-            playlist_dropdown['values'] = (self.db.list_playlists()[0])
+            playlist_dropdown['values'] = tuple(self.db.list_playlists())
             playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.song_to_playlist(playlist_dropdown.get(),entry), self.cleanup(self.top)])
             playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
         except TypeError:
@@ -223,6 +223,7 @@ class mainWindow():
             name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
             playlist_entry = ttk.Entry(playlist_Frame,width=10)
             playlist_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+            # print(playlist_entry.get())
             playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.add_playlist(playlist_entry.get()),self.update_playlist_list(playlist_dropdown), self.cleanup(self.top)])
             playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
         except Exception as e:
@@ -270,7 +271,7 @@ class mainWindow():
 
     def update_playlist_list(self,dropdown):
         try:
-            dropdown['values'] = (self.db.list_playlists()[0])
+            dropdown['values'] = tuple(self.db.list_playlists())
         except:
             print("failed to update playlist")
         
@@ -292,7 +293,6 @@ class mainWindow():
         return filepathList
     
     def input_files(self,treeview):
-        print()
         try:
             for item in treeview.get_children():
                 treeview.delete(item)
