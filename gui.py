@@ -8,6 +8,7 @@ from database_init import init
 from RangeSlider.RangeSlider import RangeSliderH
 from os import path
 
+
 class mainWindow():
     def __init__(self,root):
         self.audio = AudioEffects()
@@ -44,7 +45,8 @@ class mainWindow():
         n = tk.StringVar() 
         playlist_dropdown = ttk.Combobox(playlist_frame, width = 27, textvariable = n) 
         playlist_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
-        playlist_dropdown['values'] = tuple(self.db.list_playlists())
+        options = list(self.db.list_playlists())+[""]
+        playlist_dropdown['values'] = tuple(options)
         playlist_dropdown.bind("<<ComboboxSelected>>", lambda x:self.show_playlist(playlist_dropdown, treeview))
         create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.add_playlist_popup(playlist_dropdown)])
         create_playlist.grid(row=3,column=0,padx=5, pady=5, sticky="nsew")
@@ -207,7 +209,8 @@ class mainWindow():
             n = tk.StringVar() 
             playlist_dropdown = ttk.Combobox(playlist_Frame, width = 27, textvariable = n) 
             playlist_dropdown.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
-            playlist_dropdown['values'] = tuple(self.db.list_playlists())
+            options = list(self.db.list_playlists())+[""]
+            playlist_dropdown['values'] = tuple(options)
             playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.song_to_playlist(playlist_dropdown.get(),entry), self.cleanup(self.top)])
             playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
         except TypeError:
@@ -267,7 +270,8 @@ class mainWindow():
 
     def update_playlist_list(self,dropdown):
         try:
-            dropdown['values'] = tuple(self.db.list_playlists())
+            options = list(self.db.list_playlists()) + [""]
+            dropdown['values'] = tuple(options)
         except:
             print("failed to update playlist")
         
@@ -309,7 +313,9 @@ class mainWindow():
             print("click again")
               
     def show_playlist(self,playlist_dropdown,treeview):
-        
+        if (playlist_dropdown.get() == ""):
+            self.input_files(treeview)
+            return
         for item in treeview.get_children():
             treeview.delete(item)
         files=self.db.get_playlist(playlist_dropdown.get())
