@@ -89,6 +89,7 @@ class AudioEffects(Player):
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
         db.add_from_file(filename)
+        db.add_tag_to_file("backward", filename)
         return filename
         
     def sequence(self,files):
@@ -116,6 +117,7 @@ class AudioEffects(Player):
             filename=''.join(hashlist)
         so.export(filename,format="wav")
         db.add_from_file(filename)
+        db.add_tag_to_file("sped up", filename)
         return filename
         
             
@@ -131,6 +133,7 @@ class AudioEffects(Player):
         filename=''.join(hashlist)
         sound_export.export(filename,format="wav")
         db.add_from_file(filename)
+        db.add_tag_to_file("trimmed", filename)
         return filename
 
     def apply_distortion(self, filename, gain=20):

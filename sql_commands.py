@@ -176,12 +176,13 @@ class databaseManager():
     def add_from_file(self, filepath):
         try:
             duration = self.get_duration(filepath)
-            title = filepath.split("/")[-1][:-4]
+            root, ext = os.path.splitext(os.path.basename(filepath))
             self.cursor.execute("""
                 INSERT INTO audio_files (title, filepath, duration)
                 VALUES (?, ?, ?);
-            """, (title, filepath, duration))
+            """, (root, filepath, duration))
             self.conn.commit()
+            self.add_tag_to_file(ext, root)
         except sqlite3.IntegrityError:
             print("File already exists in the database.")
         except Exception as e:
