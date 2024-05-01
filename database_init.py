@@ -60,15 +60,14 @@ def init():
     """)
     conn.commit()
     conn.close()
-    init_default_tags()
 
 def init_default_tags():
     conn = sqlite3.connect('audio_library.sqlite')
     cursor = conn.cursor()
 
     cursor.execute(
-        """
-        INSERT INTO tags (name, desc)
+    """
+    INSERT INTO tags (name, desc)
         VALUES 
         (".wav", "a .wav file"),
         (".mp3", "a .mp3 file"),
@@ -76,7 +75,7 @@ def init_default_tags():
         ("sped up", "a sped up audio file"),
         ("trimmed","a trimmed audio file"),
         ("rec","a file which was recorded")
-        """
+    """
     )
 
     conn.commit()

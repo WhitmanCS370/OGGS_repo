@@ -4,7 +4,7 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 from audio import AudioEffects, Recorder
 from file_system import FileManager
 from sql_commands import databaseManager
-from database_init import init
+from database_init import init, init_default_tags
 from RangeSlider.RangeSlider import RangeSliderH
 from os import path
 
@@ -14,8 +14,10 @@ class mainWindow():
         self.audio = AudioEffects()
         self.files = FileManager()
         self.recorder=Recorder()
+        if not path.isfile('./audio_library.sqlite'):
+            init()
+            init_default_tags()
         self.db = databaseManager()
-        init()
         self.root=root
         #for development purposes, populate database with example files
         self.db.add_all()
