@@ -4,6 +4,9 @@ import wave, struct
 from pydub import AudioSegment
 from pydub.playback import play
 from datetime import datetime
+import threading
+import pyaudio
+import time
 
 class Player:
     """
@@ -77,7 +80,7 @@ class AudioEffects(Player):
             sound1=sound1+sound2
         play(sound1)
         
-    def backward(self,filename,db):
+    def backward(self,filename):
         """
         This method will play an audio file backwards
         """
@@ -87,7 +90,6 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_backward')
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
-        db.add_from_file(filename)
         return filename
         
     def sequence(self,files):
@@ -98,7 +100,7 @@ class AudioEffects(Player):
             self.set_currently_playing_file(file)
             self.play()
             
-    def speed_up(self,filename,speed,db):
+    def speed_up(self,filename,speed):
         """
         creates a new file but speeds it up
         """
@@ -114,11 +116,10 @@ class AudioEffects(Player):
             hashlist.insert(-4, '_speed'+speed)
             filename=''.join(hashlist)
         so.export(filename,format="wav")
-        db.add_from_file(filename)
         return filename
         
             
-    def trim(self,filename,startTimeStamp,endTimeStamp,db):
+    def trim(self,filename,startTimeStamp,endTimeStamp):
         """
         trims the specified file at the sime stamps stated
         """
@@ -129,7 +130,6 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_trim')
         filename=''.join(hashlist)
         sound_export.export(filename,format="wav")
-        db.add_from_file(filename)
         return filename
         
     def check_length(self,filename):
@@ -138,6 +138,8 @@ class AudioEffects(Player):
         return duration
     
 class Recorder(Player):
+    def __init__(self):
+        self.isrecording=False
     
     def check_inputs(self):
         """
@@ -153,7 +155,7 @@ class Recorder(Player):
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
         """
-    
+        print(path)
         if path[-4:]!=".wav":
             file=path+".wav"
             path=os.path.join(os.path.curdir, "sounds",file)
@@ -163,7 +165,7 @@ class Recorder(Player):
         audio = []
         try:
             recorder.start()
-            while True:
+            while self.isrecording:
                 frame = recorder.read()
                 audio.extend(frame)
         except KeyboardInterrupt:
@@ -175,9 +177,19 @@ class Recorder(Player):
             db.add_from_file(path)
         finally:
             recorder.delete()
+        
+        
+    def click_handler(self,button,path,db):
+        if self.isrecording:
+            self.isrecording=False
+            button.config(fg='black')
+        else:
+            self.recording=True
+            button.config(fg='red')
+            thread=threading.Thread(target=self.record,args=(path,db,)).start()
+            thread.join()
+            
             
     def get_DateTime(self):
         today=datetime.now()
         return today.strftime("%d-%m-%Y-%H-%M-%S")
-        
-
