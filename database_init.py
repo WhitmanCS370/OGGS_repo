@@ -74,7 +74,8 @@ def init_default_tags():
         ("backwards", "a backwards audio file"),
         ("sped up", "a sped up audio file"),
         ("trimmed","a trimmed audio file"),
-        ("rec","a file which was recorded")
+        ("rec","a file which was recorded"),
+        ("distorted", "a file which has been distorted")
     """
     )
 

@@ -74,7 +74,7 @@ class mainWindow():
         backward_button = ttk.Button(showing_frame, text="Backward",command=lambda:[self.db.add_from_file(self.audio.backward(self.db.get_filepath(name_entry.get()))),self.input_files(treeview)])
         backward_button.grid(row=12, column=0, padx=5, pady=5, sticky="nsew")
 
-        distortion_button = ttk.Button(showing_frame, text="Distort", command=lambda: [self.db.add_from_file(self.audio.apply_distortion(self.db.get_filepath(name_entry.get()))), self.input_files(treeview)])
+        distortion_button = ttk.Button(showing_frame, text="Distort", command=lambda: [(self.audio.apply_distortion(self.db.get_filepath(name_entry.get()), self.db)), self.input_files(treeview)])
         distortion_button.grid(row=19, column=0, padx=5, pady=5, sticky="nsew")
         
         record_button = ttk.Button(showing_frame, text="Record",command=lambda:[self.record_popup(name_entry)])
@@ -280,7 +280,7 @@ class mainWindow():
         curItems = treeview.selection()
         curItems=list(curItems)
         for item in curItems:
-            filepathList.append(str(treeview.item(item)['values'][4]))
+            filepathList.append(str(treeview.item(item)['values'][1]))
 
         return filepathList
     
@@ -322,9 +322,6 @@ class mainWindow():
         for i in range(len(files)):
             title = files[i].split("/")[-1].split(".")[0]
             treeview.insert("",tk.END,text=f"Item #{i+1}",values=(title,files[i],self.db.tags_from_file(title),self.db.get_duration(files[i])))
-
-        
-        
     
     def all_files(self):
         self.db.list_tags

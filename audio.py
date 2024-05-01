@@ -136,7 +136,7 @@ class AudioEffects(Player):
         db.add_tag_to_file("trimmed", filename)
         return filename
 
-    def apply_distortion(self, filename, gain=20):
+    def apply_distortion(self, filename, db,gain=20):
         """
         apply a distortion effect to the audio file using specified gain factor
         """
@@ -159,6 +159,10 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_distorted')
         distorted_filename = ''.join(hashlist)
         distorted_sound.export(distorted_filename, format="wav")
+        filename, ext = os.path.splitext(os.path.basename(distorted_filename))
+        print(filename, ext)
+        db.add_from_file(distorted_filename)
+        db.add_tag_to_file("distorted", filename)        
         return distorted_filename
     
     def check_length(self,filename):
