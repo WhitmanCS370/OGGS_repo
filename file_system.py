@@ -36,6 +36,7 @@ class FileManager():
         """
         try:
             self.os.rename(fileOriginPath, self.path + str(os.path.basename(fileOriginPath)))
+            return self.path + str(os.path.basename(fileOriginPath))
         except FileNotFoundError:
             print(f"file: {fileOriginPath} not found")
 

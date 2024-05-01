@@ -12,6 +12,7 @@ import queue
 
 from os import path
 
+
 class mainWindow():
     def __init__(self,root):
         self.audio = AudioEffects()
@@ -47,10 +48,9 @@ class mainWindow():
         lbl.grid(row=0,column=0, padx=5, pady=3,sticky="nw")
         n = tk.StringVar() 
         playlist_dropdown = ttk.Combobox(playlist_frame, width = 27, textvariable = n) 
-        playlist_dropdown.grid(row=0, column=1, padx=5, pady=3, sticky="nsew")
-        dropdow_values=self.db.list_playlists()
-        if len(dropdow_values)>0:
-            playlist_dropdown['values'] = tuple(dropdow_values)
+        playlist_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
+        options = list(self.db.list_playlists())+[""]
+        playlist_dropdown['values'] = tuple(options)
         playlist_dropdown.bind("<<ComboboxSelected>>", lambda x:self.show_playlist(playlist_dropdown, treeview))
         create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.add_playlist_popup(playlist_dropdown)])
         create_playlist.grid(row=3,column=0,padx=5, pady=3, sticky="nsew")
@@ -74,7 +74,10 @@ class mainWindow():
         speed_Up_button.grid(row=11, column=0, padx=5, pady=3, sticky="nsew")
         
         backward_button = ttk.Button(showing_frame, text="Backward",command=lambda:[self.db.add_from_file(self.audio.backward(self.db.get_filepath(name_entry.get()))),self.input_files(treeview)])
-        backward_button.grid(row=12, column=0, padx=5, pady=3, sticky="nsew")
+        backward_button.grid(row=12, column=0, padx=5, pady=5, sticky="nsew")
+
+        distortion_button = ttk.Button(showing_frame, text="Distort", command=lambda: [self.db.add_from_file(self.audio.apply_distortion(self.db.get_filepath(name_entry.get()))), self.input_files(treeview)])
+        distortion_button.grid(row=19, column=0, padx=5, pady=5, sticky="nsew")
         
         record_button = ttk.Button(showing_frame, text="Record",command=lambda:[self.record_popup(name_entry)])
         record_button.grid(row=13, column=0, padx=5, pady=3, sticky="nsew")
@@ -83,7 +86,7 @@ class mainWindow():
         trim_button.grid(row=14, column=0, padx=5, pady=3, sticky="nsew")
         
         add_file_button = ttk.Button(showing_frame, text="Add File",command=lambda:[self.add_file_popup(name_entry)])
-        add_file_button.grid(row=15, column=0, padx=5, pady=3, sticky="nsew")
+        add_file_button.grid(row=15, column=0, padx=5, pady=5, sticky="nsew")
         
         duplicate_file_button = ttk.Button(showing_frame, text="Duplicate File",command=lambda:[self.duplicate_file_popup(name_entry)])
         duplicate_file_button.grid(row=16, column=0, padx=5, pady=3, sticky="nsew")
@@ -213,7 +216,8 @@ class mainWindow():
             n = tk.StringVar() 
             playlist_dropdown = ttk.Combobox(playlist_Frame, width = 27, textvariable = n) 
             playlist_dropdown.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
-            playlist_dropdown['values'] = tuple(self.db.list_playlists())
+            options = list(self.db.list_playlists())+[""]
+            playlist_dropdown['values'] = tuple(options)
             playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.song_to_playlist(playlist_dropdown.get(),entry), self.cleanup(self.top)])
             playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
         except TypeError:
@@ -255,8 +259,12 @@ class mainWindow():
         playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
 
         
-    def add_file_popup(self,entry):
-        print('add file')
+    def add_file_popup(self):
+        filepath = askopenfilename()  # Open file dialog to choose a file
+        if filepath:
+            moved_filepath = self.files.add_file(filepath)
+            self.db.add_from_file(moved_filepath)
+            print('File added successfully')
         
     def duplicate_file_popup(self,entry):
         print('dup file')
@@ -270,7 +278,8 @@ class mainWindow():
 
     def update_playlist_list(self,dropdown):
         try:
-            dropdown['values'] = tuple(self.db.list_playlists())
+            options = list(self.db.list_playlists()) + [""]
+            dropdown['values'] = tuple(options)
         except:
             print("failed to update playlist")
         
@@ -312,7 +321,9 @@ class mainWindow():
             print("click again")
               
     def show_playlist(self,playlist_dropdown,treeview):
-        
+        if (playlist_dropdown.get() == ""):
+            self.input_files(treeview)
+            return
         for item in treeview.get_children():
             treeview.delete(item)
         files=self.db.get_playlist(playlist_dropdown.get())
