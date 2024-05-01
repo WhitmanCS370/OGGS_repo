@@ -176,7 +176,7 @@ class Recorder(Player):
             print(f"[{index}] {device}")
 
             
-    def record(self,path,db):
+    def record(self,path,db,lbl):
         """
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
@@ -190,9 +190,12 @@ class Recorder(Player):
         audio = []
         try:
             recorder.start()
+            start_time=time.time()
             while self.isrecording:
                 frame = recorder.read()
                 audio.extend(frame)
+                timepassed=time.time()-start_time
+                lbl.configure(text=timepassed)
             recorder.stop()
             with wave.open(path.split("/")[-1], 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
@@ -202,15 +205,14 @@ class Recorder(Player):
         except Exception as e:
             print(f"error occured: {e}")
         
-    def click_handler(self,button,path,db):
+    def click_handler(self,button,path,db,lbl):
         if self.isrecording:
             self.isrecording=False
             button.config(fg='black')
         else:
-            
             self.isrecording=True
             button.config(fg='red')
-            thread=threading.Thread(target=self.record,args=(path,db,)).start()
+            thread=threading.Thread(target=self.record,args=(path,db,lbl,)).start()
             
             
     def get_DateTime(self):

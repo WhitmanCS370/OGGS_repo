@@ -188,18 +188,17 @@ class mainWindow():
         try:
             self.top=Toplevel(self.root)
             self.top.geometry('300x300')
-            rename_Frame = ttk.Frame(self.top)
-            rename_Frame.pack()
-            lbl=tk.Label(rename_Frame,text="Enter New filename")
+            record_Frame = ttk.Frame(self.top)
+            record_Frame.pack()
+            lbl=tk.Label(record_Frame,text="Enter New filename")
             lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
-            amount_entry = ttk.Entry(rename_Frame,width=10)
+            amount_entry = ttk.Entry(record_Frame,width=10)
             amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
             amount_entry.insert(0,"file")
-            button_Frame = ttk.Frame(rename_Frame)
-            button_Frame.grid(row=2, column=0, padx=5, pady=5, sticky="n")
-            rec_popup_button=tk.Button(button_Frame, text='Record',command = lambda:[self.recorder.click_handler(rec_popup_button,amount_entry.get(),self.db)])
-            rec_popup_button.grid(row=0, column=0, padx=5, pady=5, sticky="n")
-
+            timer_Label=tk.Label(record_Frame,text="timer")
+            timer_Label.grid(row=2,column=0, sticky="n")
+            rec_popup_button=tk.Button(record_Frame, text='Record',command = lambda:[self.recorder.click_handler(rec_popup_button,amount_entry.get(),self.db,timer_Label)])
+            rec_popup_button.grid(row=3, column=0, padx=5, pady=5, sticky="n")
         except Exception as e:
             print(f"An error occurred: {e}")
             
