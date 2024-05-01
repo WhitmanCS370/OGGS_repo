@@ -13,7 +13,7 @@ class databaseManager():
     """
     soundFilePath = "./sounds/"
     def __init__(self):
-        self.conn = sqlite3.connect('audio_library.sqlite')
+        self.conn = sqlite3.connect('audio_library.sqlite', check_same_thread=False)
         self.cursor = self.conn.cursor()
         self.os = os
         self.directories = self.os.listdir("./sounds/")
@@ -248,9 +248,40 @@ class databaseManager():
             self.conn.commit()
         except Exception as e:
             print(f"An error occurred: {e}")
-    
+
+    def get_all_from_file(self, filename):
+        try:
+            self.cursor.execute(
+                """
+                    SELECT * FROM audio_files
+                    WHERE title == (?);
+                """,(filename,)
+            )
+            path=self.cursor.fetchall()
+            self.conn.commit()
+
+            return path[0] if path[0] else None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+
+    def get_all_from_filepath(self, filepath):
+        try:
+            self.cursor.execute(
+                """
+                    SELECT * FROM audio_files
+                    WHERE filepath == (?);
+                """,(filepath,)
+            )
+            path=self.cursor.fetchall()
+            self.conn.commit()
+            return path[0] if path[0] else None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+
     # END FILE METHODS
-        
+
     # START TAG METHODS
     
     def get_tag_id(self, tag):

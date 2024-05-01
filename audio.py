@@ -181,7 +181,6 @@ class Recorder(Player):
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
         """
-        print(path)
         if path[-4:]!=".wav":
             file=path+".wav"
             path=os.path.join(os.path.curdir, "sounds",file)
@@ -194,26 +193,24 @@ class Recorder(Player):
             while self.isrecording:
                 frame = recorder.read()
                 audio.extend(frame)
-        except KeyboardInterrupt:
             recorder.stop()
-            print(path.split("/")[-1])
             with wave.open(path.split("/")[-1], 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack("h" * len(audio), *audio))
             db.add_from_file(path)
-        finally:
             recorder.delete()
-        
+        except Exception as e:
+            print(f"error occured: {e}")
         
     def click_handler(self,button,path,db):
         if self.isrecording:
             self.isrecording=False
             button.config(fg='black')
         else:
-            self.recording=True
+            
+            self.isrecording=True
             button.config(fg='red')
             thread=threading.Thread(target=self.record,args=(path,db,)).start()
-            thread.join()
             
             
     def get_DateTime(self):

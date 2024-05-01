@@ -194,6 +194,7 @@ class mainWindow():
             lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
             amount_entry = ttk.Entry(rename_Frame,width=10)
             amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+            amount_entry.insert(0,"file")
             button_Frame = ttk.Frame(rename_Frame)
             button_Frame.grid(row=2, column=0, padx=5, pady=5, sticky="n")
             rec_popup_button=tk.Button(button_Frame, text='Record',command = lambda:[self.recorder.click_handler(rec_popup_button,amount_entry.get(),self.db)])
@@ -233,7 +234,6 @@ class mainWindow():
             name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
             playlist_entry = ttk.Entry(playlist_Frame,width=10)
             playlist_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-            # print(playlist_entry.get())
             playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.add_playlist(playlist_entry.get()),self.update_playlist_list(playlist_dropdown), self.cleanup(self.top)])
             playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
         except Exception as e:
@@ -306,8 +306,8 @@ class mainWindow():
                 treeview.delete(item)
             files=self.db.list_files()
             for i in range(len(files)):
-                filepath=self.db.get_filepath(files[i])
-                treeview.insert("",tk.END,text=f"Item #{i+1}",values=(files[i],self.db.get_artist(files[i]),self.db.get_album(files[i]),self.db.get_genre(files[i]),filepath,self.db.get_duration(filepath)))
+                allinfo=self.db.get_all_from_file(files[i])
+                treeview.insert("",tk.END,text=f"Item #{i+1}",values=(allinfo[1],allinfo[2],allinfo[3],allinfo[4],allinfo[5],allinfo[6]))
         except:
             print("didnt work")
             
@@ -316,7 +316,6 @@ class mainWindow():
             curItem = treeview.focus()
             name_entry.delete(0,tk.END)
             name_entry.insert(0, treeview.item(curItem)['values'][0])
-
         except IndexError:
             print("click again")
               
@@ -329,8 +328,8 @@ class mainWindow():
         files=self.db.get_playlist(playlist_dropdown.get())
         for i in range(len(files)):
             title = files[i].split("/")[-1].split(".")[0]
-            treeview.insert("",tk.END,text=f"Item #{i+1}",values=(title,self.db.get_artist(title),self.db.get_album(title),self.db.get_genre(title),files[i],self.db.get_duration(files[i])))
-
+            allinfo=self.db.get_all_from_file(title)
+            treeview.insert("",tk.END,text=f"Item #{i+1}",values=(allinfo[1],allinfo[2],allinfo[3],allinfo[4],allinfo[5],allinfo[6]))
         
         
     
