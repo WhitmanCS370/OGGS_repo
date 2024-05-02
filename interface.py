@@ -154,8 +154,6 @@ class Interface(cmd.Cmd):
         """
         playlists = list(self.db.list_playlists())
         self.columnize(playlists)
-        # for playlist in playlists:
-        #     print(playlist[0])
 
     def do_show_playlist(self, args):
         """
@@ -205,9 +203,6 @@ class Interface(cmd.Cmd):
         """
         files = list(self.db.get_from_tag(tag))
         self.columnize(files)
-        # print(files)
-        # for file in files:
-        #     print(file[1])
     
     def do_rename(self, args):
         """
@@ -227,8 +222,7 @@ class Interface(cmd.Cmd):
         """
         tags = list(self.db.list_tags())
         self.columnize(tags)
-        # for tag in tags:
-        #     print(tag[0])
+
 
     def do_exit(self, args):
         """

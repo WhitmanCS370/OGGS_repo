@@ -36,7 +36,7 @@ class Player:
         """
         self.start_time = datetime.now() # get time to calculate the time_elapsed
         try:
-            print(len(self.current_playing))
+            # print(len(self.current_playing))
             play(self.current_playing)
         except KeyboardInterrupt: # probably better way to do this in interface (reserach custom exeption?)
             self.pause()
@@ -57,7 +57,7 @@ class Player:
             # play(AudioSegment.empty()) # play an empty audio segment
         
     def resume(self):
-        print(len(self.current_playing))
+        # print(len(self.current_playing))
         self.play() # simply play the currently playing audio clip
         
 class AudioEffects(Player):
@@ -85,7 +85,7 @@ class AudioEffects(Player):
         wave_object=AudioSegment.from_wav(filename)
         reversed= wave_object.reverse()
         hashlist = list(filename)
-        hashlist.insert(-4, '_backward')
+        hashlist.insert(-4, '_backward') # create the new filename with suffix _backward
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
         db.add_from_file(filename)
