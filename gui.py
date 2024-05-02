@@ -209,7 +209,7 @@ class mainWindow():
             n = tk.StringVar() 
             playlist_dropdown = ttk.Combobox(playlist_Frame, width = 27, textvariable = n) 
             playlist_dropdown.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
-            options = list(self.db.list_playlists())+[""]
+            options = list(self.db.list_playlists())
             playlist_dropdown['values'] = tuple(options)
             playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.db.song_to_playlist(playlist_dropdown.get(),entry), self.cleanup(self.top)])
             playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
@@ -270,7 +270,7 @@ class mainWindow():
 
     def update_playlist_list(self,dropdown):
         try:
-            options = list(self.db.list_playlists()) + [""]
+            options = list(self.db.list_playlists())
             dropdown['values'] = tuple(options)
         except:
             print("failed to update playlist")
