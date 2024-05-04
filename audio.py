@@ -181,7 +181,7 @@ class Recorder(Player):
             print(f"[{index}] {device}")
 
             
-    def record(self,outfileName):
+    def record(self,outfileName, db):
         """
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
@@ -200,7 +200,7 @@ class Recorder(Player):
             with wave.open(filepath, 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack("h" * len(audio), *audio))
-            db.add_from_file(path)
+            db.add_from_file(filepath)
         finally:
             recorder.delete()
         return filepath

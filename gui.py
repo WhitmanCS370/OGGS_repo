@@ -174,7 +174,7 @@ class mainWindow():
             lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
             amount_entry = ttk.Entry(speed_up_Frame,width=10)
             amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-            sp_popup_button=tk.Button(speed_up_Frame,text='Speed Up',command=lambda:[self.db.add_from_file(self.audio.speed_up(self.db.get_filepath(entry.get()),amount_entry.get())), self.cleanup(self.top)])
+            sp_popup_button=tk.Button(speed_up_Frame,text='Speed Up',command=lambda:[self.db.add_from_file(self.audio.speed_up(self.db.get_filepath(entry.get()),amount_entry.get(), self.db)), self.cleanup(self.top)])
             sp_popup_button.grid(row=2,column=0,padx=5,pady=5,sticky="n")
         except Exception as e:
             print(f"An error occurred: {e}")
