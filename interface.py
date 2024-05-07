@@ -238,7 +238,7 @@ class Interface(cmd.Cmd):
         """
         if (self.validate_single_arg(args=args)):
             print("Press ctrl+c / command+c to stop recording")        
-            filepath = self.recorder.record(args)
+            filepath = self.recorder.record(args, self.db)
             self.db.add_from_file(filepath)
         else:
             self.provide_arg_msg()
@@ -268,7 +268,7 @@ class Interface(cmd.Cmd):
         if (self.validate_list_args(args=args,nArgs=2)):
             args=args.split()
             filename = self.db.get_filepath(args[0])
-            new_file = self.audio.speed_up(filename, args[1])
+            new_file = self.audio.speed_up(filename, args[1], self.db)
             self.db.add_from_file(new_file)
         else: 
             self.provide_arg_msg()
@@ -281,7 +281,7 @@ class Interface(cmd.Cmd):
         if (self.validate_list_args(args=args,nArgs=3)):
             args=args.split()
             filename = self.db.get_filepath(args[0])
-            new_file = self.audio.trim(filename,args[1],args[2])
+            new_file = self.audio.trim(filename,args[1],args[2], self.db)
             self.db.add_from_file(new_file)
         else: 
             self.provide_arg_msg()
@@ -293,7 +293,7 @@ class Interface(cmd.Cmd):
         """
         if (self.validate_single_arg(args=args)):
             filepath = self.db.get_filepath(args)
-            new_file = str(self.audio.backward(filepath))
+            new_file = str(self.audio.backward(filepath, self.db))
             self.db.add_from_file(new_file)
         else: 
             self.provide_arg_msg()

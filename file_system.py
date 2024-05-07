@@ -62,7 +62,7 @@ class FileManager():
         except FileNotFoundError:
             print("No files found in archive")
     
-    def duplicate_file(self,file, sql):
+    def duplicate_file(self,file, db):
         src_path = os.path.join(self.path, file)
         if file[-5].isnumeric():
             num=int(file[-5])+1
@@ -73,7 +73,7 @@ class FileManager():
             file=''.join(hashlist)
         new_path = os.path.join(self.path, file)
         shutil.copyfile(src_path, new_path)
-        sql.add_from_file(self, file, self.path)
+        db.add_from_file(self, file, self.path)
         
 if __name__ == '__main__':
     FileManager().list_files()
