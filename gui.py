@@ -75,7 +75,7 @@ class mainWindow():
         speed_Up_button = ttk.Button(showing_frame, text="Speed Up",command=lambda:[self.speed_up_popup(name_entry),self.input_files(treeview)])
         speed_Up_button.grid(row=11, column=0, padx=5, pady=3, sticky="nsew")
         
-        backward_button = ttk.Button(showing_frame, text="Backward",command=lambda:[self.db.add_from_file(self.audio.backward(self.db.get_filepath(name_entry.get()))),self.input_files(treeview)])
+        backward_button = ttk.Button(showing_frame, text="Backward",command=lambda:[self.db.add_from_file(self.audio.backward(self.db.get_filepath(name_entry.get()), self.db)),self.input_files(treeview)])
         backward_button.grid(row=12, column=0, padx=5, pady=5, sticky="nsew")
 
         distortion_button = ttk.Button(showing_frame, text="Distort", command=lambda: [(self.audio.apply_distortion(self.db.get_filepath(name_entry.get()), self.db)), self.input_files(treeview)])

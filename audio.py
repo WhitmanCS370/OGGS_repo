@@ -39,7 +39,6 @@ class Player:
         """
         self.start_time = datetime.now() # get time to calculate the time_elapsed
         try:
-            # print(len(self.current_playing))
             play(self.current_playing)
         except KeyboardInterrupt: # probably better way to do this in interface (reserach custom exeption?)
             self.pause()
@@ -81,7 +80,7 @@ class AudioEffects(Player):
             sound1=sound1+sound2
         play(sound1)
         
-    def backward(self,filename):
+    def backward(self,filename, db):
         """
         This method will play an audio file backwards
         """
@@ -91,8 +90,9 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_backward') # create the new filename with suffix _backward
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
+        name, ext = os.path.splitext(os.path.basename(filename))
         db.add_from_file(filename)
-        db.add_tag_to_file("backward", filename)
+        db.add_tag_to_file("backwards", name)
         return filename
         
     def sequence(self,files):
@@ -103,7 +103,7 @@ class AudioEffects(Player):
             self.set_currently_playing_file(file)
             self.play()
             
-    def speed_up(self,filename,speed):
+    def speed_up(self,filename,speed, db):
         """
         creates a new file but speeds it up
         """
@@ -124,7 +124,7 @@ class AudioEffects(Player):
         return filename
         
             
-    def trim(self,filename,startTimeStamp,endTimeStamp):
+    def trim(self,filename,startTimeStamp,endTimeStamp, db):
         """
         trims the specified file at the sime stamps stated
         """
@@ -191,7 +191,7 @@ class Recorder(Player):
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
         """
-        filepath = os.path.join(os.curdir, "sounds", str(outfileName)+".wav")
+        filepath = os.path.join(os.curdir, "sounds", str(lbl)+".wav")
         recorder = PvRecorder(device_index=0, frame_length=512) #(32 milliseconds of 16 kHz audio)
         audio = []
         try:
