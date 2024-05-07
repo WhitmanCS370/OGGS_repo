@@ -39,7 +39,7 @@ class Player:
         """
         self.start_time = datetime.now() # get time to calculate the time_elapsed
         try:
-            print(len(self.current_playing))
+            # print(len(self.current_playing))
             play(self.current_playing)
         except KeyboardInterrupt: # probably better way to do this in interface (reserach custom exeption?)
             self.pause()
@@ -60,7 +60,7 @@ class Player:
             # play(AudioSegment.empty()) # play an empty audio segment
         
     def resume(self):
-        print(len(self.current_playing))
+        # print(len(self.current_playing))
         self.play() # simply play the currently playing audio clip
         
 class AudioEffects(Player):
@@ -88,9 +88,11 @@ class AudioEffects(Player):
         wave_object=AudioSegment.from_wav(filename)
         reversed= wave_object.reverse()
         hashlist = list(filename)
-        hashlist.insert(-4, '_backward')
+        hashlist.insert(-4, '_backward') # create the new filename with suffix _backward
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
+        db.add_from_file(filename)
+        db.add_tag_to_file("backward", filename)
         return filename
         
     def sequence(self,files):
@@ -117,6 +119,8 @@ class AudioEffects(Player):
             hashlist.insert(-4, '_speed'+speed)
             filename=''.join(hashlist)
         so.export(filename,format="wav")
+        db.add_from_file(filename)
+        db.add_tag_to_file("sped up", filename)
         return filename
         
             
@@ -131,9 +135,11 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_trim')
         filename=''.join(hashlist)
         sound_export.export(filename,format="wav")
+        db.add_from_file(filename)
+        db.add_tag_to_file("trimmed", filename)
         return filename
 
-    def apply_distortion(self, filename, gain=20):
+    def apply_distortion(self, filename, db,gain=20):
         """
         apply a distortion effect to the audio file using specified gain factor
         """
@@ -156,6 +162,10 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_distorted')
         distorted_filename = ''.join(hashlist)
         distorted_sound.export(distorted_filename, format="wav")
+        filename, ext = os.path.splitext(os.path.basename(distorted_filename))
+        print(filename, ext)
+        db.add_from_file(distorted_filename)
+        db.add_tag_to_file("distorted", filename)        
         return distorted_filename
     
     def check_length(self,filename):
@@ -181,11 +191,7 @@ class Recorder(Player):
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
         """
-        if path[-4:]!=".wav":
-            file=path+".wav"
-            path=os.path.join(os.path.curdir, "sounds",file)
-        else:
-            path=os.path.join(os.path.curdir, 'sounds',path)
+        filepath = os.path.join(os.curdir, "sounds", str(outfileName)+".wav")
         recorder = PvRecorder(device_index=0, frame_length=512) #(32 milliseconds of 16 kHz audio)
         audio = []
         try:
