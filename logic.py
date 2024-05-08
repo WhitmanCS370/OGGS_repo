@@ -75,17 +75,21 @@ class AudioEffects(Player):
     def layer(self,files):
         """
         This method will layer a list of audio files on top of one another
+        Generates a new file
         """
-        wavlist=[]
+        filename = "backwards.wav"
         sound1=AudioSegment.from_wav(files[0])
         for file in files[1:]:
             sound2= AudioSegment.from_wav(file)
             sound1=sound1+sound2
-        play(sound1)
+        sound1.export(f"./sounds/{filename}", format="wav")
+        self.db.add_from_file(f"./sounds/{filename}")
+        return filename
         
     def backward(self,entry):
         """
-        This method will play an audio file backwards
+        This method will play an audio file backwards.
+        Generate a new file
         """
         filename=self.db.get_filepath(entry.get())
         wave_object=AudioSegment.from_wav(filename)
