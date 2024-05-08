@@ -8,6 +8,7 @@ from database_init import init, init_default_tags
 from RangeSlider.RangeSlider import RangeSliderH
 import threading
 import queue
+
 from os import path
 
 class mainWindow():
@@ -84,10 +85,10 @@ class mainWindow():
         record_button = ttk.Button(showing_frame, text="Record",command=lambda:[self.record_popup(name_entry)])
         record_button.grid(row=13, column=0, padx=5, pady=3, sticky="nsew")
         
-        trim_button = ttk.Button(showing_frame, text="Trim",command=lambda:[self.trim_popup(name_entry,treeview)])
+        trim_button = ttk.Button(showing_frame, text="Trim",command=lambda:[self.trim_popup(name_entry)])
         trim_button.grid(row=14, column=0, padx=5, pady=3, sticky="nsew")
         
-        add_file_button = ttk.Button(showing_frame, text="Add File",command=lambda:[self.add_file_popup()])
+        add_file_button = ttk.Button(showing_frame, text="Add File",command=lambda:[self.add_file_popup(name_entry)])
         add_file_button.grid(row=15, column=0, padx=5, pady=5, sticky="nsew")
         
         duplicate_file_button = ttk.Button(showing_frame, text="Duplicate File",command=lambda:[self.duplicate_file_popup(name_entry)])
@@ -146,7 +147,7 @@ class mainWindow():
                 return
             self.top=Toplevel(self.root)
             self.top.geometry('300x300')
-        
+            self.pathing = path
             rename_Frame = ttk.Frame(self.top)
             rename_Frame.pack()
             lbl=tk.Label(rename_Frame,text="Enter New filename")
@@ -174,6 +175,8 @@ class mainWindow():
             if len(entry.get())==0:
                 self.select_files_popup()
                 return
+            entry_value=entry.get()
+            print(type(entry_value))
             self.top=Toplevel(self.root)
             self.top.geometry('400x300')
             speed_up_Frame = ttk.Frame(self.top)
@@ -182,7 +185,7 @@ class mainWindow():
             lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
             amount_entry = ttk.Entry(speed_up_Frame,width=10)
             amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-            sp_popup_button=tk.Button(speed_up_Frame,text='Speed Up',command=lambda:[self.logic.add_filepath_speed_up(entry,amount_entry,self.audio), self.cleanup(self.top)])
+            sp_popup_button=tk.Button(speed_up_Frame,text='Speed Up',command=lambda:[self.logic.add_filepath_speed_up(entry,amount_entry), self.cleanup(self.top)])
             sp_popup_button.grid(row=2,column=0,padx=5,pady=5,sticky="n")
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -328,6 +331,20 @@ class mainWindow():
             name_entry.insert(0, treeview.item(curItem)['values'][0])
         except IndexError:
             print("click again")
+     
+    def show_playlist(self,playlist_dropdown,treeview):
+        if (playlist_dropdown.get() == ""):
+            self.input_files(treeview)
+            return
+        for item in treeview.get_children():
+            treeview.delete(item)
+        files=self.db.get_playlist(playlist_dropdown.get())
+        for i in range(len(files)):
+            title = files[i].split("/")[-1].split(".")[0]
+            treeview.insert("",tk.END,text=f"Item #{i+1}",values=(title,files[i],self.db.tags_from_file(title),self.db.get_duration(files[i])))
+    
+    def all_files(self):
+        self.db.list_tags
 
 def open_gui():
     root = tk.Tk()
