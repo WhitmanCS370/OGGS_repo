@@ -197,12 +197,12 @@ class Recorder(Player):
             print(f"[{index}] {device}")
 
             
-    def record(self,path,lbl):
+    def record(self,filename,lbl):
         """
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
         """
-        filepath = os.path.join(os.curdir, "sounds", str(lbl)+".wav")
+        filepath = os.path.join(os.curdir, "sounds", str(filename)+".wav")
         recorder = PvRecorder(device_index=0, frame_length=512) #(32 milliseconds of 16 kHz audio)
         audio = []
         try:
@@ -214,10 +214,11 @@ class Recorder(Player):
                 timepassed=time.time()-start_time
                 lbl.configure(text=timepassed)
             recorder.stop()
-            with wave.open(path.split("/")[-1], 'w') as f:
+            with wave.open(filepath, 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack("h" * len(audio), *audio))
-            self.db.add_from_file(path)
+            self.db.add_from_file(filepath)
+            self.db.add_tag_to_file('rec', filename)
             recorder.delete()
         except Exception as e:
             print(f"error occured: {e}")
