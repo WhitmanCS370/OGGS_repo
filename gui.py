@@ -38,7 +38,7 @@ class mainWindow():
         showing_frame.grid(row=0, column=0, padx=20, pady=10)
         
         name_entry = ttk.Entry(showing_frame)
-        name_entry.insert(0, "File Name")
+
         name_entry.bind("<FocusIn>", lambda e: name_entry.delete('0', 'end'))
         name_entry.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
         
@@ -142,6 +142,9 @@ class mainWindow():
         
     def rename_popup(self, entry):
         try:
+            if len(entry)==0:
+                self.select_files_popup()
+                return
             self.top=Toplevel(self.root)
             self.top.geometry('300x300')
             self.pathing = path
@@ -170,6 +173,11 @@ class mainWindow():
         
     def speed_up_popup(self, entry):
         try:
+            if len(entry.get())==0:
+                self.select_files_popup()
+                return
+            entry_value=entry.get()
+            print(type(entry_value))
             self.top=Toplevel(self.root)
             self.top.geometry('400x300')
             speed_up_Frame = ttk.Frame(self.top)
@@ -207,6 +215,9 @@ class mainWindow():
 
     def to_playlist_popup(self, entry):
         try:
+            if len(entry)==0:
+                self.select_files_popup()
+                return
             self.top=Toplevel(self.root)
             self.top.geometry('300x300')
             playlist_Frame = ttk.Frame(self.top)
@@ -239,23 +250,27 @@ class mainWindow():
             print(f"An error occurred: {e}")
             
     def trim_popup(self,entry):
-
-        self.top=Toplevel(self.root)
-        self.top.geometry('450x300')
-        trim_Frame = ttk.Frame(self.top)
-        trim_Frame.pack()
-        name_entry=tk.Label(trim_Frame,text="trim it?")
-        name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
-        filepath=self.db.get_filepath(entry.get())
-        duration=self.db.get_duration(filepath)
-        hLeft = tk.DoubleVar()  #left handle variable initialised to value 0
-        hRight = tk.DoubleVar()  #right handle variable initialised to duration of file
-        hSlider = RangeSliderH( trim_Frame , [hLeft, hRight], min_val=0, max_val=duration, padX=96.76 ,step_marker = True, step_size = duration/10)   #horizontal slider
-        hSlider._RangeSliderH__moveBar(0, 0.0)   # 0.2 means 20 for range 0 to 100
-        hSlider._RangeSliderH__moveBar(1, 1.0)   # 0.8 means 80 for range 0 to 100
-        hSlider.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-        playlist_popup_button=tk.Button(trim_Frame, text='Trim',command = lambda:[self.db.add_from_file(self.audio.trim(filepath,int(hLeft.get()),int(hRight.get()))), self.cleanup(self.top)])
-        playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        try:
+            self.top=Toplevel(self.root)
+            self.top.geometry('450x300')
+            trim_Frame = ttk.Frame(self.top)
+            trim_Frame.pack()
+            name_entry=tk.Label(trim_Frame,text="trim it?")
+            name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+            filepath=self.db.get_filepath(entry.get())
+            duration=self.db.get_duration(filepath)
+            hLeft = tk.DoubleVar()  #left handle variable initialised to value 0
+            hRight = tk.DoubleVar()  #right handle variable initialised to duration of file
+            hSlider = RangeSliderH( trim_Frame , [hLeft, hRight], min_val=0, max_val=duration, padX=96.76 ,step_marker = True, step_size = duration/10)   #horizontal slider
+            hSlider._RangeSliderH__moveBar(0, 0.0)   # 0.2 means 20 for range 0 to 100
+            hSlider._RangeSliderH__moveBar(1, 1.0)   # 0.8 means 80 for range 0 to 100
+            hSlider.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+            playlist_popup_button=tk.Button(trim_Frame, text='Trim',command = lambda:[self.db.add_from_file(self.audio.trim(filepath,int(hLeft.get()),int(hRight.get()))), self.cleanup(self.top)])
+            playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        except TypeError:
+            self.select_files_popup()
+        except Exception as e:
+            print(f"exception occured: {e}")
 
         
     def add_file_popup(self):
@@ -273,6 +288,17 @@ class mainWindow():
         
     def delete_tag_popup(self,entry):
         print('delete_tag')
+        
+    def select_files_popup(self):
+        try:
+            top=Toplevel(self.root)
+            top.geometry('450x300')
+            trim_Frame = ttk.Frame(top)
+            trim_Frame.pack()
+            name_entry=tk.Label(trim_Frame,text="You didn't select any files")
+            name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+        except Exception as e:
+            print(f"exception occured: {e}")
         
 
     def update_playlist_list(self,dropdown):
