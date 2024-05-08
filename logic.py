@@ -242,7 +242,11 @@ class Logic:
         self.db=db
         
     def get_playlist_list(self):
-        return list(self.db.list_playlists())+[""]
+        playlists=self.db.list_playlists()
+        if type(playlists)==None:
+            return list(playlists)+[""]
+        else: 
+            return []
     
     def delete_file_with_name(self,name):
         self.db.delete_file_by_name(name)

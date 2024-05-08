@@ -12,14 +12,17 @@ from os import path
 
 class mainWindow():
     def __init__(self,root):
+        if not path.isfile('./audio_library.sqlite'):
+            init()
+            init_default_tags()
         db = databaseManager()
+        db.add_all()
         self.audio = AudioEffects(db)
         self.files = FileManager()
         self.recorder=Recorder(db)
         self.logic=Logic(db)
-        if not path.isfile('./audio_library.sqlite'):
-            init()
-            init_default_tags()
+        
+
         self.root=root
         #for development purposes, populate database with example files
 
