@@ -10,7 +10,6 @@ import threading
 import queue
 from os import path
 
-
 class mainWindow():
     def __init__(self,root):
         db = databaseManager()
@@ -326,7 +325,24 @@ class mainWindow():
             name_entry.insert(0, treeview.item(curItem)['values'][0])
         except IndexError:
             print("click again")
+<<<<<<< Updated upstream
 
+=======
+              
+    def show_playlist(self,playlist_dropdown,treeview):
+        if (playlist_dropdown.get() == ""):
+            self.input_files(treeview)
+            return
+        for item in treeview.get_children():
+            treeview.delete(item)
+        files=self.db.get_playlist(playlist_dropdown.get())
+        for i in range(len(files)):
+            title = files[i].split("/")[-1].split(".")[0]
+            treeview.insert("",tk.END,text=f"Item #{i+1}",values=(title,files[i],self.db.tags_from_file(title),self.db.get_duration(files[i])))
+    
+    def all_files(self):
+        self.db.list_tags
+>>>>>>> Stashed changes
 
 def open_gui():
     root = tk.Tk()
