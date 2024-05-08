@@ -19,12 +19,13 @@ class Interface(cmd.Cmd):
         super().__init__()
         self.intro = "Welcome to the audio library CLI, enter 'help' for a list of commands"
         self.prompt = ">> "
-        self.audio = AudioEffects()
+        self.db = databaseManager()
+        self.audio = AudioEffects(self.db)
         self.files = FileManager()
         if not (path.exists("./audio_library.sqlite")):
             init()
-        self.recorder=Recorder()
-        self.db = databaseManager()
+        self.recorder=Recorder(self.db)
+        
         #for development purposes, populate database with example files
         self.db.add_all()
 

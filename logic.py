@@ -1,4 +1,5 @@
 import os
+from os import path
 import numpy as np
 from pvrecorder import PvRecorder
 import wave, struct 
@@ -185,6 +186,7 @@ class Recorder(Player):
         self.isrecording=False
         self.db=db
         self.db.add_all()
+
     
     def check_inputs(self):
         """
@@ -234,7 +236,7 @@ class Recorder(Player):
         today=datetime.now()
         return today.strftime("%d-%m-%Y-%H-%M-%S")
     
-class Logic():
+class Logic:
     
     def __init__(self,db):
         self.db=db
@@ -249,11 +251,12 @@ class Logic():
         self.db.add_from_file(file)
         
     def rename(self,newFileName,oldFileName):
+        self.pathing = path
         self.db.add_from_file(self.pathing.join(self.pathing.curdir, "sounds", newFileName))
         self.db.delete_file_by_name(oldFileName[:-4])
         
     def add_filepath_speed_up(self,entry,amount_entry,audio):
-        self.db.add_from_file(self.speed_up(self.db.get_filepath(entry.get()),amount_entry.get()))
+        self.db.add_from_file(audio.speed_up(entry,amount_entry.get()))
     
     def song_playlist(self,playlist_dropdown,entry):
         self.db.song_to_playlist(playlist_dropdown.get(),entry)
@@ -263,12 +266,12 @@ class Logic():
         
     def add_filepath_trim(self,entry,hLeft,hRight,audio):
         filepath=self.db.get_filepath(entry.get())
-        self.db.add_from_file(self.audio.trim(filepath,int(hLeft.get()),int(hRight.get())))
+        self.db.add_from_file(audio.trim(filepath,int(hLeft.get()),int(hRight.get())))
     
     def add_filepath(self,file):
         self.db.add_from_file(file)
         
-    def add_inputed_file(self,treeview):
+    def input_files(self,treeview):
         try:
             for item in treeview.get_children():
                 treeview.delete(item)
