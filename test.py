@@ -19,20 +19,25 @@ class Interface_test(unittest.TestCase):
         self.assertTrue(self.interface.validate_single_arg("arg"))
         self.assertFalse(self.interface.validate_single_arg("arg1 arg2 arg3"))
 
-    def test_play(self):
-        pass
-
-    def test_list(self):
-        pass
-
-    def test_rename(self):
-        pass
-
-    def test_layer(self):
-        pass
+    def test_resume(self):
+        with patch.object(self.interface.audio, "resume") as mock_obj:
+            self.interface.do_resume()
+            mock_obj.assert_called()
 
     def test_seq(self):
-        pass
+        with patch.object(self.interface.audio, "layer") as mock_obj:
+            self.interface.do_layer("fileone filetwo")
+            mock_obj.assert_called_once_with(["fileone", "filetwo"])
+
+    def test_new_playlist(self):
+        with patch.object(self.interface.db, "add_playlist") as mock_obj:
+            self.interface.do_new_playlist("playlistname")
+            mock_obj.assert_awaited_once_with("playlist")
+
+    def test_playlist_add(self):
+        with patch.object(self.interface.db, "song_to_playlist") as mock_obj:
+            self.interface.do_playlist_add("playlist song")
+            mock_obj.assert_called_once_with("playlist", "song")
 
     def test_exit(self):
         pass

@@ -4,6 +4,7 @@ from file_system import FileManager
 from sql_commands import databaseManager
 from database_init import init
 from os import walk
+from os import path
 
 class Interface(cmd.Cmd):
     """
@@ -20,7 +21,8 @@ class Interface(cmd.Cmd):
         self.prompt = ">> "
         self.audio = AudioEffects()
         self.files = FileManager()
-        init()
+        if not (path.exists("./audio_library.sqlite")):
+            init()
         self.recorder=Recorder()
         self.db = databaseManager()
         #for development purposes, populate database with example files
@@ -63,6 +65,18 @@ class Interface(cmd.Cmd):
                 self.db.add_all()
                 print("--------------------\nall files added to database.")
     
+    def do_add_file(self, args):
+        """
+        Desc: Add a file to the archive given a filepath
+        Usage: add_file <filepath>
+        """
+        if (self.validate_single_arg(args)):
+            new_path = self.files.add_file(args)
+            self.db.add_from_file(new_path)
+        else:
+            self.provide_arg_msg()
+
+
     def do_play(self, args):
         """
         Desc: Play a sound from the library.
@@ -140,8 +154,6 @@ class Interface(cmd.Cmd):
         """
         playlists = list(self.db.list_playlists())
         self.columnize(playlists)
-        # for playlist in playlists:
-        #     print(playlist[0])
 
     def do_show_playlist(self, args):
         """
@@ -191,9 +203,6 @@ class Interface(cmd.Cmd):
         """
         files = list(self.db.get_from_tag(tag))
         self.columnize(files)
-        # print(files)
-        # for file in files:
-        #     print(file[1])
     
     def do_rename(self, args):
         """
@@ -213,8 +222,7 @@ class Interface(cmd.Cmd):
         """
         tags = list(self.db.list_tags())
         self.columnize(tags)
-        # for tag in tags:
-        #     print(tag[0])
+
 
     def do_exit(self, args):
         """
@@ -229,7 +237,9 @@ class Interface(cmd.Cmd):
         Usage: record [name of new file]
         """
         if (self.validate_single_arg(args=args)):
-            self.recorder.record(args)
+            print("Press ctrl+c / command+c to stop recording")        
+            filepath = self.recorder.record(args, self.db)
+            self.db.add_from_file(filepath)
         else:
             self.provide_arg_msg()
             
@@ -258,7 +268,7 @@ class Interface(cmd.Cmd):
         if (self.validate_list_args(args=args,nArgs=2)):
             args=args.split()
             filename = self.db.get_filepath(args[0])
-            new_file = self.audio.speed_up(filename, args[1])
+            new_file = self.audio.speed_up(filename, args[1], self.db)
             self.db.add_from_file(new_file)
         else: 
             self.provide_arg_msg()
@@ -271,7 +281,7 @@ class Interface(cmd.Cmd):
         if (self.validate_list_args(args=args,nArgs=3)):
             args=args.split()
             filename = self.db.get_filepath(args[0])
-            new_file = self.audio.trim(filename,args[1],args[2])
+            new_file = self.audio.trim(filename,args[1],args[2], self.db)
             self.db.add_from_file(new_file)
         else: 
             self.provide_arg_msg()
@@ -283,7 +293,7 @@ class Interface(cmd.Cmd):
         """
         if (self.validate_single_arg(args=args)):
             filepath = self.db.get_filepath(args)
-            new_file = str(self.audio.backward(filepath))
+            new_file = str(self.audio.backward(filepath, self.db))
             self.db.add_from_file(new_file)
         else: 
             self.provide_arg_msg()

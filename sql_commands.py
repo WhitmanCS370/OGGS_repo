@@ -158,16 +158,31 @@ class databaseManager():
             print(f"An error occurred: {e}")
             print("as")
             return None
+    
+    def get_name(self, filepath):
+        try:
+            self.cursor.execute(
+                """
+                    SELECT DISTINCT title FROM audio_files
+                    WHERE filepath == (?);
+                """,(filepath,)
+            )
+            path = np.array(self.cursor.fetchall())
+            return path[0][0] if path[0][0] else None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
 
-    def add_from_file(self, filepath, artist = None, album = None, genre = None):
+    def add_from_file(self, filepath):
         try:
             duration = self.get_duration(filepath)
-            title = filepath.split("/")[-1].split(".")[0]
+            root, ext = os.path.splitext(os.path.basename(filepath))
             self.cursor.execute("""
-                INSERT INTO audio_files (title, artist, album, genre, filepath, duration)
-                VALUES (?, ?, ?, ?, ?, ?);
-            """, (title, artist, album, genre, filepath, duration))
+                INSERT INTO audio_files (title, filepath, duration)
+                VALUES (?, ?, ?);
+            """, (root, filepath, duration))
             self.conn.commit()
+            self.add_tag_to_file(ext, root)
         except sqlite3.IntegrityError:
             print("File already exists in the database.")
         except Exception as e:
@@ -195,48 +210,6 @@ class databaseManager():
         except Exception as e:
             print(f"An error occurred: {e}")
             return []
-        
-    def get_artist(self, filename):
-        try:
-            self.cursor.execute(
-                """
-                    SELECT DISTINCT artist FROM audio_files
-                    WHERE title == (?);
-                """,(filename,)
-            )
-            path = np.array(self.cursor.fetchall())
-            return path[0][0] if path[0][0] else None
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
-        
-    def get_album(self, filename):
-        try:
-            self.cursor.execute(
-                """
-                    SELECT DISTINCT album FROM audio_files
-                    WHERE title == (?);
-                """,(filename,)
-            )
-            path = np.array(self.cursor.fetchall())
-            return path[0][0] if path[0][0] else None
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
-        
-    def get_genre(self, filename):
-        try:
-            self.cursor.execute(
-                """
-                    SELECT DISTINCT genre FROM audio_files
-                    WHERE title == (?);
-                """,(filename,)
-            )
-            path = np.array(self.cursor.fetchall())
-            return path[0][0] if path[0][0] else None
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
 
     def rename(self, oldFileName, newFileName, newFilepath):
         try:
@@ -343,8 +316,23 @@ class databaseManager():
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
-    
-    # END TAG METHODS
+        
+    def tags_from_file(self, file):
+        try:
+            fileID = self.get_song_id(file)
+            self.cursor.execute("""
+                SELECT DISTINCT tags.name
+                FROM tags
+                JOIN file_tags ON tags.id = file_tags.tag_id
+                WHERE file_tags.audio_file_id = ?;
+            """, (fileID,))
+            tags = np.array(self.cursor.fetchall())
+            return tags.ravel()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None    
+        
+        # END TAG METHODS
     
 
     # helper methods for testing
