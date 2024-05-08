@@ -89,7 +89,7 @@ class mainWindow():
         add_file_button = ttk.Button(showing_frame, text="Add File",command=lambda:[self.add_file_popup(name_entry)])
         add_file_button.grid(row=15, column=0, padx=5, pady=5, sticky="nsew")
         
-        duplicate_file_button = ttk.Button(showing_frame, text="Duplicate File",command=lambda:[self.duplicate_file_popup(name_entry)])
+        duplicate_file_button = ttk.Button(showing_frame, text="Duplicate File",command=lambda:[self.files.duplicate_file(name_entry.get(), db)])
         duplicate_file_button.grid(row=16, column=0, padx=5, pady=3, sticky="nsew")
         
         add_tag_button = ttk.Button(showing_frame, text="Add Tag",command=lambda:[self.add_tag_popup(name_entry)])
