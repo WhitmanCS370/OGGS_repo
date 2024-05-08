@@ -17,19 +17,7 @@ class AudioPlayer:
 
     def initialize_stream(self):
         """ Helper method to initialize the PyAudio stream """
-        if self.filepath.endswith('.wav'):
-            self.audio = wave.open(self.filepath, 'rb')
-        elif self.filepath.endswith('.mp3'):
-            print("Converting MP3 to WAV")
-            audio = AudioSegment.from_mp3(self.filepath)
-            # Convert MP3 to WAV and export to a temporary file
-            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_file:
-                audio.export(temp_file.name, format="wav")
-                temp_file_path = temp_file.name
-            # Open the temporary WAV file with wave.open
-            self.audio = wave.open(temp_file_path, 'rb')
-        else:
-            raise ValueError("Unsupported file format")
+        self.audio = wave.open(self.filepath, 'rb')
 
         self.stream = self.p.open(format=self.p.get_format_from_width(self.audio.getsampwidth()),
                                   channels=self.audio.getnchannels(),
@@ -85,3 +73,43 @@ class AudioPlayer:
         self.paused = False
         self.stopped = False
         self.current_position = 0  # Reset current position to 0
+
+    def set_speed(self, speed_factor):
+        """Speed up or slow down the audio.
+        It creates a new temp file that can be played
+
+        Args:
+            speed_factor (float): Factor to adjust the speed (1.0 is normal, 2.0 is double speed, 0.5 is half speed, etc.)
+        """
+
+        # Load the entire audio for manipulation
+        audio_segment = AudioSegment.from_file(self.filepath)
+
+        # Apply speed change
+        new_audio = audio_segment.speedup(playback_speed=speed_factor, chunk_size=150, crossfade=25)
+
+        # Export to a new temporary file
+        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_file:
+            new_audio.export(temp_file.name, format="wav")
+            temp_file_path = temp_file.name
+
+        # Reset the stream with the modified audio
+        self.reset()
+        self.audio = wave.open(temp_file_path, 'rb')
+        self.initialize_stream()
+
+    def skip_to(self, seconds):
+        """Skips to a specific position in the audio.
+
+        Args:
+            seconds (int): Target position in seconds.
+        """
+
+        # Convert skip amount to milliseconds
+        seconds = int(seconds)
+        frame_position = seconds * self.audio.getframerate()
+        if frame_position > self.audio.getnframes():
+            frame_position = self.audio.getnframes()  # Prevent seeking past the end
+
+        self.current_position = frame_position
+        self.audio.setpos(self.current_position)

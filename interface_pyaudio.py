@@ -140,6 +140,15 @@ class Interface(cmd.Cmd):
                 print(f"Failed to reset playback: {e}")
         else:
             print("No sound is currently playing.")
+    
+    def do_skip(self, args):
+        """skip to a timeframe"""
+        if hasattr(self, 'player') and self.player:
+            try:
+                self.player.skip_to(args)
+                print(f"skipped to {args}")
+            except Exception as e:
+                print(f"Failed to skip to timeframe{args}, error: {e}")
 
 if __name__ == "__main__":
     CLI_interface = Interface()
