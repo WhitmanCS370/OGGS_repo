@@ -5,6 +5,9 @@ import wave, struct
 from pydub import AudioSegment
 from pydub.playback import play
 from datetime import datetime
+import threading
+import pyaudio
+import time
 
 class Player:
     """
@@ -36,7 +39,6 @@ class Player:
         """
         self.start_time = datetime.now() # get time to calculate the time_elapsed
         try:
-            # print(len(self.current_playing))
             play(self.current_playing)
         except KeyboardInterrupt: # probably better way to do this in interface (reserach custom exeption?)
             self.pause()
@@ -78,7 +80,7 @@ class AudioEffects(Player):
             sound1=sound1+sound2
         play(sound1)
         
-    def backward(self,filename,db):
+    def backward(self,filename, db):
         """
         This method will play an audio file backwards
         """
@@ -88,8 +90,9 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_backward') # create the new filename with suffix _backward
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
+        name, ext = os.path.splitext(os.path.basename(filename))
         db.add_from_file(filename)
-        db.add_tag_to_file("backward", filename)
+        db.add_tag_to_file("backwards", name)
         return filename
         
     def sequence(self,files):
@@ -100,7 +103,7 @@ class AudioEffects(Player):
             self.set_currently_playing_file(file)
             self.play()
             
-    def speed_up(self,filename,speed,db):
+    def speed_up(self,filename,speed, db):
         """
         creates a new file but speeds it up
         """
@@ -121,10 +124,11 @@ class AudioEffects(Player):
         return filename
         
             
-    def trim(self,filename,startTimeStamp,endTimeStamp,db):
+    def trim(self,entry,startTimeStamp,endTimeStamp, db):
         """
         trims the specified file at the sime stamps stated
         """
+        filename=self.db.get_filepath(entry.get())
         sound = AudioSegment.from_wav(filename)
         # duration = sound.duration_seconds
         sound_export = sound[float(startTimeStamp)*1000:float(endTimeStamp)*1000]
@@ -136,10 +140,11 @@ class AudioEffects(Player):
         db.add_tag_to_file("trimmed", filename)
         return filename
 
-    def apply_distortion(self, filename, db,gain=20):
+    def apply_distortion(self, entry, db,gain=20):
         """
         apply a distortion effect to the audio file using specified gain factor
         """
+        filename=self.db.get_filepath(entry.get())
         sound = AudioSegment.from_file(filename)
         samples = np.array(sound.get_array_of_samples())
         # amplify the sound by the gain factor
@@ -171,6 +176,8 @@ class AudioEffects(Player):
         return duration
     
 class Recorder(Player):
+    def __init__(self):
+        self.isrecording=False
     
     def check_inputs(self):
         """
@@ -181,32 +188,41 @@ class Recorder(Player):
             print(f"[{index}] {device}")
 
             
-    def record(self,outfileName, db):
+    def record(self,path,db,lbl):
         """
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
         """
-        filepath = os.path.join(os.curdir, "sounds", str(outfileName)+".wav")
+        filepath = os.path.join(os.curdir, "sounds", str(lbl)+".wav")
         recorder = PvRecorder(device_index=0, frame_length=512) #(32 milliseconds of 16 kHz audio)
         audio = []
         try:
             recorder.start()
-            while True:
+            start_time=time.time()
+            while self.isrecording:
                 frame = recorder.read()
                 audio.extend(frame)
-        except KeyboardInterrupt:
+                timepassed=time.time()-start_time
+                lbl.configure(text=timepassed)
             recorder.stop()
-            print(filepath.split("/")[-1])
-            with wave.open(filepath, 'w') as f:
+            with wave.open(path.split("/")[-1], 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack("h" * len(audio), *audio))
-            db.add_from_file(filepath)
-        finally:
+            db.add_from_file(path)
             recorder.delete()
-        return filepath
+        except Exception as e:
+            print(f"error occured: {e}")
+        
+    def click_handler(self,button,path,db,lbl):
+        if self.isrecording:
+            self.isrecording=False
+            button.config(fg='black')
+        else:
+            self.isrecording=True
+            button.config(fg='red')
+            thread=threading.Thread(target=self.record,args=(path,db,lbl,)).start()
+            
             
     def get_DateTime(self):
         today=datetime.now()
         return today.strftime("%d-%m-%Y-%H-%M-%S")
-        
-
