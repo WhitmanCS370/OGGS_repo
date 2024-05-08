@@ -1,4 +1,5 @@
 import os
+from os import path
 from logic import *
 import shutil 
 
@@ -24,7 +25,10 @@ class FileManager():
         """
         Delete a specific file given filename.
         """
-        file_path = os.path.join(self.path, fileName)
+        if fileName[-4:]==".wav":
+            file_path = os.path.join("sounds", fileName)
+        else:
+            file_path = os.path.join("sounds", fileName+".wav")
         try:
             os.remove(file_path)
         except FileNotFoundError:

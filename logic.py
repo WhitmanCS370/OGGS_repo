@@ -75,17 +75,21 @@ class AudioEffects(Player):
     def layer(self,files):
         """
         This method will layer a list of audio files on top of one another
+        Generates a new file
         """
-        wavlist=[]
+        filename = "backwards.wav"
         sound1=AudioSegment.from_wav(files[0])
         for file in files[1:]:
             sound2= AudioSegment.from_wav(file)
             sound1=sound1+sound2
-        play(sound1)
+        sound1.export(f"./sounds/{filename}", format="wav")
+        self.db.add_from_file(f"./sounds/{filename}")
+        return filename
         
     def backward(self,entry):
         """
-        This method will play an audio file backwards
+        This method will play an audio file backwards.
+        Generate a new file
         """
         filename=self.db.get_filepath(entry.get())
         wave_object=AudioSegment.from_wav(filename)
@@ -170,7 +174,6 @@ class AudioEffects(Player):
         distorted_filename = ''.join(hashlist)
         distorted_sound.export(distorted_filename, format="wav")
         filename, ext = os.path.splitext(os.path.basename(distorted_filename))
-        print(filename, ext)
         self.db.add_from_file(distorted_filename)
         self.db.add_tag_to_file("distorted", filename)        
         return distorted_filename
@@ -186,16 +189,6 @@ class Recorder(Player):
         self.isrecording=False
         self.db=db
         self.db.add_all()
-
-    
-    def check_inputs(self):
-        """
-        This method checks that there is an availble audio input
-        """
-        print("check_inputs")
-        for index, device in enumerate(PvRecorder.get_available_devices()):
-            print(f"[{index}] {device}")
-
             
     def record(self,filename,lbl):
         """
@@ -231,11 +224,6 @@ class Recorder(Player):
             self.isrecording=True
             button.config(fg='red')
             thread=threading.Thread(target=self.record,args=(path,lbl,)).start()
-            
-            
-    def get_DateTime(self):
-        today=datetime.now()
-        return today.strftime("%d-%m-%Y-%H-%M-%S")
     
 class Logic:
     
@@ -243,7 +231,11 @@ class Logic:
         self.db=db
         
     def get_playlist_list(self):
-        return list(self.db.list_playlists())+[""]
+        playlists=self.db.list_playlists()
+        if type(playlists)!=None:
+            return list(playlists)+[""]
+        else: 
+            return []
     
     def delete_file_with_name(self,name):
         self.db.delete_file_by_name(name)
@@ -263,7 +255,7 @@ class Logic:
         self.db.song_to_playlist(playlist_dropdown.get(),entry)
         
     def create_playlist(self,playlist_entry):
-        self.db.add_playlist(playlist_entry.get())
+        self.db.add_playlist(playlist_entry)
         
     def add_filepath_trim(self,entry,hLeft,hRight,audio):
         filepath=self.db.get_filepath(entry.get())
