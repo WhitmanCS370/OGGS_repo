@@ -67,7 +67,7 @@ class mainWindow():
         layer_button = ttk.Button(showing_frame, text="Layer",command=lambda:self.audio.layer(self.get_selected_filepaths(treeview)))
         layer_button.grid(row=8, column=0, padx=5, pady=3, sticky="nsew")
         
-        delete_button = ttk.Button(showing_frame, text="Delete",command=lambda:[self.logic.delete_file_with_name(name_entry.get()),self.files.delete_file(name_entry.get()),self.logic.input_files(treeview)])
+        delete_button = ttk.Button(showing_frame, text="Delete",command=lambda:[self.logic.delete_file_with_name(name_entry.get()), self.files.delete_file(name_entry.get()),self.logic.input_files(treeview)])
         delete_button.grid(row=9, column=0, padx=5, pady=3, sticky="nsew")
         
         rename_button = ttk.Button(showing_frame, text="Rename",command=lambda:[self.rename_popup(name_entry),self.logic.input_files(treeview)])
@@ -85,7 +85,7 @@ class mainWindow():
         record_button = ttk.Button(showing_frame, text="Record",command=lambda:[self.record_popup(name_entry)])
         record_button.grid(row=13, column=0, padx=5, pady=3, sticky="nsew")
         
-        trim_button = ttk.Button(showing_frame, text="Trim",command=lambda:[self.trim_popup(name_entry)])
+        trim_button = ttk.Button(showing_frame, text="Trim",command=lambda:[self.trim_popup(name_entry,treeview)])
         trim_button.grid(row=14, column=0, padx=5, pady=3, sticky="nsew")
         
         add_file_button = ttk.Button(showing_frame, text="Add File",command=lambda:[self.add_file_popup(name_entry)])
@@ -176,7 +176,6 @@ class mainWindow():
                 self.select_files_popup()
                 return
             entry_value=entry.get()
-            print(type(entry_value))
             self.top=Toplevel(self.root)
             self.top.geometry('400x300')
             speed_up_Frame = ttk.Frame(self.top)
@@ -185,7 +184,7 @@ class mainWindow():
             lbl.grid(row=0,column=0, padx=5, pady=5,sticky="n")
             amount_entry = ttk.Entry(speed_up_Frame,width=10)
             amount_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-            sp_popup_button=tk.Button(speed_up_Frame,text='Speed Up',command=lambda:[self.logic.add_filepath_speed_up(entry,amount_entry), self.cleanup(self.top)])
+            sp_popup_button=tk.Button(speed_up_Frame,text='Speed Up',command=lambda:[self.logic.add_filepath_speed_up(entry,amount_entry,self.audio), self.cleanup(self.top)])
             sp_popup_button.grid(row=2,column=0,padx=5,pady=5,sticky="n")
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -239,11 +238,11 @@ class mainWindow():
             self.top.geometry('300x300')
             playlist_Frame = ttk.Frame(self.top)
             playlist_Frame.pack()
-            name_entry=tk.Label(playlist_Frame,text="What is the playlist's name?")
-            name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+            playlist_lbl=tk.Label(playlist_Frame,text="What is the playlist's name?")
+            playlist_lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
             playlist_entry = ttk.Entry(playlist_Frame,width=10)
             playlist_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-            playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.logic.create_playlist(playlist_entry),self.update_playlist_list(playlist_dropdown), self.cleanup(self.top)])
+            playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.logic.create_playlist(playlist_entry.get()),self.update_playlist_list(playlist_dropdown), self.cleanup(self.top)])
             playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
         except Exception as e:
             print(f"An error occurred: {e}")
