@@ -142,7 +142,7 @@ class mainWindow():
         
     def rename_popup(self, entry):
         try:
-            if len(entry)==0:
+            if len(entry.get())==0:
                 self.select_files_popup()
                 return
             self.top=Toplevel(self.root)
