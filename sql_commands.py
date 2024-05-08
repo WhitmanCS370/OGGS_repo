@@ -2,7 +2,7 @@ import os
 import sqlite3
 import wave
 import numpy as np
-from audio import *
+from logic import *
 from database_init import init
 
 class databaseManager():

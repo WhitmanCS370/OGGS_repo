@@ -8,6 +8,7 @@ from datetime import datetime
 import threading
 import pyaudio
 import time
+import tkinter as tk
 
 class Player:
     """
@@ -18,7 +19,7 @@ class Player:
         self.start_time = 0 # time that the audio clip began playing
         self.pause_time = 0 # time that the audio clip was paused
         self.length = 0 # the overall length of the audio clip
-
+      
     def set_currently_playing_file(self, filename):
         """
         This is a method to set the currently playing file from a filepath
@@ -66,8 +67,9 @@ class AudioEffects(Player):
     """
     This class will be responsible for applying effects to audio files that are being played
     """
-    def __init__(self):
+    def __init__(self,db):
         super()
+        self.db=db
         
     def layer(self,files):
         """
@@ -80,10 +82,11 @@ class AudioEffects(Player):
             sound1=sound1+sound2
         play(sound1)
         
-    def backward(self,filename, db):
+    def backward(self,entry):
         """
         This method will play an audio file backwards
         """
+        filename=self.db.get_filepath(entry.get())
         wave_object=AudioSegment.from_wav(filename)
         reversed= wave_object.reverse()
         hashlist = list(filename)
@@ -91,8 +94,8 @@ class AudioEffects(Player):
         filename=''.join(hashlist)
         reversed.export(filename,format="wav")
         name, ext = os.path.splitext(os.path.basename(filename))
-        db.add_from_file(filename)
-        db.add_tag_to_file("backwards", name)
+        self.db.add_from_file(filename)
+        self.db.add_tag_to_file("backwards", name)
         return filename
         
     def sequence(self,files):
@@ -103,10 +106,11 @@ class AudioEffects(Player):
             self.set_currently_playing_file(file)
             self.play()
             
-    def speed_up(self,filename,speed, db):
+    def speed_up(self,entry,speed):
         """
         creates a new file but speeds it up
         """
+        filename=self.db.get_filepath(entry.get())
         if speed.isnumeric():
             speed=str(int(speed)*1.0)
         sound = AudioSegment.from_wav(filename)
@@ -119,12 +123,12 @@ class AudioEffects(Player):
             hashlist.insert(-4, '_speed'+speed)
             filename=''.join(hashlist)
         so.export(filename,format="wav")
-        db.add_from_file(filename)
-        db.add_tag_to_file("sped up", filename)
+        self.db.add_from_file(filename)
+        self.db.add_tag_to_file("sped up", filename)
         return filename
         
             
-    def trim(self,entry,startTimeStamp,endTimeStamp, db):
+    def trim(self,entry,startTimeStamp,endTimeStamp):
         """
         trims the specified file at the sime stamps stated
         """
@@ -136,11 +140,11 @@ class AudioEffects(Player):
         hashlist.insert(-4, '_trim')
         filename=''.join(hashlist)
         sound_export.export(filename,format="wav")
-        db.add_from_file(filename)
-        db.add_tag_to_file("trimmed", filename)
+        self.db.add_from_file(filename)
+        self.db.add_tag_to_file("trimmed", filename)
         return filename
 
-    def apply_distortion(self, entry, db,gain=20):
+    def apply_distortion(self, entry,gain=20):
         """
         apply a distortion effect to the audio file using specified gain factor
         """
@@ -166,18 +170,21 @@ class AudioEffects(Player):
         distorted_sound.export(distorted_filename, format="wav")
         filename, ext = os.path.splitext(os.path.basename(distorted_filename))
         print(filename, ext)
-        db.add_from_file(distorted_filename)
-        db.add_tag_to_file("distorted", filename)        
+        self.db.add_from_file(distorted_filename)
+        self.db.add_tag_to_file("distorted", filename)        
         return distorted_filename
     
-    def check_length(self,filename):
+    def check_length(self,entry):
+        filename=self.db.get_filepath(entry.get())
         sound = AudioSegment.from_wav(filename)
         duration = sound.duration_seconds
         return duration
     
 class Recorder(Player):
-    def __init__(self):
+    def __init__(self,db):
         self.isrecording=False
+        self.db=db
+        self.db.add_all()
     
     def check_inputs(self):
         """
@@ -188,7 +195,7 @@ class Recorder(Player):
             print(f"[{index}] {device}")
 
             
-    def record(self,path,db,lbl):
+    def record(self,path,lbl):
         """
         starts recording and waits for the user to press ctrl+c or command+c to stop recording
 
@@ -208,21 +215,81 @@ class Recorder(Player):
             with wave.open(path.split("/")[-1], 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack("h" * len(audio), *audio))
-            db.add_from_file(path)
+            self.db.add_from_file(path)
             recorder.delete()
         except Exception as e:
             print(f"error occured: {e}")
         
-    def click_handler(self,button,path,db,lbl):
+    def click_handler(self,button,path,lbl):
         if self.isrecording:
             self.isrecording=False
             button.config(fg='black')
         else:
             self.isrecording=True
             button.config(fg='red')
-            thread=threading.Thread(target=self.record,args=(path,db,lbl,)).start()
+            thread=threading.Thread(target=self.record,args=(path,lbl,)).start()
             
             
     def get_DateTime(self):
         today=datetime.now()
         return today.strftime("%d-%m-%Y-%H-%M-%S")
+    
+class Logic():
+    
+    def __init__(self,db):
+        self.db=db
+        
+    def get_playlist_list(self):
+        return list(self.db.list_playlists())+[""]
+    
+    def delete_file_with_name(self,name):
+        self.db.delete_file_by_name(name)
+        
+    def add_file(self,file):
+        self.db.add_from_file(file)
+        
+    def rename(self,newFileName,oldFileName):
+        self.db.add_from_file(self.pathing.join(self.pathing.curdir, "sounds", newFileName))
+        self.db.delete_file_by_name(oldFileName[:-4])
+        
+    def add_filepath_speed_up(self,entry,amount_entry,audio):
+        self.db.add_from_file(self.speed_up(self.db.get_filepath(entry.get()),amount_entry.get()))
+    
+    def song_playlist(self,playlist_dropdown,entry):
+        self.db.song_to_playlist(playlist_dropdown.get(),entry)
+        
+    def create_playlist(self,playlist_entry):
+        self.db.add_playlist(playlist_entry.get())
+        
+    def add_filepath_trim(self,entry,hLeft,hRight,audio):
+        filepath=self.db.get_filepath(entry.get())
+        self.db.add_from_file(self.audio.trim(filepath,int(hLeft.get()),int(hRight.get())))
+    
+    def add_filepath(self,file):
+        self.db.add_from_file(file)
+        
+    def add_inputed_file(self,treeview):
+        try:
+            for item in treeview.get_children():
+                treeview.delete(item)
+            files=self.db.list_files()
+            for i in range(len(files)):
+                filepath=self.db.get_filepath(files[i])
+                treeview.insert("",tk.END,text=f"Item #{i+1}",values=(files[i],filepath,self.db.tags_from_file(files[i]),self.db.get_duration(filepath)))
+        except:
+            print("didnt work")
+            
+    def get_files(self):
+        return self.db.list_files()
+    
+    def show_playlist(self,playlist_dropdown,treeview):
+        if (playlist_dropdown.get() == ""):
+            self.input_files(treeview)
+            return
+        for item in treeview.get_children():
+            treeview.delete(item)
+        files=self.db.get_playlist(playlist_dropdown.get())
+        for i in range(len(files)):
+            title = files[i].split("/")[-1].split(".")[0]
+            treeview.insert("",tk.END,text=f"Item #{i+1}",values=(title,files[i],self.db.tags_from_file(title),self.db.get_duration(files[i])))
+          

@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest.mock import patch, MagicMock
 from file_system import *
-from audio import *
+from logic import *
 from interface import *
 
 

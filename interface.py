@@ -1,5 +1,5 @@
 import cmd
-from audio import AudioEffects, Recorder
+from logic import AudioEffects, Recorder
 from file_system import FileManager
 from sql_commands import databaseManager
 from database_init import init

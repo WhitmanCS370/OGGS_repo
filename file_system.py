@@ -1,5 +1,5 @@
 import os
-from audio import *
+from logic import *
 import shutil 
 
 class FileManager():
