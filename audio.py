@@ -124,10 +124,11 @@ class AudioEffects(Player):
         return filename
         
             
-    def trim(self,filename,startTimeStamp,endTimeStamp, db):
+    def trim(self,entry,startTimeStamp,endTimeStamp, db):
         """
         trims the specified file at the sime stamps stated
         """
+        filename=self.db.get_filepath(entry.get())
         sound = AudioSegment.from_wav(filename)
         # duration = sound.duration_seconds
         sound_export = sound[float(startTimeStamp)*1000:float(endTimeStamp)*1000]
@@ -139,10 +140,11 @@ class AudioEffects(Player):
         db.add_tag_to_file("trimmed", filename)
         return filename
 
-    def apply_distortion(self, filename, db,gain=20):
+    def apply_distortion(self, entry, db,gain=20):
         """
         apply a distortion effect to the audio file using specified gain factor
         """
+        filename=self.db.get_filepath(entry.get())
         sound = AudioSegment.from_file(filename)
         samples = np.array(sound.get_array_of_samples())
         # amplify the sound by the gain factor
