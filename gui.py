@@ -104,7 +104,7 @@ class mainWindow():
         trim_button = ttk.Button(showing_frame, text="Trim",command=lambda:[self.trim_popup(name_entry,treeview)])
         trim_button.grid(row=16, column=0, padx=5, pady=3, sticky="nsew")
         
-        add_file_button = ttk.Button(showing_frame, text="Add File",command=lambda:[self.add_file_popup(name_entry)])
+        add_file_button = ttk.Button(showing_frame, text="Add File",command=lambda:[self.add_file_popup()])
         add_file_button.grid(row=17, column=0, padx=5, pady=5, sticky="nsew")
         
         duplicate_file_button = ttk.Button(showing_frame, text="Duplicate File",command=lambda:[self.files.duplicate_file(name_entry.get(), db)])
