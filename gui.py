@@ -352,6 +352,7 @@ class mainWindow():
             options = self.logic.get_playlist_list()
             dropdown['values'] = tuple(options)
         except:
+            dropdown['values']=()
             print("failed to update playlist")
             
     def update_tag_list(self,dropdown):
@@ -360,6 +361,7 @@ class mainWindow():
             options = self.logic.get_tag_list()
             dropdown['values'] = tuple(options)
         except:
+            dropdown['values']=()
             print("failed to update tag list")
         
     def get_selected_filepaths(self,treeview):
