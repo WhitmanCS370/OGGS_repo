@@ -255,15 +255,14 @@ class AudioEffects:
         return filename
         
             
-    def trim(self,entry,startTimeStamp,endTimeStamp):
+    def trim(self,filepath,startTimeStamp,endTimeStamp):
         """
         trims the specified file at the sime stamps stated
         """
-        filename=self.db.get_filepath(entry.get())
-        sound = AudioSegment.from_wav(filename)
+        sound = AudioSegment.from_wav(filepath)
         # duration = sound.duration_seconds
         sound_export = sound[float(startTimeStamp)*1000:float(endTimeStamp)*1000]
-        hashlist = list(filename)
+        hashlist = list(filepath)
         hashlist.insert(-4, '_trim')
         filename=''.join(hashlist)
         sound_export.export(filename,format="wav")
