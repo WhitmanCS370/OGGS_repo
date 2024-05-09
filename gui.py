@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk,Label, Toplevel
 from tkinter.filedialog import askopenfilename, asksaveasfilename
-from logic import AudioEffects, Recorder, Logic
+from logic import AudioEffects, Recorder, Logic, Player, AudioPlayer
 from file_system import FileManager
 from sql_commands import databaseManager
 from database_init import init, init_default_tags
@@ -22,7 +22,9 @@ class mainWindow():
         self.files = FileManager()
         self.recorder=Recorder(db)
         self.logic=Logic(db)
-        
+        self.player = Player()
+        self.stream = AudioPlayer
+
         self.root=root
         #for development purposes, populate database with example files
 
@@ -73,7 +75,11 @@ class mainWindow():
         add_to_playlist=ttk.Button(showing_frame,text="Add To Playlist", command=lambda:[self.to_playlist_popup(self.get_selected_filepaths(treeview))])
         add_to_playlist.grid(row=7,column=0,padx=5, pady=3, sticky="nsew")
         
-        play_button = ttk.Button(showing_frame, text="Play",command=lambda:[self.audio.sequence(self.get_selected_filepaths(treeview))])
+        #play_button = ttk.Button(showing_frame, text="Play",command=lambda:[self.player.sequence(self.get_selected_filepaths(treeview))])
+        #play_button.grid(row=8, column=0, padx=5, pady=3, sticky="nsew")
+
+        play_button = ttk.Button(showing_frame, text="Play", command=lambda: self.play_audio(self.get_selected_filepaths(treeview)))
+
         play_button.grid(row=8, column=0, padx=5, pady=3, sticky="nsew")
         
         layer_button = ttk.Button(showing_frame, text="Layer",command=lambda:self.audio.layer(self.get_selected_filepaths(treeview)))
@@ -151,6 +157,11 @@ class mainWindow():
         #for development purposes, populate database with example files
 
         self.root.mainloop()
+
+    def play_audio(self, filepath):
+            for file in filepath:
+                self.player = AudioPlayer(file)
+                self.player.play()
         
     def rename_popup(self, entry):
         try:
