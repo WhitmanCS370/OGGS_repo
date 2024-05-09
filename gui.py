@@ -53,8 +53,7 @@ class mainWindow():
         n = tk.StringVar() 
         playlist_dropdown = ttk.Combobox(playlist_frame, width = 27, textvariable = n) 
         playlist_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
-        options = self.logic.get_playlist_list()
-        playlist_dropdown['values'] = tuple(options)
+        self.update_playlist_list(playlist_dropdown)
         playlist_dropdown.bind("<<ComboboxSelected>>", lambda x:self.logic.show_playlist(playlist_dropdown, treeview))
         create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.add_playlist_popup(playlist_dropdown)])
         create_playlist.grid(row=4,column=0,padx=5, pady=3, sticky="nsew")
@@ -66,8 +65,7 @@ class mainWindow():
         n = tk.StringVar() 
         tag_dropdown = ttk.Combobox(tag_frame, width = 27, textvariable = n) 
         tag_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
-        options = self.logic.get_tag_list()
-        tag_dropdown['values'] = tuple(options)
+        self.update_tag_list(tag_dropdown)
         tag_dropdown.bind("<<ComboboxSelected>>", lambda x:self.logic.show_tag(tag_dropdown, treeview))
         create_tag=ttk.Button(showing_frame,text="Create Tag", command=lambda:[self.add_tag_popup(tag_dropdown)])
         create_tag.grid(row=5,column=0,padx=5, pady=3, sticky="nsew")
@@ -336,8 +334,6 @@ class mainWindow():
         except Exception as e:
             print(f"An error occurred: {e}")
         
-    def delete_tag_popup(self,entry):
-        print('delete_tag')
         
     def select_files_popup(self):
         try:
@@ -362,7 +358,6 @@ class mainWindow():
         try:
             print("drop")
             options = self.logic.get_tag_list()
-            print(options)
             dropdown['values'] = tuple(options)
         except:
             print("failed to update tag list")
