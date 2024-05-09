@@ -73,12 +73,33 @@ class mainWindow():
         add_to_playlist=ttk.Button(showing_frame,text="Add To Playlist", command=lambda:[self.to_playlist_popup(self.get_selected_filepaths(treeview))])
         add_to_playlist.grid(row=7,column=0,padx=5, pady=3, sticky="nsew")
         
+        # BEGIN PLAY METHODS ----------------------------------------------------------------------------------------------------
+
         #play_button = ttk.Button(showing_frame, text="Play",command=lambda:[self.player.sequence(self.get_selected_filepaths(treeview))])
-        #play_button.grid(row=8, column=0, padx=5, pady=3, sticky="nsew")
-
         play_button = ttk.Button(showing_frame, text="Play", command=lambda: self.play_audio(self.get_selected_filepaths(treeview)))
+        play_button.grid(row=0, column=1, padx=10, pady=10)
 
-        play_button.grid(row=8, column=0, padx=5, pady=3, sticky="nsew")
+        pause_button = ttk.Button(showing_frame, text="Pause/Play", command=lambda: self.player.pausePlay())
+        pause_button.grid(row=9, column=1, padx=10, pady=10)
+
+        stop_button = ttk.Button(showing_frame, text="Reset", command=lambda: self.player.stop())
+        stop_button.grid(row=18, column=1, padx=10, pady=10)
+
+        # Frame to hold skip controls
+        skip_frame = ttk.Frame(showing_frame)
+        skip_frame.grid(row=10, column=1, sticky="nsew") 
+
+        skip_label = ttk.Label(skip_frame, text="Skip (seconds):")
+        skip_label.grid(row=0, column=0, padx=5, pady=3)
+
+        skip_entry = ttk.Entry(skip_frame)
+        skip_entry.grid(row=0, column=1, padx=5, pady=3)
+
+        skip_button = ttk.Button(skip_frame, text="Skip", 
+                                command=lambda: self.player.skip_to(skip_entry.get()))
+        skip_button.grid(row=0, column=2, padx=5, pady=3)
+
+        # END PLAY METHODS ----------------------------------------------------------------------------------------------------
         
         layer_button = ttk.Button(showing_frame, text="Layer",command=lambda:self.audio.layer(self.get_selected_filepaths(treeview)))
         layer_button.grid(row=9, column=0, padx=5, pady=3, sticky="nsew")
@@ -153,7 +174,7 @@ class mainWindow():
         #for development purposes, populate database with example files
 
         self.root.mainloop()
-
+    # START PLAYER --------------------------------------------------
     def play_audio(self, filepath):
             for file in filepath:
                 self.player = AudioPlayer(file)

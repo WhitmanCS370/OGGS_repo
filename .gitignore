@@ -2,3 +2,4 @@
 **/__pycache__/
 .venv/
 audio_library.sqlite
+audio_library.sqlite-journal
