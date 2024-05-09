@@ -23,7 +23,6 @@ class mainWindow():
         self.recorder=Recorder(db)
         self.logic=Logic(db)
         
-
         self.root=root
         #for development purposes, populate database with example files
 
@@ -107,8 +106,8 @@ class mainWindow():
         duplicate_file_button = ttk.Button(showing_frame, text="Duplicate File",command=lambda:[self.files.duplicate_file(name_entry.get(), db)])
         duplicate_file_button.grid(row=18, column=0, padx=5, pady=3, sticky="nsew")
         
-        add_tag_button = ttk.Button(showing_frame, text="Add Tag",command=lambda:[self.add_tag_popup(name_entry)])
-        add_tag_button.grid(row=19, column=0, padx=5, pady=3, sticky="nsew")
+        add_to_tag_button = ttk.Button(showing_frame, text="Add Tag to File",command=lambda:[self.to_tag_popup(self.get_selected_filepaths(treeview))])
+        add_to_tag_button.grid(row=19, column=0, padx=5, pady=3, sticky="nsew")
         
         delete_tag_button = ttk.Button(showing_frame, text="Delete Tag",command=lambda:[self.delete_tag_popup(name_entry)])
         delete_tag_button.grid(row=20, column=0, padx=5, pady=3, sticky="nsew")
@@ -293,6 +292,28 @@ class mainWindow():
     def duplicate_file_popup(self,entry):
         print('dup file')
     
+    def to_tag_popup(self, entry):
+        try:
+            if len(entry)==0:
+                self.select_files_popup()
+                return
+            self.top=Toplevel(self.root)
+            self.top.geometry('300x300')
+            tag_Frame = ttk.Frame(self.top)
+            tag_Frame.pack()
+            lbl=tk.Label(tag_Frame,text="Add file to tag")
+            lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+            n = tk.StringVar() 
+            tag_dropdown = ttk.Combobox(tag_Frame, width = 27, textvariable = n) 
+            tag_dropdown.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
+            options = self.logic.get_tag_list()
+            tag_dropdown['values'] = tuple(options)
+            tag_popup_button=tk.Button(tag_Frame, text='Add',command = lambda:[self.logic.song_tag(tag_dropdown,entry), self.cleanup(self.top)])
+            tag_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        except TypeError:
+            print("error occured: Select file to add")
+
+
     def add_tag_popup(self,tag_dropdown):
         try:
             self.top=Toplevel(self.root)
@@ -330,12 +351,12 @@ class mainWindow():
         except:
             print("failed to update playlist")
             
-    def update_playlist_list(self,dropdown):
+    def update_tag_list(self,dropdown):
         try:
             options = self.logic.get_tag_list()
             dropdown['values'] = tuple(options)
         except:
-            print("failed to update playlist")
+            print("failed to update tag list")
         
     def get_selected_filepaths(self,treeview):
         filepathList=[]

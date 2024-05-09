@@ -238,12 +238,12 @@ class Logic:
             return []
         
     def get_tag_list(self):
-        tags=self.db.list_tags()
+        tags = self.db.list_tags()
         print(tags)
-        if tags:
-            return list(tags)+[""]
-        else: 
+        if tags is None:
             return []
+        else: 
+            return list(tags)+[""]
     
     def delete_file_with_name(self,name):
         self.db.delete_file_by_name(name)
@@ -263,6 +263,7 @@ class Logic:
         self.db.song_to_playlist(playlist_dropdown.get(),entry)
     
     def song_tag(self,tag_dropdown,entry):
+        # print(entry, tag_dropdown.get())
         self.db.add_tag_to_file(tag_dropdown.get(),entry)
         
     def create_playlist(self,playlist_entry):

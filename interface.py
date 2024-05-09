@@ -177,11 +177,10 @@ class Interface(cmd.Cmd):
     def do_new_tag(self, args):
         """
         Desc: Add a tag to the database.
-        Usage: add_tag <tagName> <tagDesc>
+        Usage: add_tag <tagName>
         """
-        if (self.validate_list_args(args=args, nArgs=2)):
-            args = args.split()
-            self.db.add_tag(args[0], args[1])
+        if (self.validate_single_arg(args)):
+            self.db.add_tag(args)
         else:
             self.provide_arg_msg()
 

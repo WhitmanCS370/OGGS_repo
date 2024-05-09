@@ -44,8 +44,7 @@ def init():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS tags (
         id INTEGER PRIMARY KEY,
-        name TEXT UNIQUE,
-        desc TEXT
+        name TEXT UNIQUE
     )
     """)
 
@@ -69,13 +68,13 @@ def init_default_tags():
     """
     INSERT INTO tags (name, desc)
         VALUES 
-        (".wav", "a .wav file"),
-        (".mp3", "a .mp3 file"),
-        ("backwards", "a backwards audio file"),
-        ("sped up", "a sped up audio file"),
-        ("trimmed","a trimmed audio file"),
-        ("rec","a file which was recorded"),
-        ("distorted", "a file which has been distorted")
+        (".wav"),
+        (".mp3"),
+        ("backwards"),
+        ("sped up"),
+        ("trimmed"),
+        ("rec"),
+        ("distorted")
     """
     )
 
