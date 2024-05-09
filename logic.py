@@ -350,14 +350,11 @@ class Logic:
             return []
         
     def get_tag_list(self):
-        try:
-            tags=self.db.list_tags()
-            if tags:
-                return list(tags)+[""]
-            else: 
-                return []
-        except:
-            print("didnt get tags")
+        tags = self.db.list_tags()
+        if tags is None:
+            return []
+        else:
+            return list(tags) + [""]
     
     def delete_file_with_name(self,name):
         self.db.delete_file_by_name(name)
@@ -385,7 +382,7 @@ class Logic:
         
     def create_tag(self,tag_entry):
         print(tag_entry)
-        self.db.add_tag(tag_entry,"")
+        self.db.add_tag(tag_entry)
         
     def add_filepath_trim(self,entry,hLeft,hRight,audio):
         val=entry.get()

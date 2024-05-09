@@ -66,7 +66,7 @@ def init_default_tags():
 
     cursor.execute(
     """
-    INSERT INTO tags (name, desc)
+    INSERT INTO tags (name)
         VALUES 
         (".wav"),
         (".mp3"),

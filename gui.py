@@ -67,7 +67,10 @@ class mainWindow():
         tag_dropdown = ttk.Combobox(tag_frame, width = 27, textvariable = n) 
         tag_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
         options = self.logic.get_tag_list()
-        tag_dropdown['values'] = tuple(options)
+        if options is not None:
+            tag_dropdown['values'] = tuple(options)
+        else:
+            tag_dropdown['values'] = ()
         tag_dropdown.bind("<<ComboboxSelected>>", lambda x:self.logic.show_tag(tag_dropdown, treeview))
         create_tag=ttk.Button(showing_frame,text="Create Tag", command=lambda:[self.add_tag_popup(tag_dropdown)])
         create_tag.grid(row=5,column=0,padx=5, pady=3, sticky="nsew")
