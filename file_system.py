@@ -67,17 +67,17 @@ class FileManager():
             print("No files found in archive")
     
     def duplicate_file(self,file, db):
-        src_path = os.path.join(self.path, file)
-        if file[-5].isnumeric():
-            num=int(file[-5])+1
-            file=str(num).join(file.rsplit(str(num-1), 1))
+        src_path = os.path.join(os.path.curdir,"sounds", file +".wav")
+        if (("_" in file) and (file.split("_")[-1].isdigit())):
+            num=int(file.split("_")[-1]) + 1
+            file=file.split('_')[0] + "_" + str(num)
         else: 
             hashlist = list(file)
-            hashlist.insert(-4, '_2')
+            hashlist.append('_2')
             file=''.join(hashlist)
-        new_path = os.path.join(self.path, file)
+        new_path = os.path.join(os.curdir, "sounds", file+".wav")
         shutil.copyfile(src_path, new_path)
-        db.add_from_file(self, file, self.path)
+        db.add_from_file(new_path)
         
 if __name__ == '__main__':
     FileManager().list_files()
