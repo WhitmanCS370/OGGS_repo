@@ -236,6 +236,14 @@ class Logic:
             return list(playlists)+[""]
         else: 
             return []
+        
+    def get_tag_list(self):
+        tags=self.db.list_tags()
+        print(tags)
+        if tags:
+            return list(tags)+[""]
+        else: 
+            return []
     
     def delete_file_with_name(self,name):
         self.db.delete_file_by_name(name)
@@ -253,9 +261,15 @@ class Logic:
     
     def song_playlist(self,playlist_dropdown,entry):
         self.db.song_to_playlist(playlist_dropdown.get(),entry)
+    
+    def song_tag(self,tag_dropdown,entry):
+        self.db.add_tag_to_file(tag_dropdown.get(),entry)
         
     def create_playlist(self,playlist_entry):
         self.db.add_playlist(playlist_entry)
+        
+    def create_tag(self,tag_entry):
+        self.db.add_tag(tag_entry)
         
     def add_filepath_trim(self,entry,hLeft,hRight,audio):
         filepath=self.db.get_filepath(entry.get())
@@ -288,4 +302,14 @@ class Logic:
         for i in range(len(files)):
             title = files[i].split("/")[-1].split(".")[0]
             treeview.insert("",tk.END,text=f"Item #{i+1}",values=(title,files[i],self.db.tags_from_file(title),self.db.get_duration(files[i])))
-          
+    
+    def show_tag(self,tag_dropdown,treeview):
+        if (tag_dropdown.get() == ""):
+            self.input_files(treeview)
+            return
+        for item in treeview.get_children():
+            treeview.delete(item)
+        files=self.db.get_from_tag(tag_dropdown.get())
+        for i in range(len(files)):
+            title = files[i].split("/")[-1].split(".")[0]
+            treeview.insert("",tk.END,text=f"Item #{i+1}",values=(title,files[i],self.db.tags_from_file(title),self.db.get_duration(files[i])))

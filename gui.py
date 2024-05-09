@@ -56,49 +56,62 @@ class mainWindow():
         playlist_dropdown['values'] = tuple(options)
         playlist_dropdown.bind("<<ComboboxSelected>>", lambda x:self.logic.show_playlist(playlist_dropdown, treeview))
         create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.add_playlist_popup(playlist_dropdown)])
-        create_playlist.grid(row=3,column=0,padx=5, pady=3, sticky="nsew")
+        create_playlist.grid(row=4,column=0,padx=5, pady=3, sticky="nsew")
+        
+        tag_frame = ttk.Frame(showing_frame)
+        tag_frame.grid(row=3, column=0)
+        lbl=tk.Label(tag_frame,text="Tags:")
+        lbl.grid(row=0,column=0, padx=5, pady=3,sticky="nw")
+        n = tk.StringVar() 
+        tag_dropdown = ttk.Combobox(tag_frame, width = 27, textvariable = n) 
+        tag_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
+        options = self.logic.get_tag_list()
+        tag_dropdown['values'] = tuple(options)
+        tag_dropdown.bind("<<ComboboxSelected>>", lambda x:self.logic.show_tag(tag_dropdown, treeview))
+        create_tag=ttk.Button(showing_frame,text="Create Tag", command=lambda:[self.add_tag_popup(tag_dropdown)])
+        create_tag.grid(row=5,column=0,padx=5, pady=3, sticky="nsew")
         
         add_to_playlist=ttk.Button(showing_frame,text="Add To Playlist", command=lambda:[self.to_playlist_popup(self.get_selected_filepaths(treeview))])
-        add_to_playlist.grid(row=4,column=0,padx=5, pady=3, sticky="nsew")
+        add_to_playlist.grid(row=7,column=0,padx=5, pady=3, sticky="nsew")
         
         play_button = ttk.Button(showing_frame, text="Play",command=lambda:[self.audio.sequence(self.get_selected_filepaths(treeview))])
-        play_button.grid(row=6, column=0, padx=5, pady=3, sticky="nsew")
+        play_button.grid(row=8, column=0, padx=5, pady=3, sticky="nsew")
         
         layer_button = ttk.Button(showing_frame, text="Layer",command=lambda:self.audio.layer(self.get_selected_filepaths(treeview)))
-        layer_button.grid(row=8, column=0, padx=5, pady=3, sticky="nsew")
+        layer_button.grid(row=9, column=0, padx=5, pady=3, sticky="nsew")
         
         delete_button = ttk.Button(showing_frame, text="Delete",command=lambda:[self.logic.delete_file_with_name(name_entry.get()), self.files.delete_file(name_entry.get()),self.logic.input_files(treeview)])
-        delete_button.grid(row=9, column=0, padx=5, pady=3, sticky="nsew")
+        delete_button.grid(row=10, column=0, padx=5, pady=3, sticky="nsew")
         
         rename_button = ttk.Button(showing_frame, text="Rename",command=lambda:[self.rename_popup(name_entry),self.logic.input_files(treeview)])
-        rename_button.grid(row=10,column=0,padx=5,pady=3, sticky="nsew")
+        rename_button.grid(row=11,column=0,padx=5,pady=3, sticky="nsew")
         
         speed_Up_button = ttk.Button(showing_frame, text="Speed Up",command=lambda:[self.speed_up_popup(name_entry),self.logic.input_files(treeview)])
-        speed_Up_button.grid(row=11, column=0, padx=5, pady=3, sticky="nsew")
+        speed_Up_button.grid(row=12, column=0, padx=5, pady=3, sticky="nsew")
         
         backward_button = ttk.Button(showing_frame, text="Backward",command=lambda:[self.logic.add_file(self.audio.backward(name_entry)),self.logic.input_files(treeview)])
-        backward_button.grid(row=12, column=0, padx=5, pady=5, sticky="nsew")
+        backward_button.grid(row=13, column=0, padx=5, pady=5, sticky="nsew")
 
         distortion_button = ttk.Button(showing_frame, text="Distort", command=lambda: [(self.audio.apply_distortion(name_entry)), self.logic.input_files(treeview)])
-        distortion_button.grid(row=19, column=0, padx=5, pady=5, sticky="nsew")
+        distortion_button.grid(row=14, column=0, padx=5, pady=5, sticky="nsew")
         
         record_button = ttk.Button(showing_frame, text="Record",command=lambda:[self.record_popup(name_entry)])
-        record_button.grid(row=13, column=0, padx=5, pady=3, sticky="nsew")
+        record_button.grid(row=15, column=0, padx=5, pady=3, sticky="nsew")
         
         trim_button = ttk.Button(showing_frame, text="Trim",command=lambda:[self.trim_popup(name_entry,treeview)])
-        trim_button.grid(row=14, column=0, padx=5, pady=3, sticky="nsew")
+        trim_button.grid(row=16, column=0, padx=5, pady=3, sticky="nsew")
         
         add_file_button = ttk.Button(showing_frame, text="Add File",command=lambda:[self.add_file_popup(name_entry)])
-        add_file_button.grid(row=15, column=0, padx=5, pady=5, sticky="nsew")
+        add_file_button.grid(row=17, column=0, padx=5, pady=5, sticky="nsew")
         
         duplicate_file_button = ttk.Button(showing_frame, text="Duplicate File",command=lambda:[self.duplicate_file_popup(name_entry)])
-        duplicate_file_button.grid(row=16, column=0, padx=5, pady=3, sticky="nsew")
+        duplicate_file_button.grid(row=18, column=0, padx=5, pady=3, sticky="nsew")
         
         add_tag_button = ttk.Button(showing_frame, text="Add Tag",command=lambda:[self.add_tag_popup(name_entry)])
-        add_tag_button.grid(row=17, column=0, padx=5, pady=3, sticky="nsew")
+        add_tag_button.grid(row=19, column=0, padx=5, pady=3, sticky="nsew")
         
         delete_tag_button = ttk.Button(showing_frame, text="Delete Tag",command=lambda:[self.delete_tag_popup(name_entry)])
-        delete_tag_button.grid(row=18, column=0, padx=5, pady=3, sticky="nsew")
+        delete_tag_button.grid(row=20, column=0, padx=5, pady=3, sticky="nsew")
     
         
         tree_frame = ttk.Frame(frame)
@@ -280,8 +293,20 @@ class mainWindow():
     def duplicate_file_popup(self,entry):
         print('dup file')
     
-    def add_tag_popup(self,entry):
-        print('add Tag')
+    def add_tag_popup(self,tag_dropdown):
+        try:
+            self.top=Toplevel(self.root)
+            self.top.geometry('300x300')
+            tag_Frame = ttk.Frame(self.top)
+            tag_Frame.pack()
+            tag_lbl=tk.Label(tag_Frame,text="What is the Tag?")
+            tag_lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+            tag_entry = ttk.Entry(tag_Frame,width=10)
+            tag_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+            tag_popup_button=tk.Button(tag_Frame, text='Add',command = lambda:[self.logic.create_tag(tag_entry.get()),self.update_tag_list(tag_dropdown), self.cleanup(self.top)])
+            tag_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        except Exception as e:
+            print(f"An error occurred: {e}")
         
     def delete_tag_popup(self,entry):
         print('delete_tag')
@@ -301,6 +326,13 @@ class mainWindow():
     def update_playlist_list(self,dropdown):
         try:
             options = self.logic.get_playlist_list()
+            dropdown['values'] = tuple(options)
+        except:
+            print("failed to update playlist")
+            
+    def update_playlist_list(self,dropdown):
+        try:
+            options = self.logic.get_tag_list()
             dropdown['values'] = tuple(options)
         except:
             print("failed to update playlist")
