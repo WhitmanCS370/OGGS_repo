@@ -64,7 +64,6 @@ class AudioPlayer:
         self.stream.close()
         self.audio.close()
         self.p.terminate()
-        self.reset()
 
     def reset(self):
         """ Reset stream and file to allow replaying """

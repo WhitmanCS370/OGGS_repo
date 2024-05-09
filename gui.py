@@ -82,7 +82,7 @@ class mainWindow():
         pause_button = ttk.Button(showing_frame, text="Pause/Play", command=lambda: self.player.pausePlay())
         pause_button.grid(row=9, column=1, padx=10, pady=10)
 
-        stop_button = ttk.Button(showing_frame, text="Reset", command=lambda: self.player.stop())
+        stop_button = ttk.Button(showing_frame, text="Stop", command=lambda: self.player.stop())
         stop_button.grid(row=18, column=1, padx=10, pady=10)
 
         # Frame to hold skip controls
