@@ -113,9 +113,11 @@ class databaseManager():
         try:
             playlistid = self.get_playlist_id(playlist)
             if type(songs)==str:
-                songs=songs.split()
+                print(songs)
+                songs=[songs]
             for song in songs:
-                title = song.split("/")[-1].split(".")[0]
+                title, ext = os.path.splitext(os.path.basename(song))
+                # title = song.split("/")[-1].split(".")[0]
                 songid = self.get_song_id(title)
                 self.cursor.execute("""
                     INSERT INTO playlist_items (playlist_id, audio_file_id)
@@ -276,31 +278,37 @@ class databaseManager():
                 SELECT DISTINCT name FROM tags;
             """)
             tags = np.array(self.cursor.fetchall())
-            return tags.ravel() if tags else None
+            return tags.ravel() if tags.size > 0 else None
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def add_tag(self, name, desc):
+    def add_tag(self, name):
         try:
             self.cursor.execute("""
-                INSERT INTO tags (name, desc)
-                VALUES (?, ?)
-            """, (name, desc))
+                INSERT INTO tags (name)
+                VALUES (?)
+            """, (name,))
             self.conn.commit()
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def add_tag_to_file(self, tag, filename):
+    def add_tag_to_file(self, tag, songs):
         try:
             tagid = self.get_tag_id(tag)
-            songid = self.get_song_id(filename)
-            self.cursor.execute("""
-                INSERT INTO file_tags (tag_id, audio_file_id)
-                VALUES (?, ?)
-            """, (tagid, songid))
-            self.conn.commit()
+            if type(songs)==str:
+                songs=[songs]
+            for song in songs:
+                title, ext = os.path.splitext(os.path.basename(song))
+                # title = song.split("/")[-1].split(".")[0]
+                songid = self.get_song_id(title)
+                self.cursor.execute("""
+                    INSERT INTO file_tags (tag_id, audio_file_id)
+                    VALUES (?, ?)
+                """, (tagid, songid))
+                self.conn.commit()
         except Exception as e:
             print(f"An error occurred: {e}")
+
 
     def get_from_tag(self, tag):
         try:

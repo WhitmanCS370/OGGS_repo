@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk,Label, Toplevel
 from tkinter.filedialog import askopenfilename, asksaveasfilename
-from logic import AudioEffects, Recorder, Logic
+from logic import AudioEffects, Recorder, Logic, Player, AudioPlayer
 from file_system import FileManager
 from sql_commands import databaseManager
 from database_init import init, init_default_tags
@@ -22,7 +22,8 @@ class mainWindow():
         self.files = FileManager()
         self.recorder=Recorder(db)
         self.logic=Logic(db)
-        
+        self.player = Player()
+        self.stream = AudioPlayer
 
         self.root=root
         #for development purposes, populate database with example files
@@ -74,7 +75,11 @@ class mainWindow():
         add_to_playlist=ttk.Button(showing_frame,text="Add To Playlist", command=lambda:[self.to_playlist_popup(self.get_selected_filepaths(treeview))])
         add_to_playlist.grid(row=7,column=0,padx=5, pady=3, sticky="nsew")
         
-        play_button = ttk.Button(showing_frame, text="Play",command=lambda:[self.audio.sequence(self.get_selected_filepaths(treeview))])
+        #play_button = ttk.Button(showing_frame, text="Play",command=lambda:[self.player.sequence(self.get_selected_filepaths(treeview))])
+        #play_button.grid(row=8, column=0, padx=5, pady=3, sticky="nsew")
+
+        play_button = ttk.Button(showing_frame, text="Play", command=lambda: self.play_audio(self.get_selected_filepaths(treeview)))
+
         play_button.grid(row=8, column=0, padx=5, pady=3, sticky="nsew")
         
         layer_button = ttk.Button(showing_frame, text="Layer",command=lambda:self.audio.layer(self.get_selected_filepaths(treeview)))
@@ -107,8 +112,8 @@ class mainWindow():
         duplicate_file_button = ttk.Button(showing_frame, text="Duplicate File",command=lambda:[self.files.duplicate_file(name_entry.get(), db)])
         duplicate_file_button.grid(row=18, column=0, padx=5, pady=3, sticky="nsew")
         
-        add_tag_button = ttk.Button(showing_frame, text="Add Tag",command=lambda:[self.add_tag_popup(name_entry)])
-        add_tag_button.grid(row=19, column=0, padx=5, pady=3, sticky="nsew")
+        add_to_tag_button = ttk.Button(showing_frame, text="Add Tag to File",command=lambda:[self.to_tag_popup(self.get_selected_filepaths(treeview))])
+        add_to_tag_button.grid(row=19, column=0, padx=5, pady=3, sticky="nsew")
         
     
         
@@ -150,6 +155,11 @@ class mainWindow():
         #for development purposes, populate database with example files
 
         self.root.mainloop()
+
+    def play_audio(self, filepath):
+            for file in filepath:
+                self.player = AudioPlayer(file)
+                self.player.play()
         
     def rename_popup(self, entry):
         try:
@@ -289,6 +299,28 @@ class mainWindow():
             print('File added successfully')
         
     
+    def to_tag_popup(self, entry):
+        try:
+            if len(entry)==0:
+                self.select_files_popup()
+                return
+            self.top=Toplevel(self.root)
+            self.top.geometry('300x300')
+            tag_Frame = ttk.Frame(self.top)
+            tag_Frame.pack()
+            lbl=tk.Label(tag_Frame,text="Add file to tag")
+            lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
+            n = tk.StringVar() 
+            tag_dropdown = ttk.Combobox(tag_Frame, width = 27, textvariable = n) 
+            tag_dropdown.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
+            options = self.logic.get_tag_list()
+            tag_dropdown['values'] = tuple(options)
+            tag_popup_button=tk.Button(tag_Frame, text='Add',command = lambda:[self.logic.song_tag(tag_dropdown,entry), self.cleanup(self.top)])
+            tag_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
+        except TypeError:
+            print("error occured: Select file to add")
+
+
     def add_tag_popup(self,tag_dropdown):
         try:
             self.top=Toplevel(self.root)
@@ -333,7 +365,7 @@ class mainWindow():
             print(options)
             dropdown['values'] = tuple(options)
         except:
-            print("failed to update playlist")
+            print("failed to update tag list")
         
     def get_selected_filepaths(self,treeview):
         filepathList=[]
