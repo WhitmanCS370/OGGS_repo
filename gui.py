@@ -47,7 +47,7 @@ class mainWindow():
         name_entry.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
         
         playlist_frame = ttk.Frame(showing_frame)
-        playlist_frame.grid(row=2, column=0)
+        playlist_frame.grid(row=1, column=0)
         lbl=tk.Label(playlist_frame,text="Playlists:")
         lbl.grid(row=0,column=0, padx=5, pady=3,sticky="nw")
         n = tk.StringVar() 
@@ -56,14 +56,14 @@ class mainWindow():
         self.update_playlist_list(playlist_dropdown)
         playlist_dropdown.bind("<<ComboboxSelected>>", lambda x:self.logic.show_playlist(playlist_dropdown, treeview))
         create_playlist=ttk.Button(showing_frame,text="Create Playlist", command=lambda:[self.add_playlist_popup(playlist_dropdown)])
-        create_playlist.grid(row=4,column=0,padx=5, pady=3, sticky="nsew")
+        create_playlist.grid(row=3,column=0,padx=5, pady=3, sticky="nsew")
         
         tag_frame = ttk.Frame(showing_frame)
-        tag_frame.grid(row=3, column=0)
+        tag_frame.grid(row=2, column=0)
         lbl=tk.Label(tag_frame,text="Tags:")
         lbl.grid(row=0,column=0, padx=5, pady=3,sticky="nw")
         n = tk.StringVar() 
-        tag_dropdown = ttk.Combobox(tag_frame, width = 27, textvariable = n) 
+        tag_dropdown = ttk.Combobox(tag_frame, width = 30, textvariable = n) 
         tag_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
         self.update_tag_list(tag_dropdown)
         tag_dropdown.bind("<<ComboboxSelected>>", lambda x:self.logic.show_tag(tag_dropdown, treeview))
@@ -71,68 +71,71 @@ class mainWindow():
         create_tag.grid(row=5,column=0,padx=5, pady=3, sticky="nsew")
         
         add_to_playlist=ttk.Button(showing_frame,text="Add To Playlist", command=lambda:[self.to_playlist_popup(self.get_selected_filepaths(treeview))])
-        add_to_playlist.grid(row=7,column=0,padx=5, pady=3, sticky="nsew")
+        add_to_playlist.grid(row=6,column=0,padx=5, pady=3, sticky="nsew")
         
         # BEGIN PLAY METHODS ----------------------------------------------------------------------------------------------------
-
+        
+        play_pause_frame = ttk.Frame(showing_frame)
+        play_pause_frame.grid(row=0, column=1,padx=5, pady=3, sticky="nsew")
         #play_button = ttk.Button(showing_frame, text="Play",command=lambda:[self.player.sequence(self.get_selected_filepaths(treeview))])
-        play_button = ttk.Button(showing_frame, text="Play", command=lambda: self.play_audio(self.get_selected_filepaths(treeview)))
-        play_button.grid(row=0, column=1, padx=10, pady=10)
-
-        pause_button = ttk.Button(showing_frame, text="Pause/Play", command=lambda: self.player.pausePlay())
-        pause_button.grid(row=9, column=1, padx=10, pady=10)
-
+        play_button = ttk.Button(play_pause_frame, text="Play",width=25, command=lambda: self.play_audio(self.get_selected_filepaths(treeview)))
+        play_button.pack(side=tk.LEFT,expand=True)
+        pause_button = ttk.Button(play_pause_frame, text="Pause/Play",width=25, command=lambda: self.player.pausePlay())
+        pause_button.pack(side=tk.RIGHT,expand=True)
         stop_button = ttk.Button(showing_frame, text="Stop", command=lambda: self.player.stop())
         stop_button.grid(row=18, column=1, padx=10, pady=10)
 
         # Frame to hold skip controls
         skip_frame = ttk.Frame(showing_frame)
-        skip_frame.grid(row=10, column=1, sticky="nsew") 
+        skip_frame.grid(row=2, column=1, sticky="nsew") 
 
         skip_label = ttk.Label(skip_frame, text="Skip (seconds):")
-        skip_label.grid(row=0, column=0, padx=5, pady=3)
+        skip_label.grid(row=0, column=0,padx=5, pady=3, sticky="nsew")
 
         skip_entry = ttk.Entry(skip_frame)
         skip_entry.grid(row=0, column=1, padx=5, pady=3)
 
         skip_button = ttk.Button(skip_frame, text="Skip", 
                                 command=lambda: self.player.skip_to(skip_entry.get()))
-        skip_button.grid(row=0, column=2, padx=5, pady=3)
+        skip_button.grid(row=0, column=2,padx=5, pady=3, sticky="nsew")
 
         # END PLAY METHODS ----------------------------------------------------------------------------------------------------
         
+
         layer_button = ttk.Button(showing_frame, text="Layer",command=lambda:self.audio.layer(self.get_selected_filepaths(treeview)))
-        layer_button.grid(row=9, column=0, padx=5, pady=3, sticky="nsew")
+        layer_button.grid(row=8, column=0, padx=5, pady=3, sticky="nsew")
         
         delete_button = ttk.Button(showing_frame, text="Delete",command=lambda:[self.logic.delete_file_with_name(name_entry.get()), self.files.delete_file(name_entry.get()),self.logic.input_files(treeview)])
-        delete_button.grid(row=10, column=0, padx=5, pady=3, sticky="nsew")
+        delete_button.grid(row=7, column=0, padx=5, pady=3, sticky="nsew")
         
         rename_button = ttk.Button(showing_frame, text="Rename",command=lambda:[self.rename_popup(name_entry),self.logic.input_files(treeview)])
-        rename_button.grid(row=11,column=0,padx=5,pady=3, sticky="nsew")
+        rename_button.grid(row=10,column=0,padx=5,pady=3, sticky="nsew")
+     
         
         speed_Up_button = ttk.Button(showing_frame, text="Speed Up",command=lambda:[self.speed_up_popup(name_entry),self.logic.input_files(treeview)])
-        speed_Up_button.grid(row=12, column=0, padx=5, pady=3, sticky="nsew")
+        speed_Up_button.grid(row=6, column=1, padx=5, pady=3, sticky="nsew")
         
         backward_button = ttk.Button(showing_frame, text="Backward",command=lambda:[self.logic.add_file(self.audio.backward(name_entry)),self.logic.input_files(treeview)])
-        backward_button.grid(row=13, column=0, padx=5, pady=5, sticky="nsew")
+        backward_button.grid(row=7, column=1, padx=5, pady=5, sticky="nsew")
 
         distortion_button = ttk.Button(showing_frame, text="Distort", command=lambda: [(self.audio.apply_distortion(name_entry)), self.logic.input_files(treeview)])
-        distortion_button.grid(row=14, column=0, padx=5, pady=5, sticky="nsew")
-        
-        record_button = ttk.Button(showing_frame, text="Record",command=lambda:[self.record_popup(name_entry)])
-        record_button.grid(row=15, column=0, padx=5, pady=3, sticky="nsew")
+        distortion_button.grid(row=8, column=1, padx=5, pady=5, sticky="nsew")
         
         trim_button = ttk.Button(showing_frame, text="Trim",command=lambda:[self.trim_popup(name_entry,treeview)])
-        trim_button.grid(row=16, column=0, padx=5, pady=3, sticky="nsew")
+        trim_button.grid(row=9, column=1, padx=5, pady=3, sticky="nsew")
+        
+        
+        record_button = ttk.Button(showing_frame, text="Record",command=lambda:[self.record_popup(name_entry)])
+        record_button.grid(row=10, column=1, padx=5, pady=3, sticky="nsew")
         
         add_file_button = ttk.Button(showing_frame, text="Add File",command=lambda:[self.add_file_popup()])
-        add_file_button.grid(row=17, column=0, padx=5, pady=5, sticky="nsew")
+        add_file_button.grid(row=9, column=0, padx=5, pady=5, sticky="nsew")
         
         duplicate_file_button = ttk.Button(showing_frame, text="Duplicate File",command=lambda:[self.files.duplicate_file(name_entry.get(), db)])
-        duplicate_file_button.grid(row=18, column=0, padx=5, pady=3, sticky="nsew")
+        duplicate_file_button.grid(row=11, column=1, padx=5, pady=3, sticky="nsew")
         
         add_to_tag_button = ttk.Button(showing_frame, text="Add Tag to File",command=lambda:[self.to_tag_popup(self.get_selected_filepaths(treeview))])
-        add_to_tag_button.grid(row=19, column=0, padx=5, pady=3, sticky="nsew")
+        add_to_tag_button.grid(row=11, column=0, padx=5, pady=3, sticky="nsew")
         
     
         
