@@ -1,5 +1,5 @@
 import argparse
-from audio import * 
+from logic import * 
 from manager import FileManager
 import os
 from os import walk

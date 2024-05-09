@@ -20,9 +20,6 @@ def init():
         CREATE TABLE IF NOT EXISTS audio_files (
             id INTEGER PRIMARY KEY,
             title TEXT UNIQUE,
-            artist TEXT,
-            album TEXT, 
-            genre TEXT,
             filepath TEXT,
             duration INTEGER
         )
@@ -47,8 +44,7 @@ def init():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS tags (
         id INTEGER PRIMARY KEY,
-        name TEXT UNIQUE,
-        desc TEXT
+        name TEXT UNIQUE
     )
     """)
 
@@ -63,6 +59,28 @@ def init():
     """)
     conn.commit()
     conn.close()
+
+def init_default_tags():
+    conn = sqlite3.connect('audio_library.sqlite')
+    cursor = conn.cursor()
+
+    cursor.execute(
+    """
+    INSERT INTO tags (name)
+        VALUES 
+        (".wav"),
+        (".mp3"),
+        ("backwards"),
+        ("sped up"),
+        ("trimmed"),
+        ("rec"),
+        ("distorted")
+    """
+    )
+
+    conn.commit()
+    conn.close()
+    
 
 if __name__ == "__main__":
     try:

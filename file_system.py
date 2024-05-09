@@ -1,5 +1,6 @@
 import os
-from audio import *
+from os import path
+from logic import *
 import shutil 
 
 class FileManager():
@@ -24,7 +25,10 @@ class FileManager():
         """
         Delete a specific file given filename.
         """
-        file_path = os.path.join(self.path, fileName)
+        if fileName[-4:]==".wav":
+            file_path = os.path.join("sounds", fileName)
+        else:
+            file_path = os.path.join("sounds", fileName+".wav")
         try:
             os.remove(file_path)
         except FileNotFoundError:
@@ -36,9 +40,15 @@ class FileManager():
         Does not add to database, will require updating the database
         """
         try:
-            self.os.rename(fileOriginPath, self.path + str(os.path.basename(fileOriginPath)))
+            assert self.os.path.isfile(fileOriginPath)
+            assert fileOriginPath.endswith(".wav")
+            newpath = self.os.path.join(self.path , str(os.path.basename(fileOriginPath)))
+            self.os.rename(fileOriginPath, newpath)
+            return newpath
         except FileNotFoundError:
             print(f"file: {fileOriginPath} not found")
+        except AssertionError:
+            print("File invalid")
 
     def add_file_menu(self):
         """
@@ -56,18 +66,18 @@ class FileManager():
         except FileNotFoundError:
             print("No files found in archive")
     
-    def duplicate_file(self,file, sql):
-        src_path = os.path.join(self.path, file)
-        if file[-5].isnumeric():
-            num=int(file[-5])+1
-            file=str(num).join(file.rsplit(str(num-1), 1))
+    def duplicate_file(self,file, db):
+        src_path = os.path.join(os.path.curdir,"sounds", file +".wav")
+        if (("_" in file) and (file.split("_")[-1].isdigit())):
+            num=int(file.split("_")[-1]) + 1
+            file=file.split('_')[0] + "_" + str(num)
         else: 
             hashlist = list(file)
-            hashlist.insert(-4, '_2')
+            hashlist.append('_2')
             file=''.join(hashlist)
-        new_path = os.path.join(self.path, file)
+        new_path = os.path.join(os.curdir, "sounds", file+".wav")
         shutil.copyfile(src_path, new_path)
-        sql.add_from_file(self, file, self.path)
+        db.add_from_file(new_path)
         
 if __name__ == '__main__':
     FileManager().list_files()

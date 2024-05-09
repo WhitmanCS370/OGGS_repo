@@ -1,5 +1,10 @@
+from gui import open_gui
 from interface import Interface
+from sys import argv
 
 if (__name__ == "__main__"):
-    CLI_interface = Interface()
-    CLI_interface.cmdloop()
+    if "-g" in argv:
+        open_gui()
+    else:
+        i = Interface()
+        i.cmdloop()
