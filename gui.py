@@ -383,6 +383,8 @@ class mainWindow():
         try:
             print("drop")
             options = self.logic.get_tag_list()
+            
+            print(options)
             dropdown['values'] = tuple(options)
         except:
             dropdown['values']=()

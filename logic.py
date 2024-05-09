@@ -359,11 +359,8 @@ class Logic:
         
     def get_tag_list(self):
         tags=self.db.list_tags()
-        print(tags)
-        if tags:
-            return list(tags)+[""]
-        else: 
-            return []
+        return list(tags)+[""]
+
     
     def delete_file_with_name(self,name):
         self.db.delete_file_by_name(name)
