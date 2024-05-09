@@ -110,8 +110,6 @@ class mainWindow():
         add_tag_button = ttk.Button(showing_frame, text="Add Tag",command=lambda:[self.add_tag_popup(name_entry)])
         add_tag_button.grid(row=19, column=0, padx=5, pady=3, sticky="nsew")
         
-        delete_tag_button = ttk.Button(showing_frame, text="Delete Tag",command=lambda:[self.delete_tag_popup(name_entry)])
-        delete_tag_button.grid(row=20, column=0, padx=5, pady=3, sticky="nsew")
     
         
         tree_frame = ttk.Frame(frame)
@@ -221,9 +219,7 @@ class mainWindow():
         except Exception as e:
             print(f"An error occurred: {e}")
             
-
-
-
+            
     def to_playlist_popup(self, entry):
         try:
             if len(entry)==0:
@@ -253,7 +249,7 @@ class mainWindow():
             playlist_Frame.pack()
             playlist_lbl=tk.Label(playlist_Frame,text="What is the playlist's name?")
             playlist_lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
-            playlist_entry = ttk.Entry(playlist_Frame,width=10)
+            playlist_entry = ttk.Entry(playlist_Frame,width=20)
             playlist_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
             playlist_popup_button=tk.Button(playlist_Frame, text='Add',command = lambda:[self.logic.create_playlist(playlist_entry.get()),self.update_playlist_list(playlist_dropdown), self.cleanup(self.top)])
             playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
@@ -268,16 +264,18 @@ class mainWindow():
             trim_Frame.pack()
             name_entry=tk.Label(trim_Frame,text="trim it?")
             name_entry.grid(row=0, column=0, padx=5, pady=5, sticky="n")
-            duration=treeview.item(entry.get())['values'][3]
+            selct=treeview.focus()
+            duration=treeview.item(selct)['values'][3]
             hLeft = tk.DoubleVar()  #left handle variable initialised to value 0
             hRight = tk.DoubleVar()  #right handle variable initialised to duration of file
-            hSlider = RangeSliderH( trim_Frame , [hLeft, hRight], min_val=0, max_val=duration, padX=96.76 ,step_marker = True, step_size = duration/10)   #horizontal slider
+            hSlider = RangeSliderH( trim_Frame , [hLeft, hRight], min_val=0, max_val=float(duration), padX=96.76 ,step_marker = True, step_size = float(duration)/10)   #horizontal slider
             hSlider._RangeSliderH__moveBar(0, 0.0)   # 0.2 means 20 for range 0 to 100
             hSlider._RangeSliderH__moveBar(1, 1.0)   # 0.8 means 80 for range 0 to 100
             hSlider.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
             playlist_popup_button=tk.Button(trim_Frame, text='Trim',command = lambda:[self.logic.add_filepath_trim(entry,hLeft,hRight,self.audio), self.cleanup(self.top)])
             playlist_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
-        except TypeError:
+        except Exception as e:
+            print(f"exception: {e}")
             self.select_files_popup()
         except Exception as e:
             print(f"exception occured: {e}")
@@ -290,8 +288,6 @@ class mainWindow():
             self.logic.add_filepath(moved_filepath)
             print('File added successfully')
         
-    def duplicate_file_popup(self,entry):
-        print('dup file')
     
     def add_tag_popup(self,tag_dropdown):
         try:
@@ -301,7 +297,7 @@ class mainWindow():
             tag_Frame.pack()
             tag_lbl=tk.Label(tag_Frame,text="What is the Tag?")
             tag_lbl.grid(row=0, column=0, padx=5, pady=5, sticky="n")
-            tag_entry = ttk.Entry(tag_Frame,width=10)
+            tag_entry = ttk.Entry(tag_Frame,width=30)
             tag_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
             tag_popup_button=tk.Button(tag_Frame, text='Add',command = lambda:[self.logic.create_tag(tag_entry.get()),self.update_tag_list(tag_dropdown), self.cleanup(self.top)])
             tag_popup_button.grid(row=2, column=0, padx=5, pady=5, sticky="n")
@@ -330,9 +326,11 @@ class mainWindow():
         except:
             print("failed to update playlist")
             
-    def update_playlist_list(self,dropdown):
+    def update_tag_list(self,dropdown):
         try:
+            print("drop")
             options = self.logic.get_tag_list()
+            print(options)
             dropdown['values'] = tuple(options)
         except:
             print("failed to update playlist")

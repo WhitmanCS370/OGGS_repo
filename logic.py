@@ -133,11 +133,10 @@ class AudioEffects(Player):
         return filename
         
             
-    def trim(self,entry,startTimeStamp,endTimeStamp):
+    def trim(self,filename,startTimeStamp,endTimeStamp):
         """
         trims the specified file at the sime stamps stated
         """
-        filename=self.db.get_filepath(entry.get())
         sound = AudioSegment.from_wav(filename)
         # duration = sound.duration_seconds
         sound_export = sound[float(startTimeStamp)*1000:float(endTimeStamp)*1000]
@@ -238,12 +237,14 @@ class Logic:
             return []
         
     def get_tag_list(self):
-        tags=self.db.list_tags()
-        print(tags)
-        if tags:
-            return list(tags)+[""]
-        else: 
-            return []
+        try:
+            tags=self.db.list_tags()
+            if tags:
+                return list(tags)+[""]
+            else: 
+                return []
+        except:
+            print("didnt get tags")
     
     def delete_file_with_name(self,name):
         self.db.delete_file_by_name(name)
@@ -269,10 +270,12 @@ class Logic:
         self.db.add_playlist(playlist_entry)
         
     def create_tag(self,tag_entry):
-        self.db.add_tag(tag_entry)
+        print(tag_entry)
+        self.db.add_tag(tag_entry,"")
         
     def add_filepath_trim(self,entry,hLeft,hRight,audio):
-        filepath=self.db.get_filepath(entry.get())
+        val=entry.get()
+        filepath=self.db.get_filepath(val)
         self.db.add_from_file(audio.trim(filepath,int(hLeft.get()),int(hRight.get())))
     
     def add_filepath(self,file):
