@@ -58,18 +58,41 @@ New Features:
 - record audio
 - trim audio files 
 
-Program Usage:
+# Setup:
+1. Clone this repository onto your computer.
+2. make sure that python is installed, type "python --version" to make sure 
+3. Navigate to the program directory.
+4. Create virtual python environment and set it as your python source.
+5. install dependencies with "pip install -r requirements.txt"
 
-# To start the program:
+
+
+# Program Usage: GUI
+
+## To start the program:
+1. navigate to the project directory
+2. run "python main.py -g" in the command line
+
+## To use program:
+1. Use buttons in gui to perform actions
+2. To manipulate or play files, select them in the window and use buttons to perform actions.
+
+
+
+# Program Usage: CLI
+
+## To start the program:
   1. navigate into the directory that this program is stored in
   2. run "python main.py" in command line
   
-# To play a files:
+## To play a files:
   1. If you do not know the name of the file or playlist you want to play, run list_files or list_playlists
   2. In the program's command line interface, type play <filename> or play -p <playlist>, in the case of filename, do not include file extensions. 
 
-# To find out the functionality of other commands
+## To find out the functionality of other commands
   - Type "help" or "help <command_name>" for specific command usage
+
+
 
 Contributions: 
 Oliver:
