@@ -132,3 +132,5 @@ Oliver Baltzer: I worked on implementing each existing feature with the new GUI 
 Steven Lin: I worked on reworking audio player, fixing issues that caused audio to be inconsistent across different OS, and implementing pause/play/skip functions.
 
 Gabriel Paris-Moe: I did the main design and implementation of the GUI as well as making many of the popups and making the original functions that we already had work with the popup.
+
+Grant Didway: I worked on the distort feature and making popup windows that pass the correct information to logic.py, path consistency accross different operating systems, and fixing issues with tagging.
