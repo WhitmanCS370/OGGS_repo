@@ -128,3 +128,5 @@ Steven:
 
 
 Oliver Baltzer: I worked on implementing each existing feature with the new GUI and fixed bugs as they came up, I also implemented the system for automatic tagging. 
+
+Steven Lin: I worked on reworking audio player, fixing issues that caused audio to be inconsistent across different OS, and impementing pause/play/skip functions.
