@@ -129,4 +129,6 @@ Steven:
 
 Oliver Baltzer: I worked on implementing each existing feature with the new GUI and fixed bugs as they came up, I also implemented the system for automatic tagging. 
 
-Steven Lin: I worked on reworking audio player, fixing issues that caused audio to be inconsistent across different OS, and impementing pause/play/skip functions.
+Steven Lin: I worked on reworking audio player, fixing issues that caused audio to be inconsistent across different OS, and implementing pause/play/skip functions.
+
+Gabriel Paris-Moe: I did the main design and implementation of the GUI as well as making many of the popups and making the original functions that we already had work with the popup.
